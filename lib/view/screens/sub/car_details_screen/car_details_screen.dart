@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:hny_main/view/screens/sub/car_details_screen/widgets/booking_details.dart';
 import 'package:hny_main/view/screens/sub/car_details_screen/widgets/booking_price.dart';
 import 'package:hny_main/view/screens/sub/car_details_screen/widgets/car_feature.dart';
@@ -14,12 +15,20 @@ class CarDetailsScreen extends StatelessWidget {
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
-          children: const [
+          children:  [
             CarHeader(),
             CarSpecs(),
-            CarFeatures(),
+            Divider(),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 32),
+              child: CarFeatures(),
+            ),
+                        Divider(),
+
             LocationDetails(),
             BookingDetails(),
+            Gap(62),
+SizedBox(width: double.infinity,child: Divider(),),
             BookingPrice(),
           ],
         ),

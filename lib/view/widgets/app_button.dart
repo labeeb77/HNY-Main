@@ -24,7 +24,7 @@ class PrimaryElevateButton extends StatelessWidget {
         onPressed:ontap??(){},
         style: ElevatedButton.styleFrom(
           elevation: 0.0,
-          backgroundColor:isGrey!=null?const Color(0xFFE6EFEB):AppColors.primary,
+          backgroundColor:isGrey!=null? AppColors.greenShadeBackground :AppColors.primary,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30),
           ),

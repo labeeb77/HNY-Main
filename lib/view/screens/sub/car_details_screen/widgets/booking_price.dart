@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hny_main/core/utils/app_colors.dart';
+import 'package:hny_main/view/widgets/app_button.dart';
 
 class BookingPrice extends StatelessWidget {
   const BookingPrice({Key? key}) : super(key: key);
@@ -6,13 +8,13 @@ class BookingPrice extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.only(bottom:24,left: 19,right: 19,top: 8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Column(
+          const Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
+            children: [
               Text(
                 'Total amount',
                 style: TextStyle(
@@ -26,25 +28,16 @@ class BookingPrice extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Colors.green,
+                  color: AppColors.primary,
                 ),
               ),
             ],
           ),
-          ElevatedButton(
-            onPressed: () {},
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green,
-              padding: const EdgeInsets.symmetric(
-                horizontal: 32,
-                vertical: 16,
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-            child: const Text('Book Now'),
-          ),
+          PrimaryElevateButton(
+                     ontap: (){
+                  },
+                    buttonName:"Book Now"
+                  )
         ],
       ),
     );

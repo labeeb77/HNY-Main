@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
+import 'package:hny_main/core/utils/app_colors.dart';
+import 'package:hny_main/view/screens/main/home/widgets_elements.dart';
 
 class CarHeader extends StatelessWidget {
   const CarHeader({Key? key}) : super(key: key);
@@ -46,20 +49,25 @@ class CarHeader extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.white),
-              onPressed: () => Navigator.pop(context),
+            CircledIcon(
+              ontap: () => Navigator.pop(context),
+              circleColor: AppColors.circleAvatarBackground,
+              iconColor: AppColors.white,
+              icon: Icons.arrow_back,
             ),
             Row(
               children: [
-                IconButton(
-                  icon: const Icon(Icons.share, color: Colors.white),
-                  onPressed: () {},
+                CircledIcon(
+                  circleColor: AppColors.circleAvatarBackground,
+                  iconColor: AppColors.white,
+                  icon: Icons.share,
                 ),
-                IconButton(
-                  icon: const Icon(Icons.favorite_border, color: Colors.white),
-                  onPressed: () {},
-                ),
+                Gap(12),
+                CircledIcon(
+                  circleColor: AppColors.circleAvatarBackground,
+                  iconColor: AppColors.white,
+                  icon: Icons.favorite_border,
+                )
               ],
             ),
           ],
@@ -72,30 +80,48 @@ class CarHeader extends StatelessWidget {
     return Row(
       children: [
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
           decoration: BoxDecoration(
-            color: Colors.green,
-            borderRadius: BorderRadius.circular(4),
+            color: AppColors.primary,
+            borderRadius: BorderRadius.circular(15),
           ),
           child: const Text(
             'Electric',
-            style: TextStyle(color: Colors.white),
+            style: TextStyle(
+                color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600),
           ),
         ),
-        const Spacer(),
-        const Icon(Icons.star, color: Colors.amber, size: 20),
-        const Text(' 4.8'),
       ],
     );
   }
 
   Widget _buildCarTitle() {
-    return const Text(
-      'Ford Escape',
-      style: TextStyle(
-        fontSize: 24,
-        fontWeight: FontWeight.bold,
-      ),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        const Text(
+          'Ford Escape',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+          decoration: BoxDecoration(
+              border: Border.all(color: Color(0xFFE4E4E4)),
+              borderRadius: BorderRadius.circular(9)),
+          child: const Row(
+            children: [
+              Icon(Icons.star, color: Colors.amber, size: 20),
+              Text(
+                ' 4.8',
+                style: TextStyle(fontWeight: FontWeight.w700,fontSize: 16),
+              ),
+            ],
+          ),
+        )
+      ],
     );
   }
 
