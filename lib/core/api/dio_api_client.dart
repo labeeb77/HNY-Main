@@ -32,7 +32,7 @@ class ApiClient {
   }
 
   Future _onRequest(
-    RequestOptions options, 
+    RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
     final prefs = await SharedPreferences.getInstance();
@@ -44,7 +44,7 @@ class ApiClient {
   }
 
   void _onResponse(
-    Response response, 
+    Response response,
     ResponseInterceptorHandler handler,
   ) {
     log('Response: ${response.data}');
