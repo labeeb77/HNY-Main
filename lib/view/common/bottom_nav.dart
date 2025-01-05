@@ -1,26 +1,27 @@
 import 'dart:developer';
 
-
 import 'package:flutter/material.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
 import 'package:hny_main/data/providers/bottom_nav_controller.dart';
-import 'package:hny_main/view/widgets/nav_item.dart';
+import 'package:hny_main/view/screens/main/home/widgets_elements.dart';
 import 'package:provider/provider.dart';
+
 
 class BottomNav extends StatelessWidget {
   const BottomNav({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final bottomNavController = Provider.of<BottomNavController>(context);
+    final bottomViewModel = Provider.of<BottomNavController>(context);
 
     return Scaffold(
       body: Consumer<BottomNavController>(
           builder: (context, value, child) =>
               value.screens[value.currentScreenIndex]),
       bottomNavigationBar: OrientationBuilder(
-        builder: (context, orientation) => Container(
-          padding: const EdgeInsets.symmetric(horizontal: 40),
+        builder: (context, orientation) => 
+         Container(
+          padding: const EdgeInsets.symmetric(horizontal: 28),
           decoration: BoxDecoration(
             color: AppColors.white,
             borderRadius: const BorderRadius.only(
@@ -37,39 +38,49 @@ class BottomNav extends StatelessWidget {
             ],
           ),
           width: double.infinity,
-          height: (orientation == Orientation.portrait)
-              ? MediaQuery.of(context).size.height / 11
-              : MediaQuery.of(context).size.width / 20,
+          height: (orientation == Orientation.portrait)? MediaQuery.of(context).size.height / 13:MediaQuery.of(context).size.width / 20,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               NavItemWidget(
-                isSelected: bottomNavController.currentScreenIndex == 0,
+                isSelected: bottomViewModel.currentScreenIndex == 0,
                 label: "Home",
                 icon: Icons.home_outlined,
                 ontap: () {
                   log(orientation.name);
-                  bottomNavController.changeScreenIndex(0);
+                  bottomViewModel.changeScreenIndex(0);
                 },
                 orientation: orientation,
               ),
               NavItemWidget(
-                isSelected: bottomNavController.currentScreenIndex == 1,
-                label: "Task",
-                icon: Icons.task_outlined,
+                isSelected: bottomViewModel.currentScreenIndex == 1,
+                label: "Bookings",
+                icon: Icons.book_outlined,
                 ontap: () {
-                  bottomNavController.changeScreenIndex(1);
+                  bottomViewModel.changeScreenIndex(1);
                 },
-                orientation: orientation,
+                                orientation: orientation,
+
               ),
               NavItemWidget(
-                isSelected: bottomNavController.currentScreenIndex == 2,
+                isSelected: bottomViewModel.currentScreenIndex == 2,
+                label: "Favorites",
+                icon: Icons.favorite_outline,
+                ontap: () {
+                  bottomViewModel.changeScreenIndex(2);
+                },
+                                orientation: orientation,
+
+              ),
+              NavItemWidget(
+                isSelected: bottomViewModel.currentScreenIndex == 3,
                 label: "Profile",
                 icon: Icons.person_outline,
                 ontap: () {
-                  bottomNavController.changeScreenIndex(2);
+                  bottomViewModel.changeScreenIndex(3);
                 },
-                orientation: orientation,
+                                orientation: orientation,
+
               ),
             ],
           ),

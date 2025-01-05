@@ -1,4 +1,41 @@
 import 'package:flutter/material.dart';
+import 'package:hny_main/core/utils/app_colors.dart';
+import 'package:hny_main/view/widgets/app_text_widget.dart';
+
+
+
+
+
+class PrimaryElevateButton extends StatelessWidget {
+  final buttonName;
+  final isGrey;
+  final ontap;
+  const PrimaryElevateButton({
+    this.ontap,
+    this.buttonName,this.isGrey,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 38,
+      child: ElevatedButton(
+        onPressed:ontap??(){},
+        style: ElevatedButton.styleFrom(
+          elevation: 0.0,
+          backgroundColor:isGrey!=null?const Color(0xFFE6EFEB):AppColors.primary,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30),
+          ),
+        ),
+        child:  AppText(buttonName??"Book Now",color:isGrey!=null?AppColors.primary: AppColors.white,),
+      ),
+    );
+  }
+}
+
+/// secondary button
 
 class AppButton extends StatelessWidget {
   final Widget child;
