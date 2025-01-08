@@ -27,7 +27,7 @@ class AppTheme {
       buttonColor: AppColors.primary,
       textTheme: ButtonTextTheme.primary,
     ),
-    colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+    colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primary),
     useMaterial3: true,
   );
 

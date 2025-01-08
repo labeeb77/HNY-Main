@@ -3,7 +3,7 @@ import 'package:hny_main/core/utils/app_theme.dart';
 import 'package:hny_main/data/providers/bottom_nav_controller.dart';
 import 'package:hny_main/data/providers/home_controller.dart';
 import 'package:hny_main/view/common/bottom_nav.dart';
-import 'package:hny_main/view/screens/main/bookings/splash_screen/splash_screen.dart';
+import 'package:hny_main/view/screens/main/splash_screen/splash_screen.dart';
 import 'package:provider/provider.dart';
 
 

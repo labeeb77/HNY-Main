@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
 import 'package:hny_main/view/common/bottom_nav.dart';
+import 'package:hny_main/view/screens/main/auth/sign_up_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -31,7 +32,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
       // Navigate to the next screen after the animation
       Future.delayed(const Duration(seconds: 1), () {
-        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const BottomNav(),), (route) => true,); // Replace with your actual screen
+        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) =>  SignUpScreen(),), (route) => true,); // Replace with your actual screen
       });
     });
   }
@@ -46,7 +47,7 @@ class _SplashScreenState extends State<SplashScreen> {
           duration: const Duration(seconds: 1), // Fade duration
           child: SizedBox(
             height: 148,
-            child: Image.asset("assets/logo/Removebg preview 1.png"),
+            child: Image.asset("assets/logo/splash_screen_logo.png"),
           ),
         ),
       ),
