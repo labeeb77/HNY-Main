@@ -131,7 +131,7 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
                       : Set.from([
                           Marker(
                             icon: myIcon!,
-                            infoWindow: InfoWindow(title: "PICKUP LOCATION"),
+                            infoWindow: const InfoWindow(title: "PICKUP LOCATION"),
                             markerId: MarkerId(_center.toString()),
                             position: LatLng(
                                 _center.latitude ?? 25.2048, _center.longitude),
@@ -217,8 +217,8 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
                     const SizedBox(width: 16),
                     Expanded(
                       child: Text(
-                       placemarks.length!=0? placemarks.first.name .toString():"Choose a location",
-                        style: TextStyle(fontSize: 16),
+                       placemarks.isNotEmpty? placemarks.first.name .toString():"Choose a location",
+                        style: const TextStyle(fontSize: 16),
                       ),
                     ),
                   ],
@@ -227,7 +227,7 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
                 Row(
                   children: [
                     SizedBox(
-                      width: MediaQuery.of(context).size.width / 3,
+                      width: MediaQuery.of(context).size.width / 3.5,
                     ),
                     PrimaryElevateButton(
                       buttonName: "Cancel",
