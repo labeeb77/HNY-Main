@@ -116,8 +116,8 @@ class PriceRangeBottomSheet extends StatelessWidget {
             const SizedBox(height: 100),
             Row(
               children: [
-                SizedBox(width: MediaQuery.of(context).size.width/3,),
-                 Expanded(
+                Spacer()
+,                 Expanded(
                   child: PrimaryElevateButton(
                     buttonName: "Clear All",isGrey: true,
                   ontap: (){

@@ -29,7 +29,7 @@ class PrimaryElevateButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(30),
           ),
         ),
-        child:  AppText(buttonName??"Book Now",color:isGrey!=null?AppColors.primary: AppColors.white,),
+        child:  FittedBox(child: AppText(buttonName??"Book Now",color:isGrey!=null?AppColors.primary: AppColors.white,style: TextStyle(fontWeight: FontWeight.w700,fontSize: 16),maxLines: 1,)),
       ),
     );
   }

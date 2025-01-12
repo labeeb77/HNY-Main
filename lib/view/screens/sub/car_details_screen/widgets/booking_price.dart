@@ -1,22 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
+import 'package:hny_main/view/screens/sub/car_details_screen/widgets/add_gadget_bottomsheet.dart';
 import 'package:hny_main/view/widgets/app_button.dart';
 
 class BookingPrice extends StatelessWidget {
-  const BookingPrice({Key? key}) : super(key: key);
+  final title;
+  final value;
+  final buttonName;
+  final onTap;
+  const BookingPrice(
+      {Key? key, this.title, this.value, this.buttonName, this.onTap})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.only(bottom:24,left: 19,right: 19,top: 8),
+      decoration: BoxDecoration(
+          border:
+              Border(top: BorderSide(color: AppColors.containerBorderColor))),
+      padding: const EdgeInsets.only(bottom: 24, left: 19, right: 19, top: 8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Column(
+          Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Total amount',
+                title,
                 style: TextStyle(
                   color: Colors.grey,
                   fontSize: 14,
@@ -24,7 +34,7 @@ class BookingPrice extends StatelessWidget {
               ),
               SizedBox(height: 4),
               Text(
-                'AED 12,510',
+                'AED $value',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -33,11 +43,7 @@ class BookingPrice extends StatelessWidget {
               ),
             ],
           ),
-          PrimaryElevateButton(
-                     ontap: (){
-                  },
-                    buttonName:"Book Now"
-                  )
+          PrimaryElevateButton(ontap: onTap, buttonName: buttonName)
         ],
       ),
     );
