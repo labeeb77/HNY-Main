@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         
-          title: 'MVVM Demo',
+          title: 'HNY-Customer',
         theme: AppTheme.lightTheme, // Apply the light theme
         darkTheme: AppTheme.darkTheme, // Optional: Apply the dark theme
         themeMode: ThemeMode.light, // Switches based on system preference

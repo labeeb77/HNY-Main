@@ -11,7 +11,7 @@ class AppColors {
         static  Color circleAvatarBackground =Colors.grey.withOpacity(0.4);
     static const Color orange = Color(0xFFFE7332);
     static const Color greenShadeBackground = Color(0xFFE6EFEB);
-
+static const Color containerBorderColor = Color(0xFFD9D9D9);
     static const Color white = Color(0xFFFFFFFF);
   static const Color textwhiteSecondary = Color(0xFFFFFCFC);
 
