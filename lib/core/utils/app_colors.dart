@@ -14,6 +14,7 @@ class AppColors {
 static const Color containerBorderColor = Color(0xFFD9D9D9);
     static const Color white = Color(0xFFFFFFFF);
   static const Color textwhiteSecondary = Color(0xFFFFFCFC);
-
+static const Color paymentScreenBackgroundColor = Color(0xFFFFFFFF);
+static const Color textFormFieldBorderColor = Color(0xFFD9D9D9);
 
 }

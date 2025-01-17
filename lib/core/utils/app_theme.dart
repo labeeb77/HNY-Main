@@ -15,7 +15,7 @@ class AppTheme {
       systemOverlayStyle:
           SystemUiOverlayStyle.dark // or use SystemUiOverlayStyle.light
       ,
-      titleTextStyle: AppTextStyles.headline1.copyWith(color: Colors.white),
+      titleTextStyle: AppTextStyles.bodyText1.copyWith(color: Colors.white),
     ),
 
     // textTheme: const TextTheme(
