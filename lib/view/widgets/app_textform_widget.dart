@@ -12,12 +12,14 @@ class CustomTextFormField extends StatelessWidget {
   final Icon? suffixIcon;
   final TextInputAction textInputAction;
   final VoidCallback? onFieldSubmitted;
+  final Color? borderColor;
 
   const CustomTextFormField({
     Key? key,
     required this.controller,
     required this.label,
     required this.hint,
+    this.borderColor,
     this.validator,
     this.keyboardType = TextInputType.text,
     this.obscureText = false,
@@ -43,8 +45,8 @@ class CustomTextFormField extends StatelessWidget {
           hintText: hint,
           prefixIcon: prefixIcon,
           suffixIcon: suffixIcon,
-          enabledBorder: const OutlineInputBorder(
-              borderSide: BorderSide(color: AppColors.primary)),
+          enabledBorder:  OutlineInputBorder(
+              borderSide: BorderSide(color:borderColor!=null?borderColor!: AppColors.primary)),
           border: OutlineInputBorder(
             borderSide: const BorderSide(color: Color(0xFFFFFF)),
             borderRadius: BorderRadius.circular(4),
@@ -53,8 +55,8 @@ class CustomTextFormField extends StatelessWidget {
             borderSide: const BorderSide(color: Color(0xFFFFFF)),
             borderRadius: BorderRadius.circular(4),
           ),
-          focusedBorder: const OutlineInputBorder(
-              borderSide: BorderSide(color: AppColors.primary)),
+          focusedBorder:  OutlineInputBorder(
+              borderSide: BorderSide(color:borderColor!=null?borderColor!: AppColors.primary)),
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         ),
