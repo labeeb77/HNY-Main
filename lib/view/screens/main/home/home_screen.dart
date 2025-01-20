@@ -33,7 +33,8 @@ class _HomeScreenState extends State<HomeScreen> {
     final mediaQuery = MediaQuery.of(context).size;
 
     return Scaffold(
-      appBar: new AppBar(
+      appBar:  AppBar(
+
         elevation: 0.0,
         actions: [
           CircledIcon(
@@ -55,7 +56,8 @@ class _HomeScreenState extends State<HomeScreen> {
             24,
           ),
         ],
-        title: Column(
+        automaticallyImplyLeading: false,centerTitle: false,
+        title: const Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             AppText(
@@ -254,7 +256,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               '5 Seats',
                               '7,000',
                               'https://s3-alpha-sig.figma.com/img/ae74/a9e7/f68182d3f5fd6e910be717cb9f8591cb?Expires=1736726400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=K715cm5OI1fJp2z6U3vjW8ZaZKaNFcS7GPY9~L9hP1azK1FH4A7MOZ2eev45S2W3CpedLyJZOypyNlkDXeVc3EvuT2a8GRGzkLc0pcUe41xvBrB9F-ZFLnqzoyQiTdVJYJ9j-B~n6JrR5bzBZFbMCa5gATFUZP9CnNyQKeuj9MhBBsyjKoaPKBHyuxi2ePhS4m22uYirfWWsV9z-9NxPKdE7WAmgb-arXkgjnJHtTHq9-RJ3Z36~kCLcuC8TWfDbbonZZm7FyjD-KrerDgskbpfHRVueRN~DxGrwtG50vzvtHr02YN4pqpjuW3qnx24dGVs2JlYgseMIqUXLiidqdA__',
-                              context,
+                           false  , context,
+                              
                               orientation,
                               mediaQuery),
                           const SizedBox(height: 16),
@@ -267,7 +270,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               '5 Seats',
                               '9,000',
                               'https://s3-alpha-sig.figma.com/img/ae74/a9e7/f68182d3f5fd6e910be717cb9f8591cb?Expires=1736726400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=K715cm5OI1fJp2z6U3vjW8ZaZKaNFcS7GPY9~L9hP1azK1FH4A7MOZ2eev45S2W3CpedLyJZOypyNlkDXeVc3EvuT2a8GRGzkLc0pcUe41xvBrB9F-ZFLnqzoyQiTdVJYJ9j-B~n6JrR5bzBZFbMCa5gATFUZP9CnNyQKeuj9MhBBsyjKoaPKBHyuxi2ePhS4m22uYirfWWsV9z-9NxPKdE7WAmgb-arXkgjnJHtTHq9-RJ3Z36~kCLcuC8TWfDbbonZZm7FyjD-KrerDgskbpfHRVueRN~DxGrwtG50vzvtHr02YN4pqpjuW3qnx24dGVs2JlYgseMIqUXLiidqdA__',
-                              context,
+                             false, context,
                               orientation,
                               mediaQuery),
                           const SizedBox(height: 16),
@@ -280,7 +283,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               '5 Seats',
                               '9,000',
                               'https://s3-alpha-sig.figma.com/img/ae74/a9e7/f68182d3f5fd6e910be717cb9f8591cb?Expires=1736726400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=K715cm5OI1fJp2z6U3vjW8ZaZKaNFcS7GPY9~L9hP1azK1FH4A7MOZ2eev45S2W3CpedLyJZOypyNlkDXeVc3EvuT2a8GRGzkLc0pcUe41xvBrB9F-ZFLnqzoyQiTdVJYJ9j-B~n6JrR5bzBZFbMCa5gATFUZP9CnNyQKeuj9MhBBsyjKoaPKBHyuxi2ePhS4m22uYirfWWsV9z-9NxPKdE7WAmgb-arXkgjnJHtTHq9-RJ3Z36~kCLcuC8TWfDbbonZZm7FyjD-KrerDgskbpfHRVueRN~DxGrwtG50vzvtHr02YN4pqpjuW3qnx24dGVs2JlYgseMIqUXLiidqdA__',
-                              context,
+                              false,context,
                               orientation,
                               mediaQuery),
                         ],

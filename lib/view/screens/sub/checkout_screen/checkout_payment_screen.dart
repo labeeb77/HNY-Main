@@ -4,7 +4,7 @@ import 'package:hny_main/core/utils/app_colors.dart';
 import 'package:hny_main/core/utils/app_text_styles.dart';
 import 'package:hny_main/view/screens/sub/car_details_screen/widgets/add_gadget_bottomsheet.dart';
 import 'package:hny_main/view/screens/sub/car_details_screen/widgets/booking_price.dart';
-import 'package:hny_main/view/screens/sub/checkout_screen/widgets/radiou_tile.dart';
+import 'package:hny_main/view/screens/sub/checkout_screen/widgets/radius_tile.dart';
 import 'package:hny_main/view/widgets/app_text_widget.dart';
 import 'package:hny_main/view/widgets/app_textform_widget.dart';
 import 'package:hny_main/view/widgets/back_button.dart';
@@ -119,7 +119,7 @@ class CheckoutPaymentScreen extends StatelessWidget {
                     hint: "",
                     borderColor: AppColors.textFormFieldBorderColor,
                   )),
-              const Gap(15),
+              const Gap(24),
               Container(
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8),

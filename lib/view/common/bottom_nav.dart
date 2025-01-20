@@ -55,7 +55,7 @@ class BottomNav extends StatelessWidget {
               NavItemWidget(
                 isSelected: bottomViewModel.currentScreenIndex == 1,
                 label: "Bookings",
-                icon: Icons.book_outlined,
+                icon: Icons.confirmation_number_outlined,
                 ontap: () {
                   bottomViewModel.changeScreenIndex(1);
                 },

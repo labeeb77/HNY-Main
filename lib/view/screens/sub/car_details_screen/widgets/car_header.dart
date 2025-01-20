@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
 import 'package:hny_main/view/screens/main/home/widgets_elements.dart';
+import 'package:hny_main/view/screens/main/favorite/favorite_screen.dart';
 
 class CarHeader extends StatelessWidget {
   const CarHeader({Key? key}) : super(key: key);
@@ -29,7 +30,7 @@ class CarHeader extends StatelessWidget {
             children: [
               _buildCarType(),
               const SizedBox(height: 8),
-              _buildCarTitle(),
+              _buildCarTitle(context),
               const SizedBox(height: 8),
               _buildCarDescription(),
             ],
@@ -95,7 +96,7 @@ class CarHeader extends StatelessWidget {
     );
   }
 
-  Widget _buildCarTitle() {
+  Widget _buildCarTitle(context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
