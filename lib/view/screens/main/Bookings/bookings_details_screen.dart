@@ -4,22 +4,25 @@ import 'package:hny_main/core/utils/app_colors.dart';
 import 'package:hny_main/view/screens/sub/checkout_screen/checkout_payment_screen.dart';
 import 'package:hny_main/view/screens/sub/checkout_screen/widgets/random_widget.dart';
 import 'package:hny_main/view/widgets/app_button.dart';
+import 'package:hny_main/view/widgets/app_text_widget.dart';
 import 'package:hny_main/view/widgets/back_button.dart';
 import 'package:hny_main/view/widgets/common_app_bar.dart';
 
-class CartScreen extends StatefulWidget {
-  const CartScreen({Key? key}) : super(key: key);
+class MyBookingDetailsScreen extends StatefulWidget {
+  const MyBookingDetailsScreen({Key? key}) : super(key: key);
 
   @override
-  State<CartScreen> createState() => _CartScreenState();
+  State<MyBookingDetailsScreen> createState() => _MyBookingDetailsScreenState();
 }
 
-class _CartScreenState extends State<CartScreen> {
+class _MyBookingDetailsScreenState extends State<MyBookingDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: const CommonAppBar(title: 'My Cart',),
+      appBar: const CommonAppBar(
+        title: 'My Booking',
+      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -49,47 +52,66 @@ class _CartScreenState extends State<CartScreen> {
                   ),
                   const SizedBox(height: 16),
                   buildAddonCard(
-                    'Child Seat',
-                    10,
-                    'https://s3-alpha-sig.figma.com/img/ae74/a9e7/f68182d3f5fd6e910be717cb9f8591cb?Expires=1736726400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=K715cm5OI1fJp2z6U3vjW8ZaZKaNFcS7GPY9~L9hP1azK1FH4A7MOZ2eev45S2W3CpedLyJZOypyNlkDXeVc3EvuT2a8GRGzkLc0pcUe41xvBrB9F-ZFLnqzoyQiTdVJYJ9j-B~n6JrR5bzBZFbMCa5gATFUZP9CnNyQKeuj9MhBBsyjKoaPKBHyuxi2ePhS4m22uYirfWWsV9z-9NxPKdE7WAmgb-arXkgjnJHtTHq9-RJ3Z36~kCLcuC8TWfDbbonZZm7FyjD-KrerDgskbpfHRVueRN~DxGrwtG50vzvtHr02YN4pqpjuW3qnx24dGVs2JlYgseMIqUXLiidqdA__',
-                  ),
+                      'Child Seat',
+                      10,
+                      'https://s3-alpha-sig.figma.com/img/ae74/a9e7/f68182d3f5fd6e910be717cb9f8591cb?Expires=1736726400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=K715cm5OI1fJp2z6U3vjW8ZaZKaNFcS7GPY9~L9hP1azK1FH4A7MOZ2eev45S2W3CpedLyJZOypyNlkDXeVc3EvuT2a8GRGzkLc0pcUe41xvBrB9F-ZFLnqzoyQiTdVJYJ9j-B~n6JrR5bzBZFbMCa5gATFUZP9CnNyQKeuj9MhBBsyjKoaPKBHyuxi2ePhS4m22uYirfWWsV9z-9NxPKdE7WAmgb-arXkgjnJHtTHq9-RJ3Z36~kCLcuC8TWfDbbonZZm7FyjD-KrerDgskbpfHRVueRN~DxGrwtG50vzvtHr02YN4pqpjuW3qnx24dGVs2JlYgseMIqUXLiidqdA__',
+                      true),
                   const SizedBox(height: 16),
                   buildAddonCard(
-                    'iPhone Charger',
-                    10,
-                    'https://s3-alpha-sig.figma.com/img/ae74/a9e7/f68182d3f5fd6e910be717cb9f8591cb?Expires=1736726400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=K715cm5OI1fJp2z6U3vjW8ZaZKaNFcS7GPY9~L9hP1azK1FH4A7MOZ2eev45S2W3CpedLyJZOypyNlkDXeVc3EvuT2a8GRGzkLc0pcUe41xvBrB9F-ZFLnqzoyQiTdVJYJ9j-B~n6JrR5bzBZFbMCa5gATFUZP9CnNyQKeuj9MhBBsyjKoaPKBHyuxi2ePhS4m22uYirfWWsV9z-9NxPKdE7WAmgb-arXkgjnJHtTHq9-RJ3Z36~kCLcuC8TWfDbbonZZm7FyjD-KrerDgskbpfHRVueRN~DxGrwtG50vzvtHr02YN4pqpjuW3qnx24dGVs2JlYgseMIqUXLiidqdA__',
-                  ),
-                  const SizedBox(height: 32),
-                  buildPromoCodeSection(),
-                  const SizedBox(height: 24),
-                  buildSuperCoinsSection(context),
-                  const SizedBox(height: 24),
+                      'iPhone Charger',
+                      10,
+                      'https://s3-alpha-sig.figma.com/img/ae74/a9e7/f68182d3f5fd6e910be717cb9f8591cb?Expires=1736726400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=K715cm5OI1fJp2z6U3vjW8ZaZKaNFcS7GPY9~L9hP1azK1FH4A7MOZ2eev45S2W3CpedLyJZOypyNlkDXeVc3EvuT2a8GRGzkLc0pcUe41xvBrB9F-ZFLnqzoyQiTdVJYJ9j-B~n6JrR5bzBZFbMCa5gATFUZP9CnNyQKeuj9MhBBsyjKoaPKBHyuxi2ePhS4m22uYirfWWsV9z-9NxPKdE7WAmgb-arXkgjnJHtTHq9-RJ3Z36~kCLcuC8TWfDbbonZZm7FyjD-KrerDgskbpfHRVueRN~DxGrwtG50vzvtHr02YN4pqpjuW3qnx24dGVs2JlYgseMIqUXLiidqdA__',
+                      true),
                 ],
               ),
             ),
+            const Gap(16),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 32),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
               decoration: const BoxDecoration(
                   color: AppColors.white,
                   border: Border(
                       top: BorderSide(color: AppColors.containerBorderColor))),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  buildOrderSummary(),
+                  buildBookingSummary(),
                   const SizedBox(height: 24),
-                  SizedBox(
-                      height: 40,
-                      width: double.infinity,
-                      child: PrimaryElevateButton(
-                        ontap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => CheckoutPaymentScreen(),
-                              ));
-                        },
-                        buttonName: "Proceed to checkout",
-                      )),
+                  const Text(
+                    "Are you want to complete payment?",
+                    style: TextStyle(
+                        color: AppColors.blue,
+                        fontWeight: FontWeight.w600,
+                        decoration: TextDecoration.underline),
+                  ),
+                  const SizedBox(height: 24),
+                  Container(
+                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(6),                    color:const Color.fromARGB(255, 219, 219, 219).withOpacity(0.6),
+),
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      children: [
+                        const Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("Need Help?"),
+                            Icon(Icons.keyboard_arrow_down_rounded)
+                          ],
+                        ),
+                        const Divider(),
+                        Row(
+                          children: [
+                            ElevatedButton(
+                                onPressed: () {}, child: const Text("Support",style: TextStyle(color: Colors.white),),style: ElevatedButton.styleFrom(backgroundColor: Colors.red,),),
+                                const Gap(12),
+                            ElevatedButton(
+                                onPressed: () {}, child: const Text("Replacement",style: TextStyle(color: Colors.white),),style: ElevatedButton.styleFrom(backgroundColor: AppColors.blue,),),
+                          ],
+                        ),
+                       
+                      ],
+                    ),
+                  )
                 ],
               ),
             )
