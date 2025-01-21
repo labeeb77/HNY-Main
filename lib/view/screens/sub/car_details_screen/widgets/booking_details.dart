@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class BookingDetails extends StatelessWidget {
-  const BookingDetails({Key? key}) : super(key: key);
+  const BookingDetails({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -48,11 +48,11 @@ class DateTimeItem extends StatelessWidget {
   final String time;
 
   const DateTimeItem({
-    Key? key,
+    super.key,
     required this.title,
     required this.date,
     required this.time,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -116,7 +116,7 @@ class PriceRangeBottomSheet extends StatelessWidget {
             const SizedBox(height: 100),
             Row(
               children: [
-                Spacer()
+                const Spacer()
 ,                 Expanded(
                   child: PrimaryElevateButton(
                     buttonName: "Clear All",isGrey: true,

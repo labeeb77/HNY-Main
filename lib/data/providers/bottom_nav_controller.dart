@@ -8,9 +8,9 @@ class BottomNavController extends ChangeNotifier {
   int currentScreenIndex = 0;
   List<Widget> screens = [
     const HomeScreen(),
-    BookingScreen(),
-    FavoriteScreen(),
-ProfileScreen()  ];
+    const BookingScreen(),
+    const FavoriteScreen(),
+const ProfileScreen()  ];
 
   changeScreenIndex(index) {
     currentScreenIndex = index;

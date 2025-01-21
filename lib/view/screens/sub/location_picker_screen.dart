@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -11,7 +10,7 @@ import 'package:hny_main/view/widgets/app_button.dart';
 
 class LocationPickerScreen extends StatefulWidget {
   final from;
-  const LocationPickerScreen({Key? key, required this.from}) : super(key: key);
+  const LocationPickerScreen({super.key, required this.from});
 
   @override
   State<LocationPickerScreen> createState() => _LocationPickerScreenState();
@@ -229,7 +228,7 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
                 const Gap(42),
                 Row(
               children: [
-                Spacer(),
+                const Spacer(),
                  Expanded(
                   child: PrimaryElevateButton(
                     buttonName: "Cancel",isGrey: true,

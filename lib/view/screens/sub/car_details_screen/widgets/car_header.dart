@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
 import 'package:hny_main/view/screens/main/home/widgets_elements.dart';
-import 'package:hny_main/view/screens/main/favorite/favorite_screen.dart';
 
 class CarHeader extends StatelessWidget {
-  const CarHeader({Key? key}) : super(key: key);
+  const CarHeader({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +62,7 @@ class CarHeader extends StatelessWidget {
                   iconColor: AppColors.white,
                   icon: Icons.share,
                 ),
-                Gap(12),
+                const Gap(12),
                 CircledIcon(
                   circleColor: AppColors.circleAvatarBackground,
                   iconColor: AppColors.white,
@@ -110,7 +109,7 @@ class CarHeader extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
           decoration: BoxDecoration(
-              border: Border.all(color: Color(0xFFE4E4E4)),
+              border: Border.all(color: const Color(0xFFE4E4E4)),
               borderRadius: BorderRadius.circular(9)),
           child: const Row(
             children: [

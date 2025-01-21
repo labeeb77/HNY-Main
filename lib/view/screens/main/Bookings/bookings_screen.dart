@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
 import 'package:hny_main/view/screens/main/bookings/bookings_details_screen.dart';
-import 'package:hny_main/view/screens/sub/checkout_screen/checkout_screen.dart';
 import 'package:hny_main/view/widgets/app_button.dart';
 import 'package:hny_main/view/widgets/app_text_widget.dart';
-import 'package:hny_main/view/widgets/back_button.dart';
 
 class BookingScreen extends StatelessWidget {
-  const BookingScreen({Key? key}) : super(key: key);
+  const BookingScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -129,7 +127,7 @@ class BookingScreen extends StatelessWidget {
 
 class BookingCard extends StatelessWidget {
   final index;
-  const BookingCard({Key? key, required this.index}) : super(key: key);
+  const BookingCard({super.key, required this.index});
 
   @override
   Widget build(BuildContext context) {
@@ -146,11 +144,11 @@ class BookingCard extends StatelessWidget {
                 blurRadius: 12)
           ]),
       child:  Padding(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Column(
+            const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Column(
@@ -173,7 +171,7 @@ class BookingCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -197,7 +195,7 @@ class BookingCard extends StatelessWidget {
                 ),
               ],
             ),
-            Column(
+            const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Column(
@@ -220,7 +218,7 @@ class BookingCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -247,7 +245,7 @@ class BookingCard extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Column(
+                const Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
@@ -267,7 +265,7 @@ class BookingCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                Gap(24),
+                const Gap(24),
                 Column(
                   children: [
                     SizedBox(
@@ -275,7 +273,7 @@ class BookingCard extends StatelessWidget {
                         width: 104,
                         child: PrimaryElevateButton(
                           ontap: (){
-Navigator.push(context,MaterialPageRoute(builder: (context) => MyBookingDetailsScreen(),));
+Navigator.push(context,MaterialPageRoute(builder: (context) => const MyBookingDetailsScreen(),));
                           },
                           buttonName: "View Details",
                         )),

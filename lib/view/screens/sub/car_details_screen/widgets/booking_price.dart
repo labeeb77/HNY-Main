@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
-import 'package:hny_main/view/screens/sub/car_details_screen/widgets/add_gadget_bottomsheet.dart';
 import 'package:hny_main/view/widgets/app_button.dart';
 
 class BookingPrice extends StatelessWidget {
@@ -9,13 +8,12 @@ class BookingPrice extends StatelessWidget {
   final buttonName;
   final onTap;
   const BookingPrice(
-      {Key? key, this.title, this.value, this.buttonName, this.onTap})
-      : super(key: key);
+      {super.key, this.title, this.value, this.buttonName, this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
           border:
               Border(top: BorderSide(color: AppColors.containerBorderColor))),
       padding: const EdgeInsets.only(bottom: 24, left: 19, right: 19, top: 8),
@@ -27,15 +25,15 @@ class BookingPrice extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.grey,
                   fontSize: 14,
                 ),
               ),
-              SizedBox(height: 4),
+              const SizedBox(height: 4),
               Text(
                 'AED $value',
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                   color: AppColors.primary,
