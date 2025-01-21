@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
-import 'package:hny_main/view/screens/sub/checkout_screen/checkout_payment_screen.dart';
 import 'package:hny_main/view/screens/sub/checkout_screen/widgets/random_widget.dart';
-import 'package:hny_main/view/widgets/app_button.dart';
-import 'package:hny_main/view/widgets/app_text_widget.dart';
-import 'package:hny_main/view/widgets/back_button.dart';
 import 'package:hny_main/view/widgets/common_app_bar.dart';
 
 class MyBookingDetailsScreen extends StatefulWidget {
-  const MyBookingDetailsScreen({Key? key}) : super(key: key);
+  const MyBookingDetailsScreen({super.key});
 
   @override
   State<MyBookingDetailsScreen> createState() => _MyBookingDetailsScreenState();
@@ -102,10 +98,10 @@ class _MyBookingDetailsScreenState extends State<MyBookingDetailsScreen> {
                         Row(
                           children: [
                             ElevatedButton(
-                                onPressed: () {}, child: const Text("Support",style: TextStyle(color: Colors.white),),style: ElevatedButton.styleFrom(backgroundColor: Colors.red,),),
+                                onPressed: () {},style: ElevatedButton.styleFrom(backgroundColor: Colors.red,), child: const Text("Support",style: TextStyle(color: Colors.white),),),
                                 const Gap(12),
                             ElevatedButton(
-                                onPressed: () {}, child: const Text("Replacement",style: TextStyle(color: Colors.white),),style: ElevatedButton.styleFrom(backgroundColor: AppColors.blue,),),
+                                onPressed: () {},style: ElevatedButton.styleFrom(backgroundColor: AppColors.blue,), child: const Text("Replacement",style: TextStyle(color: Colors.white),),),
                           ],
                         ),
                        

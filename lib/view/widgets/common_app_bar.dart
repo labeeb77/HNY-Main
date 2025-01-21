@@ -21,10 +21,10 @@ this.showLeading = true,
       backgroundColor: AppColors.background,
       leading: showLeading? CommonBackButton(
         showBorder: showBorder,
-      ):SizedBox(),
+      ):const SizedBox(),
       title:  Text(
         title,
-        style: TextStyle(color: Colors.black, fontSize: 18),
+        style: const TextStyle(color: Colors.black, fontSize: 18),
       ),
       scrolledUnderElevation: 0.0,
       elevation: 0,

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
 import 'package:another_stepper/another_stepper.dart';
-import 'package:order_tracker_zen/order_tracker_zen.dart';
 
 class CarFeatures extends StatelessWidget {
-  CarFeatures({Key? key}) : super(key: key);
+  CarFeatures({super.key});
 
   List<StepperData> stepperData = [
     StepperData(
@@ -92,10 +91,10 @@ class FeatureItem extends StatelessWidget {
   final String description;
 
   const FeatureItem({
-    Key? key,
+    super.key,
     required this.title,
     required this.description,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

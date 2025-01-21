@@ -1,12 +1,11 @@
 import 'package:dotted_line/dotted_line.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
 import 'package:hny_main/view/screens/sub/location_picker_screen.dart';
 
 class LocationDetails extends StatelessWidget {
-  const LocationDetails({Key? key}) : super(key: key);
+  const LocationDetails({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -99,10 +98,10 @@ class LocationItem extends StatelessWidget {
   final String address;
 
   const LocationItem({
-    Key? key,
+    super.key,
     required this.title,
     required this.address,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

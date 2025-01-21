@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hny_main/view/screens/main/home/widgets_elements.dart';
-import 'package:hny_main/view/widgets/back_button.dart';
 import 'package:hny_main/view/widgets/common_app_bar.dart';
 
 class FavoriteScreen extends StatelessWidget {

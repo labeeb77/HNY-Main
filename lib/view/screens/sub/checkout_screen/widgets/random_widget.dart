@@ -299,7 +299,7 @@ Widget buildAddonCard(String name, double price, String imagePath,
                         const SizedBox(width: 14),
                         const Text(
                           '1',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.bold,
                           ),

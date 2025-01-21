@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
 import 'package:hny_main/view/common/bottom_nav.dart';
 import 'package:hny_main/view/screens/main/auth/sign_up_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -13,27 +14,40 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   double _opacity = 0.0;
 
+  // Function to check user token in SharedPreferences
+  Future<void> checkAuth() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('userToken');
+
+    if (token != null) {
+      // Navigate to BottomNav if token exists
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const BottomNav()),
+      );
+    } else {
+      // Navigate to SignUpScreen if no token found
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => SignUpScreen()),
+      );
+    }
+  }
+
   @override
   void initState() {
     super.initState();
 
-    // Fade in
+    // Fade in animation
     Future.delayed(const Duration(seconds: 0), () {
       setState(() {
         _opacity = 1.0;
       });
     });
 
-    // Fade out after 1 second and navigate
+    // Wait for a short time to show splash, then check authentication status
     Future.delayed(const Duration(seconds: 2), () {
-      setState(() {
-        _opacity = 0.0;
-      });
-
-      // Navigate to the next screen after the animation
-      Future.delayed(const Duration(seconds: 1), () {
-        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) =>  SignUpScreen(),), (route) => true,); // Replace with your actual screen
-      });
+      checkAuth(); // Check token and navigate accordingly
     });
   }
 

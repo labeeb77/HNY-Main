@@ -29,7 +29,7 @@ class PrimaryElevateButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(30),
           ),
         ),
-        child:  FittedBox(child: AppText(buttonName??"Book Now",color:isGrey!=null?AppColors.primary: AppColors.white,style: TextStyle(fontWeight: FontWeight.w700,fontSize: 16),maxLines: 1,)),
+        child:  FittedBox(child: AppText(buttonName??"Book Now",color:isGrey!=null?AppColors.primary: AppColors.white,style: const TextStyle(fontWeight: FontWeight.w700,fontSize: 16),maxLines: 1,)),
       ),
     );
   }
@@ -45,13 +45,13 @@ class AppButton extends StatelessWidget {
   final EdgeInsetsGeometry padding;
 
   const AppButton({
-    Key? key,
+    super.key,
     required this.child,
     required this.onPressed,
     this.color,
     this.borderRadius = 25.0,
     this.padding = const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

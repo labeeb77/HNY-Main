@@ -18,9 +18,9 @@ class GeneralElementContainer extends StatelessWidget {
     return Row(
       children: [
         Icon(leadingIcon,size: 28,color: isDelete?AppColors.orange:AppColors.black,),
-        Gap(20),
+        const Gap(20),
         AppText(title,fontWeight: FontWeight.w600,color: isDelete?AppColors.orange:AppColors.black,),
-        Spacer(),
+        const Spacer(),
         Icon(
           Icons.arrow_forward_ios,
           size: 16,

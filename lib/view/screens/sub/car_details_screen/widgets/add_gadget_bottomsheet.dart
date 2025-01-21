@@ -21,7 +21,7 @@ class GadgetModel {
 }
 
 class GadgetBottomSheet extends StatefulWidget {
-  const GadgetBottomSheet({Key? key}) : super(key: key);
+  const GadgetBottomSheet({super.key});
 
   @override
   State<GadgetBottomSheet> createState() => _GadgetBottomSheetState();
@@ -89,7 +89,7 @@ class _GadgetBottomSheetState extends State<GadgetBottomSheet> {
               itemBuilder: (context, index) {
                 final gadget = gadgets[index];
                 return Container(
-                  margin: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                   decoration: BoxDecoration(
                       border: Border.all(color: AppColors.containerBorderColor),
                       borderRadius: BorderRadius.circular(8)),
@@ -104,7 +104,7 @@ class _GadgetBottomSheetState extends State<GadgetBottomSheet> {
                         height: 48,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8),
-                          image: DecorationImage(
+                          image: const DecorationImage(
                             image: AssetImage(
                                 "assets/images/placeholder_image.webp"),
                             fit: BoxFit.cover,

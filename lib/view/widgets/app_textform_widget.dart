@@ -15,7 +15,7 @@ class CustomTextFormField extends StatelessWidget {
   final Color? borderColor;
 
   const CustomTextFormField({
-    Key? key,
+    super.key,
     required this.controller,
     required this.label,
     required this.hint,
@@ -27,12 +27,12 @@ class CustomTextFormField extends StatelessWidget {
     this.suffixIcon,
     this.textInputAction = TextInputAction.done,
     this.onFieldSubmitted,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 45,
+
       child: TextFormField(
         controller: controller,
         obscureText: obscureText,
@@ -48,11 +48,11 @@ class CustomTextFormField extends StatelessWidget {
           enabledBorder:  OutlineInputBorder(
               borderSide: BorderSide(color:borderColor!=null?borderColor!: AppColors.primary)),
           border: OutlineInputBorder(
-            borderSide: const BorderSide(color: Color(0xFFFFFF)),
+            borderSide: const BorderSide(color: Color(0x00ffffff)),
             borderRadius: BorderRadius.circular(4),
           ),
           disabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: Color(0xFFFFFF)),
+            borderSide: const BorderSide(color: Color(0x00ffffff)),
             borderRadius: BorderRadius.circular(4),
           ),
           focusedBorder:  OutlineInputBorder(

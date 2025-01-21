@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
 import 'package:hny_main/view/screens/sub/checkout_screen/checkout_payment_screen.dart';
 import 'package:hny_main/view/screens/sub/checkout_screen/widgets/random_widget.dart';
 import 'package:hny_main/view/widgets/app_button.dart';
-import 'package:hny_main/view/widgets/back_button.dart';
 import 'package:hny_main/view/widgets/common_app_bar.dart';
 
 class CartScreen extends StatefulWidget {
-  const CartScreen({Key? key}) : super(key: key);
+  const CartScreen({super.key});
 
   @override
   State<CartScreen> createState() => _CartScreenState();

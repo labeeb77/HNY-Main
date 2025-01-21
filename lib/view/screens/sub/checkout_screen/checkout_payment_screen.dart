@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
 import 'package:hny_main/core/utils/app_text_styles.dart';
-import 'package:hny_main/view/screens/sub/car_details_screen/widgets/add_gadget_bottomsheet.dart';
 import 'package:hny_main/view/screens/sub/car_details_screen/widgets/booking_price.dart';
 import 'package:hny_main/view/screens/sub/checkout_screen/widgets/radius_tile.dart';
 import 'package:hny_main/view/widgets/app_text_widget.dart';
@@ -63,14 +62,14 @@ class CheckoutPaymentScreen extends StatelessWidget {
                     RadioBoxElement(
                       status: true,
                       title: "Payment with cards",
-                      padding: const EdgeInsets.only(top: 6, right: 16, left: 16),
+                      padding: EdgeInsets.only(top: 6, right: 16, left: 16),
                     ),
                     SizedBox(width: double.infinity, child: Divider()),
                     RadioBoxElement(
                       status: false,
                       title: "Payment with link",
                       padding:
-                          const EdgeInsets.only(right: 16, bottom: 6, left: 16),
+                          EdgeInsets.only(right: 16, bottom: 6, left: 16),
                     ),
                   ],
                 ),
@@ -137,20 +136,20 @@ class CheckoutPaymentScreen extends StatelessWidget {
                     RadioBoxElement(
                       status: true,
                       title: "Payment with cards",
-                      padding: const EdgeInsets.only(top: 6, right: 16, left: 16),
+                      padding: EdgeInsets.only(top: 6, right: 16, left: 16),
                     ),
                     SizedBox(width: double.infinity, child: Divider()),
                     RadioBoxElement(
                       status: false,
                       title: "Payment with link",
-                      padding: const EdgeInsets.only(right: 16, left: 16),
+                      padding: EdgeInsets.only(right: 16, left: 16),
                     ),
                     SizedBox(width: double.infinity, child: Divider()),
                     RadioBoxElement(
                       status: false,
                       title: "Payment with link",
                       padding:
-                          const EdgeInsets.only(right: 16, bottom: 6, left: 16),
+                          EdgeInsets.only(right: 16, bottom: 6, left: 16),
                     ),
                   ],
           

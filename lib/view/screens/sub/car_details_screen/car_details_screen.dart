@@ -9,7 +9,7 @@ import 'package:hny_main/view/screens/sub/car_details_screen/widgets/car_specs.d
 import 'package:hny_main/view/screens/sub/car_details_screen/widgets/location_details.dart';
 
 class CarDetailsScreen extends StatelessWidget {
-  const CarDetailsScreen({Key? key}) : super(key: key);
+  const CarDetailsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
