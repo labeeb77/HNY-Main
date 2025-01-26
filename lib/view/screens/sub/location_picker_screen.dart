@@ -227,27 +227,26 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
                 ),
                 const Gap(42),
                 Row(
-              children: [
-                const Spacer(),
-                 Expanded(
-                  child: PrimaryElevateButton(
-                    buttonName: "Cancel",isGrey: true,
-                  ontap: (){
-                    Navigator.pop(context);
-                  },
-                  ),
+                  children: [
+                    const Spacer(),
+                    Expanded(
+                      child: PrimaryElevateButton(
+                        buttonName: "Cancel",
+                        isGrey: true,
+                        ontap: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                        child: PrimaryElevateButton(
+                            ontap: () {
+                              Navigator.pop(context);
+                            },
+                            buttonName: "Add Location")),
+                  ],
                 ),
-                const SizedBox(width: 10),
-                 Expanded(
-                  child: PrimaryElevateButton(
-                     ontap: (){
-                    Navigator.pop(context);
-                  },
-                    buttonName:"Add Location"
-                  )
-                ),
-              ],
-            ),
                 const Gap(24)
               ],
             ),
