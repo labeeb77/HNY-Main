@@ -21,7 +21,7 @@ class FavoriteScreen extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 7),
             child: buildCarCard(
                 'Toyota Corolla',
-                4.8,
+                4.8.toString(),
                 'Sedans',
                 'Manual',
                 'Petrol',

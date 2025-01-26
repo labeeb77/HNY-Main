@@ -61,11 +61,11 @@ class AuthRepository {
   Future saveUserDatas(UserModel user) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('userId', user.id ?? "");
-    await prefs.setString('userToken', user.strToken ?? "");
+    await prefs.setString('access_token', user.strToken ?? "");
   }
 
   Future clearToken() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('userToken');
+    await prefs.remove('access_token');
   }
 }
