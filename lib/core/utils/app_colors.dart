@@ -15,6 +15,7 @@ static const Color containerBorderColor = Color(0xFFD9D9D9);
 static const Color favoriteColor = Color(0xFFFF2969);
     static const Color white = Color(0xFFFFFFFF);
         static const Color black = Colors.black;
+        static const Color grey = Colors.grey;
 static const Color blue = Color(0xFF438EF7);
   static const Color textwhiteSecondary = Color(0xFFFFFCFC);
 static const Color paymentScreenBackgroundColor = Color(0xFFFFFFFF);

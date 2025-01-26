@@ -1,6 +1,6 @@
 
 import 'package:flutter/material.dart';
-import 'package:hny_main/data/models/response/user_model/user_mode.dart';
+import 'package:hny_main/data/models/user_model/user_mode.dart';
 import 'package:hny_main/data/repositories/auth/auth_repo.dart';
 
 class AuthProvider extends ChangeNotifier {

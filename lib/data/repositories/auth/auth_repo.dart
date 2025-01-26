@@ -2,10 +2,10 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:hny_main/core/api/dio_api_client.dart';
-import 'package:hny_main/core/utils/api_constants.dart';
+import 'package:hny_main/core/constants/api_constants.dart';
 import 'package:hny_main/data/models/response/api_response.dart';
-import 'package:hny_main/data/models/response/auth/login_res_model.dart';
-import 'package:hny_main/data/models/response/user_model/user_mode.dart';
+import 'package:hny_main/data/models/auth/login_res_model.dart';
+import 'package:hny_main/data/models/user_model/user_mode.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthRepository {
