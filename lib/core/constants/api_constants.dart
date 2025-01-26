@@ -6,4 +6,5 @@ class ApiConstants {
   // API endpoints
   static const String login = 'login_customer';
   static const String otpVerify = 'otp_verify_customer';
+  static const String getCartDataListUrl = 'get_home_page';
 }

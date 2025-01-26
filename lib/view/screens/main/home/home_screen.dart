@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
+import 'package:hny_main/data/providers/home_controller.dart';
 import 'package:hny_main/view/screens/main/home/filter_bottomsheet.dart';
 import 'package:hny_main/view/screens/main/home/widgets_elements.dart';
 import 'package:hny_main/view/widgets/app_text_widget.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -25,6 +27,10 @@ class _HomeScreenState extends State<HomeScreen> {
             Brightness.light, // Adjust icons for visibility
       ),
     );
+    WidgetsBinding.instance.addPostFrameCallback((va){
+          Provider.of<HomeController>(context,listen: false).getCarDataList(context);
+
+    });
     super.initState();
   }
 
@@ -33,8 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final mediaQuery = MediaQuery.of(context).size;
 
     return Scaffold(
-      appBar:  AppBar(
-
+      appBar: AppBar(
         elevation: 0.0,
         actions: [
           CircledIcon(
@@ -56,7 +61,8 @@ class _HomeScreenState extends State<HomeScreen> {
             24,
           ),
         ],
-        automaticallyImplyLeading: false,centerTitle: false,
+        automaticallyImplyLeading: false,
+        centerTitle: false,
         title: const Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -245,48 +251,29 @@ class _HomeScreenState extends State<HomeScreen> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: OrientationBuilder(
-                      builder: (context, orientation) => Column(
-                        children: [
-                          buildCarCard(
-                              'Toyota Corolla',
-                              4.8,
-                              'Sedans',
-                              'Manual',
-                              'Petrol',
-                              '5 Seats',
-                              '7,000',
-                              'https://s3-alpha-sig.figma.com/img/ae74/a9e7/f68182d3f5fd6e910be717cb9f8591cb?Expires=1736726400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=K715cm5OI1fJp2z6U3vjW8ZaZKaNFcS7GPY9~L9hP1azK1FH4A7MOZ2eev45S2W3CpedLyJZOypyNlkDXeVc3EvuT2a8GRGzkLc0pcUe41xvBrB9F-ZFLnqzoyQiTdVJYJ9j-B~n6JrR5bzBZFbMCa5gATFUZP9CnNyQKeuj9MhBBsyjKoaPKBHyuxi2ePhS4m22uYirfWWsV9z-9NxPKdE7WAmgb-arXkgjnJHtTHq9-RJ3Z36~kCLcuC8TWfDbbonZZm7FyjD-KrerDgskbpfHRVueRN~DxGrwtG50vzvtHr02YN4pqpjuW3qnx24dGVs2JlYgseMIqUXLiidqdA__',
-                           false  , context,
-                              
-                              orientation,
-                              mediaQuery),
-                          const SizedBox(height: 16),
-                          buildCarCard(
-                              'Tesla Model 3',
-                              4.8,
-                              'Electric',
-                              'Automatic',
-                              'Electric',
-                              '5 Seats',
-                              '9,000',
-                              'https://s3-alpha-sig.figma.com/img/ae74/a9e7/f68182d3f5fd6e910be717cb9f8591cb?Expires=1736726400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=K715cm5OI1fJp2z6U3vjW8ZaZKaNFcS7GPY9~L9hP1azK1FH4A7MOZ2eev45S2W3CpedLyJZOypyNlkDXeVc3EvuT2a8GRGzkLc0pcUe41xvBrB9F-ZFLnqzoyQiTdVJYJ9j-B~n6JrR5bzBZFbMCa5gATFUZP9CnNyQKeuj9MhBBsyjKoaPKBHyuxi2ePhS4m22uYirfWWsV9z-9NxPKdE7WAmgb-arXkgjnJHtTHq9-RJ3Z36~kCLcuC8TWfDbbonZZm7FyjD-KrerDgskbpfHRVueRN~DxGrwtG50vzvtHr02YN4pqpjuW3qnx24dGVs2JlYgseMIqUXLiidqdA__',
-                             false, context,
-                              orientation,
-                              mediaQuery),
-                          const SizedBox(height: 16),
-                          buildCarCard(
-                              'Tesla Model 3',
-                              4.8,
-                              'Electric',
-                              'Automatic',
-                              'Electric',
-                              '5 Seats',
-                              '9,000',
-                              'https://s3-alpha-sig.figma.com/img/ae74/a9e7/f68182d3f5fd6e910be717cb9f8591cb?Expires=1736726400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=K715cm5OI1fJp2z6U3vjW8ZaZKaNFcS7GPY9~L9hP1azK1FH4A7MOZ2eev45S2W3CpedLyJZOypyNlkDXeVc3EvuT2a8GRGzkLc0pcUe41xvBrB9F-ZFLnqzoyQiTdVJYJ9j-B~n6JrR5bzBZFbMCa5gATFUZP9CnNyQKeuj9MhBBsyjKoaPKBHyuxi2ePhS4m22uYirfWWsV9z-9NxPKdE7WAmgb-arXkgjnJHtTHq9-RJ3Z36~kCLcuC8TWfDbbonZZm7FyjD-KrerDgskbpfHRVueRN~DxGrwtG50vzvtHr02YN4pqpjuW3qnx24dGVs2JlYgseMIqUXLiidqdA__',
-                              false,context,
-                              orientation,
-                              mediaQuery),
-                        ],
+                      builder: (context, orientation) =>
+                          Consumer<HomeController>(
+                        builder: (context, value, child) {
+                          final data = value.carListData;
+                          return value.isLoading?const Center(child: CircularProgressIndicator(),): ListView.builder(
+                            physics: const NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: value.carListData.length,
+                              itemBuilder: (context, index) => buildCarCard(
+                                  data[index].strModel ?? "Unknown",
+                                  data[index].intRating.toString() ?? '4.0',
+                                  data[index].strCarCategory ??
+                                      "Unknown",
+                                          'Manual',
+                                  data[index].intFuelCapacity ?? "Unknown",
+                                  '${data[index].strSeatNo} Seats',
+                                  data[index].intPricePerDay.toString(),
+                                  data[index].strImgUrl!,
+                                  false,
+                                  context,
+                                  orientation,
+                                  mediaQuery));
+                        },
                       ),
                     ),
                   ),
@@ -300,3 +287,29 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
+ // const SizedBox(height: 16),
+                          // buildCarCard(
+                          //     'Tesla Model 3',
+                          //     4.8,
+                          //     'Electric',
+                          //     'Automatic',
+                          //     'Electric',
+                          //     '5 Seats',
+                          //     '9,000',
+                          //     'https://s3-alpha-sig.figma.com/img/ae74/a9e7/f68182d3f5fd6e910be717cb9f8591cb?Expires=1736726400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=K715cm5OI1fJp2z6U3vjW8ZaZKaNFcS7GPY9~L9hP1azK1FH4A7MOZ2eev45S2W3CpedLyJZOypyNlkDXeVc3EvuT2a8GRGzkLc0pcUe41xvBrB9F-ZFLnqzoyQiTdVJYJ9j-B~n6JrR5bzBZFbMCa5gATFUZP9CnNyQKeuj9MhBBsyjKoaPKBHyuxi2ePhS4m22uYirfWWsV9z-9NxPKdE7WAmgb-arXkgjnJHtTHq9-RJ3Z36~kCLcuC8TWfDbbonZZm7FyjD-KrerDgskbpfHRVueRN~DxGrwtG50vzvtHr02YN4pqpjuW3qnx24dGVs2JlYgseMIqUXLiidqdA__',
+                          //    false, context,
+                          //     orientation,
+                          //     mediaQuery),
+                          // const SizedBox(height: 16),
+                          // buildCarCard(
+                          //     'Tesla Model 3',
+                          //     4.8,
+                          //     'Electric',
+                          //     'Automatic',
+                          //     'Electric',
+                          //     '5 Seats',
+                          //     '9,000',
+                          //     'https://s3-alpha-sig.figma.com/img/ae74/a9e7/f68182d3f5fd6e910be717cb9f8591cb?Expires=1736726400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=K715cm5OI1fJp2z6U3vjW8ZaZKaNFcS7GPY9~L9hP1azK1FH4A7MOZ2eev45S2W3CpedLyJZOypyNlkDXeVc3EvuT2a8GRGzkLc0pcUe41xvBrB9F-ZFLnqzoyQiTdVJYJ9j-B~n6JrR5bzBZFbMCa5gATFUZP9CnNyQKeuj9MhBBsyjKoaPKBHyuxi2ePhS4m22uYirfWWsV9z-9NxPKdE7WAmgb-arXkgjnJHtTHq9-RJ3Z36~kCLcuC8TWfDbbonZZm7FyjD-KrerDgskbpfHRVueRN~DxGrwtG50vzvtHr02YN4pqpjuW3qnx24dGVs2JlYgseMIqUXLiidqdA__',
+                          //     false,context,
+                          //     orientation,
+                          //     mediaQuery),,)

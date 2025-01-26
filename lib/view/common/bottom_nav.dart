@@ -21,6 +21,7 @@ class BottomNav extends StatelessWidget {
       bottomNavigationBar: OrientationBuilder(
         builder: (context, orientation) => 
          SafeArea(
+          maintainBottomViewPadding: false,
            child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 28),
             decoration: BoxDecoration(

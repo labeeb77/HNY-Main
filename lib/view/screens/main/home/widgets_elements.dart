@@ -92,7 +92,7 @@ Widget buildFeature(IconData icon, String label) {
 
 Widget buildCarCard(
   String name,
-  double rating,
+  String rating,
   String category,
   String transmission,
   String fuelType,
@@ -132,7 +132,6 @@ Widget buildCarCard(
           Stack(
             children: [
               Container(
-           
                 height: orientation == Orientation.portrait
                     ? mediaQuery.height / 4.5
                     : mediaQuery.width /
@@ -140,30 +139,25 @@ Widget buildCarCard(
                 width: double.infinity,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
-                  // image: DecorationImage(
-                  //   fit: BoxFit.cover,
-                  //   image: ,
-                  // ),
                 ),
                 child: Stack(
                   children: [
                     Container(
-                      
-                         height: orientation == Orientation.portrait
-                      ? mediaQuery.height / 4.5
-                      : mediaQuery.width /
-                          4.5,
-                      decoration: BoxDecoration( 
-                        
-                                         borderRadius: BorderRadius.circular(12),
-),clipBehavior: Clip.hardEdge,
-                     child: Image(
-                     
+                      height: orientation == Orientation.portrait
+                          ? mediaQuery.height / 4.5
+                          : mediaQuery.width / 4.5,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      clipBehavior: Clip.hardEdge,
+                      child: Image(
                         image: CachedNetworkImageProvider(image),
                         fit: BoxFit.cover,
                       ),
                     ),
                     Container(
+                      width: double.infinity,
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                             begin: Alignment.topCenter,
@@ -171,21 +165,16 @@ Widget buildCarCard(
                             colors: [
                               Colors.black.withOpacity(0.1),
                               Colors.black.withOpacity(0.2),
-                                                            Colors.black.withOpacity(0.3),
+                              Colors.black.withOpacity(0.3),
                               Colors.black.withOpacity(0.4),
-
                               Colors.black.withOpacity(0.9),
                             ]),
                         borderRadius: BorderRadius.circular(12),
-                        // image: DecorationImage(
-                        //   fit: BoxFit.cover,
-                        //   image: ,
-                        // ),
                       ),
                     ),
                     Padding(
-                           padding: const EdgeInsets.only(
-                    left: 12, right: 12, bottom: 12, top: 2),
+                      padding: const EdgeInsets.only(
+                          left: 12, right: 12, bottom: 12, top: 2),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -195,8 +184,8 @@ Widget buildCarCard(
                               Row(
                                 children: [
                                   Container(
-                                    padding:
-                                        const EdgeInsets.symmetric(horizontal: 6),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 6),
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(10),
                                       color: AppColors.white,
@@ -282,8 +271,8 @@ Widget buildCarCard(
                       children: [
                         Text(
                           '$price AED',
-                          style:  TextStyle(
-                            color:isFromFav?AppColors.orange: Colors.blue,
+                          style: TextStyle(
+                            color: isFromFav ? AppColors.orange : Colors.blue,
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),

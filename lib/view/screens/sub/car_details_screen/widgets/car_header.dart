@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
+import 'package:hny_main/data/providers/home_controller.dart';
 import 'package:hny_main/view/screens/main/home/widgets_elements.dart';
+import 'package:provider/provider.dart';
 
 class CarHeader extends StatelessWidget {
   const CarHeader({super.key});
@@ -14,7 +16,7 @@ class CarHeader extends StatelessWidget {
         Stack(
           children: [
             Image.network(
-              'https://s3-alpha-sig.figma.com/img/ae74/a9e7/f68182d3f5fd6e910be717cb9f8591cb?Expires=1736726400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=K715cm5OI1fJp2z6U3vjW8ZaZKaNFcS7GPY9~L9hP1azK1FH4A7MOZ2eev45S2W3CpedLyJZOypyNlkDXeVc3EvuT2a8GRGzkLc0pcUe41xvBrB9F-ZFLnqzoyQiTdVJYJ9j-B~n6JrR5bzBZFbMCa5gATFUZP9CnNyQKeuj9MhBBsyjKoaPKBHyuxi2ePhS4m22uYirfWWsV9z-9NxPKdE7WAmgb-arXkgjnJHtTHq9-RJ3Z36~kCLcuC8TWfDbbonZZm7FyjD-KrerDgskbpfHRVueRN~DxGrwtG50vzvtHr02YN4pqpjuW3qnx24dGVs2JlYgseMIqUXLiidqdA__',
+              Provider.of<HomeController>(context,listen: false).carListData[0].strImgUrl!,
               height: 250,
               width: double.infinity,
               fit: BoxFit.cover,

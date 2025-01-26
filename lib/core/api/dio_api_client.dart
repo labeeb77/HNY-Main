@@ -36,7 +36,7 @@ class ApiClient {
     RequestInterceptorHandler handler,
   ) async {
     final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('userToken');
+    final token = prefs.getString('access_token');
     if (token != null) {
       options.headers['Authorization'] = token;
     }

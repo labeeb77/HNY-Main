@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
 import 'package:hny_main/view/common/bottom_nav.dart';
+import 'package:hny_main/view/screens/main/auth/sign_in_screen.dart';
 import 'package:hny_main/view/screens/main/auth/sign_up_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -17,7 +18,7 @@ class _SplashScreenState extends State<SplashScreen> {
   // Function to check user token in SharedPreferences
   Future<void> checkAuth() async {
     final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('userToken');
+    final token = prefs.getString('access_token');
 
     if (token != null) {
       // Navigate to BottomNav if token exists
@@ -29,7 +30,7 @@ class _SplashScreenState extends State<SplashScreen> {
       // Navigate to SignUpScreen if no token found
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => SignUpScreen()),
+        MaterialPageRoute(builder: (_) => SignInScreen()),
       );
     }
   }
