@@ -51,15 +51,20 @@ Widget buildSuperCoinsSection(context) {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(
                 width: MediaQuery.of(context).size.width / 1.5,
                 child: const Text(
-                    'You will earn up to 100 Super coins on this bookings')),
+                  'You will earn up to 100 Super coins on this bookings',
+                  style: TextStyle(color: AppColors.primary),
+                )),
             const Spacer(),
-            Image.network(
-                'https://s3-alpha-sig.figma.com/img/44b6/5a8d/b0f8c5896b77ac586570e13868d8d99f?Expires=1737331200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=CA3nh3H4jK1DcAuX4UdK9wB6ZF7F1VuekEf35VYjfzwGIY7H9jwLpqTqZfbv6X6Lih7SybrB5v7-Onxs8RNkeGs-FuD8CPGfRqosvNbVxGbhX4lpCauaiTGXPbcQ02KRfJMXEPUDbebUHbqtobO~L2oYBO20~2Zs8pjOYGJ5AJ9OXXstD4~hS-rhdJkQV0mvYbFEku2NJ2xPulf2iqNIYstn2RVK9sFhI1h3fgoMa8lPtXxFGVe6T0xI0UHesUu3H~MEzJexF9zJVmtH4~7Iom6HgwS3KGZPKLaTrSAJfOPj0ns8hz0ZHewn4wn8U9UVH7ICiA1Gl3X~jv1atYOtcw__',
-                height: 50),
+            SizedBox(
+              width: 67,
+              height: 35,
+              child: Image.asset('assets/images/super_coin.png', height: 50),
+            ),
           ],
         ),
         Row(
@@ -68,8 +73,12 @@ Widget buildSuperCoinsSection(context) {
               'Available balance : ',
               style: TextStyle(color: Colors.black),
             ),
-            const Icon(Icons.currency_bitcoin, size: 16, color: Colors.amber),
-            const Text(' 250'),
+            SizedBox(
+              width: 17,
+              height: 17,
+              child: Image.asset('assets/images/s_coint_image.png', height: 50),
+            ),
+            const Text(' 250',style: TextStyle(fontWeight: FontWeight.bold),),
             const Spacer(),
             Switch(
               value: superCoinEnabled,
@@ -374,6 +383,8 @@ Widget buildPromoCodeSection() {
             controller: promoController,
             decoration: const InputDecoration(
               hintText: 'Promo code',
+              hintStyle:
+                  TextStyle(fontSize: 15, color: AppColors.textSecondary),
               border: InputBorder.none,
             ),
           ),
@@ -382,7 +393,7 @@ Widget buildPromoCodeSection() {
           onPressed: () {},
           child: const Text(
             'Apply now',
-            style: TextStyle(color: Colors.green),
+            style: TextStyle(color: AppColors.primary, fontSize: 16),
           ),
         ),
       ],
