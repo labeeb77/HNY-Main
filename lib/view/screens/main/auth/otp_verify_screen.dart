@@ -4,6 +4,7 @@ import 'package:gap/gap.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
 import 'package:hny_main/data/providers/auth_provider.dart';
 import 'package:hny_main/view/common/bottom_nav.dart';
+import 'package:hny_main/view/screens/main/profile/add_profile_screen.dart';
 import 'package:hny_main/view/widgets/app_button.dart';
 import 'package:hny_main/view/widgets/app_text_widget.dart';
 
@@ -354,13 +355,22 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
 
       if (verificationCode.length == 4) {
         authProvider.verifyOtp(verificationCode, otpTOken).then((value) {
-          if (value) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const BottomNav(),
-              ),
-            );
+          if (value['isSuccess']) {
+            if (value['navigateToHome']) {
+              Navigator.pushReplacement(
+                context,  
+                MaterialPageRoute(
+                  builder: (context) => const BottomNav(),
+                ),
+              );
+            } else {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const AddProfileScreen(),
+                ),
+              );
+            }
           }
         });
       }

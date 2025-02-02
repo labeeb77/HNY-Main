@@ -67,5 +67,6 @@ class AuthRepository {
   Future clearToken() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('access_token');
+    await prefs.remove('userId');
   }
 }

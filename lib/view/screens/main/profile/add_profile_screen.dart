@@ -1,6 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
+import 'package:hny_main/core/utils/app_image_picker.dart';
+import 'package:hny_main/data/providers/profile_provider.dart';
+import 'package:hny_main/view/screens/main/profile/add_id_card_screen.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class AddProfileScreen extends StatefulWidget {
   const AddProfileScreen({super.key});
@@ -10,21 +16,57 @@ class AddProfileScreen extends StatefulWidget {
 }
 
 class _AddProfileScreenState extends State<AddProfileScreen> {
-  final TextEditingController _firstNameController = TextEditingController();
-  final TextEditingController _lastNameController = TextEditingController();
-  final TextEditingController _dobController = TextEditingController();
-  final TextEditingController _mobileController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  String? _selectedGender;
-  String? _selectedNationality = 'India';
-  String? _selectedCitizenship = 'Emirati';
+  ProfileProvider? profileProvider;
+
+  @override
+  void initState() {
+    profileProvider = Provider.of<ProfileProvider>(context, listen: false);
+    super.initState();
+  }
+
+  void _showImageSourceActionSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
+      ),
+      builder: (BuildContext context) {
+        return SafeArea(
+          child: Wrap(
+            children: [
+              ListTile(
+                leading: const Icon(Icons.photo_library),
+                title: const Text('Pick from Gallery'),
+                onTap: () async {
+                  Navigator.pop(context);
+                  profileProvider?.setProfileImage(
+                      await AppImagePicker().pickImageFromGallery());
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.camera_alt),
+                title: const Text('Capture from Camera'),
+                onTap: () async {
+                  Navigator.pop(context);
+                  profileProvider?.setProfileImage(
+                      await AppImagePicker().captureImageFromCamera());
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
+    final profileProvider =
+        Provider.of<ProfileProvider>(context, listen: false);
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-      backgroundColor: AppColors.background,
+        backgroundColor: AppColors.background,
         elevation: 0,
         title: const Text(
           'Add Profile',
@@ -36,7 +78,13 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
         ),
         actions: [
           TextButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const EditGccIdScreen(),
+                  ));
+            },
             child: const Text(
               'Skip',
               style: TextStyle(
@@ -56,14 +104,25 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
               Center(
                 child: Stack(
                   children: [
-                    Container(
-                      width: 100,
-                      height: 100,
-                      decoration: const BoxDecoration(
-                        image: DecorationImage(image: AssetImage("assets/images/Objects.png")),
-                        shape: BoxShape.circle,
+                    Consumer<ProfileProvider>(
+                      builder: (context, value, child) => InkWell(
+                        onTap: () {
+                          _showImageSourceActionSheet(context);
+                        },
+                        child: Container(
+                          width: 100,
+                          height: 100,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                                fit: BoxFit.cover,
+                                image: value.selectedProfileImage == null
+                                    ? const AssetImage(
+                                        "assets/images/Objects.png")
+                                    : FileImage(value.selectedProfileImage!)),
+                            shape: BoxShape.circle,
+                          ),
+                        ),
                       ),
-                      
                     ),
                     Positioned(
                       right: 0,
@@ -85,12 +144,13 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
                 ),
               ),
               const SizedBox(height: 24),
-              _buildInputField('First Name', _firstNameController),
-              _buildInputField('Last Name', _lastNameController),
+              _buildInputField(
+                  'First Name', profileProvider.firstNameController),
+              _buildInputField('Last Name', profileProvider.lastNameController),
               const Padding(
                 padding: EdgeInsets.only(left: 4, bottom: 8),
                 child: Text(
-                  'Expense Type',
+                  'Gender Type',
                   style: TextStyle(
                     color: Colors.grey,
                     fontSize: 14,
@@ -99,12 +159,14 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
               ),
               Row(
                 children: [
-                  _buildRadioButton('Male'),
+                  _buildRadioButton('Male', profileProvider),
                   const SizedBox(width: 32),
-                  _buildRadioButton('Female'),
+                  _buildRadioButton('Female', profileProvider),
                 ],
               ),
-              _buildInputField('Date of Birth', _dobController, 
+              _buildInputField(
+                'Date of Birth',
+                profileProvider.dobController,
                 suffix: IconButton(
                   icon: const Icon(Icons.calendar_today),
                   onPressed: () async {
@@ -115,27 +177,41 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
                       lastDate: DateTime.now(),
                     );
                     if (date != null) {
-                      _dobController.text = DateFormat('MMMM d, yyyy').format(date);
+                      profileProvider.dobController.text =
+                          formatDateToISO(date);
                     }
                   },
                 ),
               ),
-              _buildInputField('Mobile Number', _mobileController, 
-                keyboardType: TextInputType.phone),
-              _buildInputField('Email ID', _emailController, 
-                keyboardType: TextInputType.emailAddress),
-              _buildDropdownField('Nationality', _selectedNationality, 
-                ['India', 'UAE', 'USA']),
-              _buildDropdownField('Citizenship Type', _selectedCitizenship, 
-                ['Emirati', 'Resident', 'Visitor']),
+              _buildInputField(
+                  'Mobile Number', profileProvider.mobileController,
+                  keyboardType: TextInputType.phone),
+              _buildInputField('Email ID', profileProvider.emailController,
+                  keyboardType: TextInputType.emailAddress),
+              _buildDropdownField(
+                  'Nationality',
+                  profileProvider.selectedNationality,
+                  ['India', 'UAE', 'USA'],
+                  profileProvider),
+              _buildDropdownField(
+                  'Citizenship Type',
+                  profileProvider.selectedCitizenship,
+                  ['Emirati', 'GCC', 'International'],
+                  profileProvider),
               const SizedBox(height: 24),
               SizedBox(
                 width: double.infinity,
                 height: 50,
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const EditGccIdScreen(),
+                        ));
+                  },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor:AppColors.primary,
+                    backgroundColor: AppColors.primary,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(80),
                     ),
@@ -155,6 +231,10 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
         ),
       ),
     );
+  }
+
+  String formatDateToISO(DateTime date) {
+    return DateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(date.toUtc());
   }
 
   Widget _buildInputField(
@@ -204,18 +284,17 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
     );
   }
 
-  Widget _buildRadioButton(String value) {
+  Widget _buildRadioButton(String value, ProfileProvider provider) {
     return Row(
       children: [
         Padding(
-          padding:  EdgeInsets.zero,
+          padding: EdgeInsets.zero,
           child: Radio<String>(
-            
             value: value,
-            groupValue: _selectedGender,
+            groupValue: provider.selectedGender,
             onChanged: (String? newValue) {
               setState(() {
-                _selectedGender = newValue;
+                provider.selectedGender = newValue;
               });
             },
           ),
@@ -225,11 +304,8 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
     );
   }
 
-  Widget _buildDropdownField(
-    String label,
-    String? value,
-    List<String> items,
-  ) {
+  Widget _buildDropdownField(String label, String? value, List<String> items,
+      ProfileProvider provider) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: Column(
@@ -272,9 +348,9 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
             onChanged: (String? newValue) {
               setState(() {
                 if (label == 'Nationality') {
-                  _selectedNationality = newValue;
+                  provider.selectedNationality = newValue;
                 } else {
-                  _selectedCitizenship = newValue;
+                  provider.selectedCitizenship = newValue;
                 }
               });
             },

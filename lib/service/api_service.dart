@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hny_main/core/constants/api_constants.dart';
+import 'package:hny_main/core/global/profile.dart';
 import 'package:hny_main/core/helpers/route_arguments.dart';
 import 'package:hny_main/core/routes/app_routes.dart';
 import 'package:hny_main/core/utils/app_alerts.dart';
@@ -111,6 +112,9 @@ class ApiService {
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('access_token');
+    if(currentUserId==""){
+      currentUserId = prefs.getString('userId')??"";
+    }
     Options options = Options(
       headers: {
         'Authorization': token,
