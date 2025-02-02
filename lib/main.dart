@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:hny_main/core/utils/app_theme.dart';
 import 'package:hny_main/data/providers/auth_provider.dart';
 import 'package:hny_main/data/providers/bottom_nav_controller.dart';
+import 'package:hny_main/data/providers/common_provider.dart';
 import 'package:hny_main/data/providers/home_controller.dart';
+import 'package:hny_main/data/providers/profile_provider.dart';
 import 'package:hny_main/view/screens/main/splash_screen/splash_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -27,6 +29,10 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (context) => AuthProvider(),
         ),
+        ChangeNotifierProvider(
+          create: (context) => ProfileProvider(),
+        ),
+        ChangeNotifierProvider(create: (context) => CommonProvider(),)
       ],
       child: MaterialApp(
         title: 'HNY-Customer',

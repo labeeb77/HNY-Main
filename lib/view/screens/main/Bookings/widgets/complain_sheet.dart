@@ -4,6 +4,7 @@ import 'package:gap/gap.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
 import 'package:hny_main/core/utils/app_text_styles.dart';
 import 'package:hny_main/data/providers/home_controller.dart';
+import 'package:hny_main/view/screens/main/bookings/widgets/file_upload_ui_widget.dart';
 import 'package:hny_main/view/screens/main/bookings/widgets/payment_options_widget.dart';
 import 'package:hny_main/view/widgets/app_button.dart';
 import 'package:hny_main/view/widgets/app_text_widget.dart';
@@ -115,55 +116,7 @@ class ComplainBottomSheet extends StatelessWidget {
                           borderColor: AppColors.textFormFieldBorderColor,
                         )),
                     const Gap(20),
-                    DottedBorder(
-                      borderType: BorderType.RRect,
-                      radius: const Radius.circular(12), // Rounded corners
-                      dashPattern: [4, 4], // Define the dot and gap lengths
-                      color: AppColors.primary, // Border color
-                      strokeWidth: 1.5, // Thickness of the border
-                      child: Container(
-                        width: MediaQuery.of(context).size.width -
-                            40, // Adjust width
-
-                        decoration: const BoxDecoration(
-                          color: AppColors
-                              .greenShadeBackground, // Background color
-                          borderRadius: BorderRadius.all(Radius.circular(12)),
-                        ),
-                        child: const Center(
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(vertical: 19),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.file_upload_outlined,
-                                  color: AppColors.primary,
-                                  size: 24,
-                                ),
-                                Gap(6),
-                                Text(
-                                  "Upload your files here",
-                                  style: TextStyle(
-                                    color: Color(0xFF82868B),
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Gap(6),
-                                Text(
-                                  "Brouse",
-                                  style: TextStyle(
-                                      color: AppColors.primary,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
+                    FileUploadUIWidget(),
                     const Gap(19),
                     Row(
                       children: [

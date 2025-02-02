@@ -1,3 +1,4 @@
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:hny_main/data/models/user_model/user_mode.dart';
@@ -44,15 +45,20 @@ class AuthProvider extends ChangeNotifier {
 
       if (response.success && response.data != null) {
         _user = response.data;
-        await _authRepository.saveUserDatas(_user!);
-        return true;
+        log(_user?.strEmail.toString() ?? "null bro", name: "Email");
+        if (_user?.strEmail != null) {
+          await _authRepository.saveUserDatas(_user!);
+          return {'isSuccess': true, 'navigateToHome': true};
+        } else {
+          return {'isSuccess': true, 'navigateToHome': false};
+        }
       } else {
         _setError(response.message ?? 'Login failed');
-        return false;
+        return {'isSuccess': false, 'navigateToHome': false};
       }
     } catch (e) {
       _setError('An unexpected error occurred');
-      return false;
+      return {'isSuccess': false, 'navigateToHome': false};
     } finally {
       _setLoading(false);
     }

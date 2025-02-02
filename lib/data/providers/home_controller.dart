@@ -12,10 +12,10 @@ class HomeController extends ChangeNotifier {
   List<ArrCar> _carListData = [];
   bool _isLoading = false;
   String? _error;
-
-  List<ArrCar> get carListData => _carListData;
-  bool get isLoading => _isLoading;
+bool get isLoading => _isLoading;
   String? get error => _error;
+  List<ArrCar> get carListData => _carListData;
+  
   RangeValues currentRangeValues = const RangeValues(30, 50);
   String selectedCarType = 'Economy';
 

@@ -7,4 +7,6 @@ class ApiConstants {
   static const String login = 'login_customer';
   static const String otpVerify = 'otp_verify_customer';
   static const String getCartDataListUrl = 'get_home_page';
+  static const String fileUploadApiUrl = 'files_upload';
+  static const String updateCustomerUrl = 'update_customer';
 }

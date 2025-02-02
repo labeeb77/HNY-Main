@@ -6,6 +6,7 @@ import 'package:hny_main/core/utils/app_colors.dart';
 import 'package:hny_main/data/providers/home_controller.dart';
 import 'package:hny_main/view/screens/main/home/filter_bottomsheet.dart';
 import 'package:hny_main/view/screens/main/home/widgets_elements.dart';
+import 'package:hny_main/view/screens/main/profile/add_profile_screen.dart';
 import 'package:hny_main/view/widgets/app_text_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -39,6 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final mediaQuery = MediaQuery.of(context).size;
 
     return Scaffold(
+      
       appBar: AppBar(
         elevation: 0.0,
         actions: [
@@ -152,7 +154,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
-      backgroundColor: Colors.grey[100],
+      backgroundColor:AppColors.background,
       body: SafeArea(
         child: Column(
           children: [
@@ -224,7 +226,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
 
                   // Popular Cars Section
-                  const Padding(
+                   Padding(
                     padding: EdgeInsets.all(16),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -236,11 +238,16 @@ class _HomeScreenState extends State<HomeScreen> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        Text(
-                          'See All',
-                          style: TextStyle(
-                            color: Color(0xFF0B5D3A),
-                            fontWeight: FontWeight.w500,
+                        InkWell(
+                          onTap: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => AddProfileScreen(),));
+                          },
+                          child: Text(
+                            'See All',
+                            style: TextStyle(
+                              color: Color(0xFF0B5D3A),
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
                       ],
