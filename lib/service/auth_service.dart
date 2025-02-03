@@ -1,14 +1,45 @@
-import 'dart:developer';
-
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
-import 'package:hny_main/core/routes/app_routes.dart';
+import 'package:hny_main/core/constants/api_constants.dart';
 import 'package:hny_main/data/models/auth/login_res_model.dart';
+import 'package:hny_main/data/models/response/api_response_model.dart';
 import 'package:hny_main/data/models/user_model/user_mode.dart';
-import 'package:hny_main/data/repositories/auth/auth_repo.dart';
-import 'package:hny_main/service/auth_service.dart';
-import 'package:hny_main/view/common/bottom_nav.dart';
+import 'package:hny_main/service/api_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+class AuthService {
+  final ApiService _apiService;
+
+  AuthService(BuildContext context) : _apiService = ApiService(context);
+
+  Future<ApiResponseModel> login(String phoneNumber) async {
+    return await _apiService.apiCall(
+      endpoint: ApiConstants.login,
+      method: 'POST',
+      data: {'strMobileNo': phoneNumber},
+      sendToken: false
+    );
+  }
+
+  Future<ApiResponseModel> verifyOtp(String otp, String otpToken) async {
+    return await _apiService.apiCall(
+      endpoint: ApiConstants.otpVerify,
+      method: 'POST',
+      data: {"strOTPToken": otpToken, "strOtp": otp},
+      sendToken: false
+    );
+  }
+
+  Future<void> saveUserData(UserModel user) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('userId', user.id ?? "");
+    await prefs.setString('userToken', user.strToken ?? "");
+  }
+
+  Future<void> clearToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('userToken');
+  }
+}
 
 class AuthProvider extends ChangeNotifier {
   final AuthService _authService;
@@ -38,13 +69,13 @@ class AuthProvider extends ChangeNotifier {
       }
     } catch (e) {
       _setError('An unexpected error occurred');
-      return {'isSuccess': false, 'navigateToHome': false};
+      return false;
     } finally {
       _setLoading(false);
     }
   }
 
-  Future<bool> verifyOtp(String otpInput, String otpToken,BuildContext context) async {
+  Future<bool> verifyOtp(String otpInput, String otpToken) async {
     try {
       _setLoading(true);
       _clearError();
@@ -52,13 +83,8 @@ class AuthProvider extends ChangeNotifier {
       final response = await _authService.verifyOtp(otpInput, otpToken);
       
       if (response.success && response.data != null) {
-        log('response data : ${response.data}');
         _user = UserModel.fromJson(response.data);
-        log("token : ${_user?.strToken}");
-        
-        await _authService.saveUserData(_user!).then((value) {
-           Navigator.of(context).pushReplacementNamed(AppRoutes.addProfile);
-        },);
+        await _authService.saveUserData(_user!);
         return true;
       } else {
         _setError(response.error ?? 'OTP verification failed');

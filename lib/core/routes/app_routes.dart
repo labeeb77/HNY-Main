@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:hny_main/view/screens/main/auth/sign_in_screen.dart';
+import 'package:hny_main/view/screens/main/home/home_screen.dart';
+import 'package:hny_main/view/screens/main/profile/add_profile_screen.dart';
+import 'package:hny_main/view/screens/main/splash_screen/splash_screen.dart';
 
 class AppRoutes {
   static const String splashScreen = '/';
   static const String loginPage = '/login';
-  static const String forgotPassword = '/forgotPassword';
-  static const String registration = '/register';
-  static const String screenOtp = '/otp';
+  static const String addProfile = '/addProfile';
+  static const String homePage = '/home';
+  
+
 
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -15,13 +20,13 @@ class AppRoutes {
     }
     switch (settings.name) {
       case splashScreen:
-      //   return MaterialPageRoute(builder: (_) => const ScreenSplash());
-      // case loginPage:
-      //   return MaterialPageRoute(builder: (_) => const LoginScreen());
-      // case forgotPassword:
-      //   return MaterialPageRoute(builder: (_) => const ForgotPasswordScreen());
-      // case screenOtp:
-      //   return MaterialPageRoute(builder: (_) => ScreenOtp(args: args));
+        return MaterialPageRoute(builder: (_) => const SplashScreen());
+      case loginPage:
+        return MaterialPageRoute(builder: (_) => const SignInScreen());
+      case addProfile:
+        return MaterialPageRoute(builder: (_) => const AddProfileScreen());
+      case homePage:
+        return MaterialPageRoute(builder: (_) => const HomeScreen());
 
 
 

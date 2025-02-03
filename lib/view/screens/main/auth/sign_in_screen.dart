@@ -76,7 +76,7 @@ class _SignInScreenState extends State<SignInScreen> {
                             _formKey.currentState!.validate()) {
                           _handleLogin(
                             context,
-                            AuthProvider(),
+                            AuthProvider(context),
                           );
                         }
                       },
