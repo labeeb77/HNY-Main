@@ -324,7 +324,8 @@ Widget buildRideOption(String image, String label) {
                 color: Colors.grey,
                 size: 16,
               )
-            : CachedNetworkImage(
+            : 
+            CachedNetworkImage(
                 placeholder: (context, url) => Icon(
                   Icons.image_outlined,
                   color: Colors.grey.withOpacity(0.5),

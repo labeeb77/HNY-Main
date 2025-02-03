@@ -7,70 +7,70 @@ import 'package:hny_main/core/utils/app_alerts.dart';
 import 'package:hny_main/data/models/response/api_response_model.dart';
 import 'package:hny_main/data/models/response/car_list_model.dart';
 import 'package:hny_main/service/api_service.dart';
+import 'package:hny_main/service/home_serveice.dart';
 
 class HomeController extends ChangeNotifier {
+  final HomeService _homeService;
+
   List<ArrCar> _carListData = [];
   bool _isLoading = false;
   String? _error;
-bool get isLoading => _isLoading;
-  String? get error => _error;
-  List<ArrCar> get carListData => _carListData;
-  
+
   RangeValues currentRangeValues = const RangeValues(30, 50);
   String selectedCarType = 'Economy';
 
   final List<String> carTypes = [
-    'Economy',
-    'Luxury',
-    'Sedan',
-    'Compact',
-    'Hatchback',
-    'Suv',
+    'Economy', 'Luxury', 'Sedan', 
+    'Compact', 'Hatchback', 'Suv',
   ];
 
-  changeLoadingStat() {
-    _isLoading = !_isLoading;
+  HomeController(BuildContext context) : _homeService = HomeService(context);
+
+  // Getters
+  List<ArrCar> get carListData => _carListData;
+  bool get isLoading => _isLoading;
+  String? get error => _error;
+
+  // Methods
+  void _setLoading(bool value) {
+    _isLoading = value;
     notifyListeners();
   }
 
-  changeSliderValue(value) {
+  void _setError(String? value) {
+    _error = value;
+    notifyListeners();
+  }
+
+  void changeSliderValue(RangeValues value) {
     currentRangeValues = value;
     notifyListeners();
   }
 
-  changeCarType(value) {
+  void changeCarType(String value) {
     selectedCarType = value;
     notifyListeners();
   }
 
-  Future<CarListModel?> getCarDataList(BuildContext context) async {
+  Future<void> getCarDataList(BuildContext context) async {
     try {
-      changeLoadingStat();
+      _setLoading(true);
+      _error = null;
 
-      ApiResponseModel<dynamic> apiResponse = await ApiService(context).apiCall(
-          endpoint: ApiConstants.getCartDataListUrl,
-          method: 'POST',
-          
-          data: {
-            "arrCategory": ["Economy", "Coupe"]
-          });
-      log(apiResponse.data.toString(), name: "Data");
-
-      if (apiResponse.success && apiResponse.data != null) {
-        CarListModel data = CarListModel.fromJson(apiResponse.data);
+      final data = await _homeService.fetchCarDataList();
+      
+      if (data != null) {
         _carListData = data.arrCars;
         notifyListeners();
       } else {
-        AppAlerts.showCustomSnackBar(apiResponse.error??"Alert", isSuccess: false);
-        return null;
+        _setError("Failed to fetch car data");
+        AppAlerts.showCustomSnackBar("Failed to fetch the data", isSuccess: false);
       }
     } catch (e) {
-      debugPrint('Error fetching car data: $e');
-      AppAlerts.showCustomSnackBar("Failed to fetch the data",
-          isSuccess: false);
-      return null;
+      _setError('An unexpected error occurred');
+      AppAlerts.showCustomSnackBar("Failed to fetch the data", isSuccess: false);
     } finally {
-      changeLoadingStat();
+      _setLoading(false);
     }
   }
 }

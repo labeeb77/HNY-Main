@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:hny_main/core/helpers/provider_setup.dart';
+import 'package:hny_main/core/routes/app_routes.dart';
 import 'package:hny_main/core/utils/app_theme.dart';
-import 'package:hny_main/data/providers/auth_provider.dart';
-import 'package:hny_main/data/providers/bottom_nav_controller.dart';
-import 'package:hny_main/data/providers/common_provider.dart';
-import 'package:hny_main/data/providers/home_controller.dart';
-import 'package:hny_main/data/providers/profile_provider.dart';
 import 'package:hny_main/view/screens/main/splash_screen/splash_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -19,28 +16,16 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(
-          create: (context) => BottomNavController(),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => HomeController(),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => AuthProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => ProfileProvider(),
-        ),
-        ChangeNotifierProvider(create: (context) => CommonProvider(),)
-      ],
+      providers: ProviderSetup.getProviders(),
       child: MaterialApp(
         title: 'HNY-Customer',
         theme: AppTheme.lightTheme, // Apply the light theme
         darkTheme: AppTheme.darkTheme, // Optional: Apply the dark theme
         themeMode: ThemeMode.light, // Switches based on system preference
         debugShowCheckedModeBanner: false,
-        home: const SplashScreen(),
+         initialRoute: AppRoutes.splashScreen,
+          onGenerateRoute: AppRoutes.generateRoute,
+          home: const SplashScreen(),
       ),
     );
   }

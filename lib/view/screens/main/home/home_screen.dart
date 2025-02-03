@@ -28,9 +28,9 @@ class _HomeScreenState extends State<HomeScreen> {
             Brightness.light, // Adjust icons for visibility
       ),
     );
-    WidgetsBinding.instance.addPostFrameCallback((va){
-          Provider.of<HomeController>(context,listen: false).getCarDataList(context);
-
+    WidgetsBinding.instance.addPostFrameCallback((va) {
+      Provider.of<HomeController>(context, listen: false)
+          .getCarDataList(context);
     });
     super.initState();
   }
@@ -40,7 +40,6 @@ class _HomeScreenState extends State<HomeScreen> {
     final mediaQuery = MediaQuery.of(context).size;
 
     return Scaffold(
-      
       appBar: AppBar(
         elevation: 0.0,
         actions: [
@@ -154,7 +153,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
-      backgroundColor:AppColors.background,
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: Column(
           children: [
@@ -208,16 +207,16 @@ class _HomeScreenState extends State<HomeScreen> {
                         // scrollDirection: Axis.horizontal,
                         children: [
                           buildRideOption(
-                              'https://s3-alpha-sig.figma.com/img/e4d0/548c/989595565347690200de889fc3d9f2f4?Expires=1736726400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=VxX7v-ycet0sjT0ZNhLjf~ZUa~qvP~tyi8tQt~rF6Ye2dtvSKKlem16QqnGrRtsV2rQhwGS-C2Ns~N6J1AJM-oRhSCSMFga5e3PR5ZoSLh0nfUF1EjzwDp3haBgbCplK8hfSSC~ZIkNXXfwNjCkwDa9yn3bi6Ju2FUSS7VHjegBjTTEo47255uFlcTjA09WrExBikC5lto94qP2w1iTvVVrc600EqG0g68S8vOAhisvDc~vKgPyFzd9OomQ8IVXza9y5xFB92A3vbuLDxgC4AvS7XEOa0zni08FXyrUfebTm7xopz03j4T739zYZcRgDqWqT0WuKqzxahqKYqRlKNw__',
+                              'https://cdn.pixabay.com/photo/2012/05/29/00/43/car-49278_640.jpg',
                               'Sedans'),
                           buildRideOption(
-                              'https://s3-alpha-sig.figma.com/img/5769/bbeb/60e0f438b30252ec8c5d652a4298ab8b?Expires=1736726400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=mFDt55NoobPzswnt4lQWIXq6iG87wSG5CwRMOZWP64krdyAIzbnO4qCH8D2evuCNloTWZvb6kev44nZrKVcwvZIYxRT4a9jcH9uYg~cUO5~FAdgPIFNy49a4JgFcpqwiu1bv0spdv8iRx5dfih46NCDrVPyMGvViqcEGfx4TTOx6Sg6SR-3Docf-uH2P0EELMWcNn1MxzSiBWtd7AH3REAxavEjxuZ~Ah3prBnr8tDA2Cl-aRS~5WscW5Iom7uAy4zixwo3wEIFtQUZEnbaRwcfU7vokrFRignNGula2zmxjppEovIny1nYEanjQnpqGT1QcLz-YWXF9QVwGLPU-MQ__',
+                              'https://static.vecteezy.com/system/resources/thumbnails/031/196/761/small_2x/beautiful-modern-concept-supercar-light-sky-blue-with-maroon-details-photo.jpg',
                               'SUV'),
                           buildRideOption(
-                              'https://s3-alpha-sig.figma.com/img/010a/c95f/3d3365865a1f013fce8ae11a11b9e0a2?Expires=1736726400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=bBtNxMmbX~25C65yhQ2cCJ5RFvng6AqIY1dLIXUU0Z9c7L-oS4EpZROw0mr1YJPJOL356oUVxoPL0mT09N6RfrHCIv5DSVTJUY~k7R9Y63UkQaz7IaeplFyNBhwtWO2xrfVqHUCKyQHvxQHcoSpP0N2~kIQWYlXFETt7jO3S~WwpoYk5496DqfKQJHkmM45aiFUxozaMjNHr7NsT5zrk1AMLeQ-4rNoSind7DRL1glhvFHYIPP8Ir9Tk2avKWd-FaGumIk~GBizUDfibm0rvoohTb18qi5ZDYrS~V6m~sN8pBhId2tUAKGre-T91w-ZLEhLx4EJM9qhD8MqzgbNExQ__',
+                              'https://static.vecteezy.com/system/resources/thumbnails/031/196/761/small_2x/beautiful-modern-concept-supercar-light-sky-blue-with-maroon-details-photo.jpg',
                               'Trucks'),
                           buildRideOption(
-                              'https://s3-alpha-sig.figma.com/img/f8a4/f3c5/83e69979b57cfe7604815616bf3d6a7f?Expires=1736726400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=V51VY6WOQGzB7NbTe~9XmL5iva2wdZlwjSHSkZUNBmuPTkPD6pgNpopL2l3KIhqvfwRKium4zEUkwRMwphbcLDIWzvcyBRjwHpmQLSHSoSknvSpaC-8Si09IX49XVZnYDThXs0fS5mm-04XUwkqjM0hxMDYpUOafdWtzfSozSknq-~qKmBA9u1cbh-bn47Dhza~RNOFG39lP1JdDIR5RDwT-OLyn~2kRXOler91So9FOBw~SmSb-R7MEMpm63FaAeKfm1ZVVwoFCs5OS2P~hkUKM328Mo1i0BbCQPFsed8LduJVraqgcrxPDGWKexGpZ6UogVXMwxQ2ftX1cCOVieg__',
+                              'https://cdn.pixabay.com/photo/2012/05/29/00/43/car-49278_640.jpg',
                               'Electric'),
                           buildRideOption('', 'View All'),
                         ],
@@ -226,7 +225,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
 
                   // Popular Cars Section
-                   Padding(
+                  Padding(
                     padding: EdgeInsets.all(16),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -240,7 +239,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         InkWell(
                           onTap: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => AddProfileScreen(),));
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => AddProfileScreen(),
+                                ));
                           },
                           child: Text(
                             'See All',
@@ -262,24 +265,27 @@ class _HomeScreenState extends State<HomeScreen> {
                           Consumer<HomeController>(
                         builder: (context, value, child) {
                           final data = value.carListData;
-                          return value.isLoading?const Center(child: CircularProgressIndicator(),): ListView.builder(
-                            physics: const NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            itemCount: value.carListData.length,
-                              itemBuilder: (context, index) => buildCarCard(
-                                  data[index].strModel ?? "Unknown",
-                                  data[index].intRating.toString() ?? '4.0',
-                                  data[index].strCarCategory ??
-                                      "Unknown",
-                                          'Manual',
-                                  data[index].intFuelCapacity ?? "Unknown",
-                                  '${data[index].strSeatNo} Seats',
-                                  data[index].intPricePerDay.toString(),
-                                  data[index].strImgUrl!,
-                                  false,
-                                  context,
-                                  orientation,
-                                  mediaQuery));
+                          return value.isLoading
+                              ? const Center(
+                                  child: CircularProgressIndicator(),
+                                )
+                              : ListView.builder(
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  itemCount: value.carListData.length,
+                                  itemBuilder: (context, index) => buildCarCard(
+                                      data[index].strModel ?? "Unknown",
+                                      data[index].intRating.toString() ?? '4.0',
+                                      data[index].strCarCategory ?? "Unknown",
+                                      'Manual',
+                                      data[index].intFuelCapacity ?? "Unknown",
+                                      '${data[index].strSeatNo} Seats',
+                                      data[index].intPricePerDay.toString(),
+                                      data[index].strImgUrl!,
+                                      false,
+                                      context,
+                                      orientation,
+                                      mediaQuery));
                         },
                       ),
                     ),

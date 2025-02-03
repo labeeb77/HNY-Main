@@ -102,7 +102,7 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
                       ontap: () {
                         if (_formKey.currentState != null &&
                             _formKey.currentState!.validate()) {
-                          verifyOtp(context, AuthProvider(), widget.otpToken);
+                          verifyOtp(context, AuthProvider(context), widget.otpToken);
                         }
                       },
                     ),
@@ -327,7 +327,7 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
                         otp2Controller.text.isNotEmpty &&
                         otp3Controller.text.isNotEmpty &&
                         otp4Controller.text.isNotEmpty) {
-                      verifyOtp(context, AuthProvider(), widget.otpToken);
+                      verifyOtp(context, AuthProvider(context), widget.otpToken);
                     }
                   } else {
                     setState(() {
@@ -354,25 +354,7 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
           otp4Controller.text;
 
       if (verificationCode.length == 4) {
-        authProvider.verifyOtp(verificationCode, otpTOken).then((value) {
-          if (value['isSuccess']) {
-            if (value['navigateToHome']) {
-              Navigator.pushReplacement(
-                context,  
-                MaterialPageRoute(
-                  builder: (context) => const BottomNav(),
-                ),
-              );
-            } else {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const AddProfileScreen(),
-                ),
-              );
-            }
-          }
-        });
+        authProvider.verifyOtp(verificationCode, otpTOken,context);
       }
     }
   }
