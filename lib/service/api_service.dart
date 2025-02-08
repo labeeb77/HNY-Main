@@ -5,13 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:hny_main/core/constants/api_constants.dart';
 import 'package:hny_main/core/global/profile.dart';
 import 'package:hny_main/core/helpers/route_arguments.dart';
-import 'package:hny_main/core/routes/app_routes.dart';
-import 'package:hny_main/core/utils/app_alerts.dart';
 import 'package:hny_main/core/utils/dio_exception_handler.dart';
-import 'package:hny_main/data/models/response/api_response.dart';
 import 'package:hny_main/data/models/response/api_response_model.dart';
 import 'package:hny_main/view/widgets/no_internet_view.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
@@ -111,7 +107,7 @@ class ApiService {
     bool sendToken = false,
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? token = prefs.getString('userToken');
+    String? token = prefs.getString('access_token');
     if(currentUserId==""){
       currentUserId = prefs.getString('userId')??"";
     }

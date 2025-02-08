@@ -106,7 +106,6 @@ Widget buildCarCard(
 ) {
   return InkWell(
     onTap: () {
-      log('Car Details');
       Navigator.push(
           context,
           MaterialPageRoute(

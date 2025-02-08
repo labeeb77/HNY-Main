@@ -1,14 +1,11 @@
 import 'dart:developer';
 
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
+import 'package:hny_main/core/global/profile.dart';
 import 'package:hny_main/core/routes/app_routes.dart';
 import 'package:hny_main/data/models/auth/login_res_model.dart';
 import 'package:hny_main/data/models/user_model/user_mode.dart';
-import 'package:hny_main/data/repositories/auth/auth_repo.dart';
 import 'package:hny_main/service/auth_service.dart';
-import 'package:hny_main/view/common/bottom_nav.dart';
 
 class AuthProvider extends ChangeNotifier {
   final AuthService _authService;
@@ -22,43 +19,46 @@ class AuthProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get error => _error;
 
-  Future<dynamic> login(String phoneNumber) async {
+  Future<String?> login(String phoneNumber) async {
     try {
       _setLoading(true);
       _clearError();
-      
       final response = await _authService.login(phoneNumber);
-      
       if (response.success && response.data != null) {
         final loginData = LoginResModel.fromJson(response.data);
         return loginData.strOtpToken;
       } else {
         _setError(response.error ?? 'Login failed');
-        return false;
+        return null;
       }
     } catch (e) {
       _setError('An unexpected error occurred');
-      return {'isSuccess': false, 'navigateToHome': false};
+      return null;
     } finally {
       _setLoading(false);
     }
   }
 
-  Future<bool> verifyOtp(String otpInput, String otpToken,BuildContext context) async {
+  void logCurrentUser() {
+    log(_user?.strToken ?? "User token is null");
+  }
+
+  Future<bool> verifyOtp(
+      String otpInput, String otpToken, BuildContext context) async {
     try {
       _setLoading(true);
       _clearError();
-
       final response = await _authService.verifyOtp(otpInput, otpToken);
-      
       if (response.success && response.data != null) {
-        log('response data : ${response.data}');
         _user = UserModel.fromJson(response.data);
-        log("token : ${_user?.strToken}");
-        
-        await _authService.saveUserData(_user!).then((value) {
-           Navigator.of(context).pushReplacementNamed(AppRoutes.addProfile);
-        },);
+        globalUser = UserModel.fromJson(response.data);
+        await _authService.saveUserData(_user!).then((_) {
+          if (_user?.strEmail.isEmpty || _user?.strFirstName == null) {
+            Navigator.of(context).pushReplacementNamed(AppRoutes.addProfile);
+          } else {
+            Navigator.of(context).pushReplacementNamed(AppRoutes.bottomNav);
+          }
+        });
         return true;
       } else {
         _setError(response.error ?? 'OTP verification failed');
@@ -76,7 +76,7 @@ class AuthProvider extends ChangeNotifier {
     try {
       _setLoading(true);
       _clearError();
-      await _authService.clearToken();
+      await _authService.clearAllLocalData();
       _user = null;
       notifyListeners();
     } catch (e) {

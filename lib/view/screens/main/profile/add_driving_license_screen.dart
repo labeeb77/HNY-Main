@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:hny_main/core/global/profile.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
 import 'package:hny_main/core/utils/app_image_picker.dart';
 import 'package:hny_main/data/providers/profile_provider.dart';
+import 'package:hny_main/view/common/bottom_nav.dart';
 import 'package:hny_main/view/screens/main/bookings/widgets/file_upload_ui_widget.dart';
 import 'package:hny_main/view/screens/main/home/home_screen.dart';
 import 'package:hny_main/view/widgets/back_button.dart';
 import 'package:provider/provider.dart';
 
 class AddDrivingLicenseScreen extends StatelessWidget {
-  const AddDrivingLicenseScreen({Key? key}) : super(key: key);
+  const AddDrivingLicenseScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -96,17 +98,27 @@ class AddDrivingLicenseScreen extends StatelessWidget {
                     child: Consumer<ProfileProvider>(
                       builder: (context, value, child) => ClipRRect(
                           borderRadius: BorderRadius.circular(8),
-                          child: value.selectedDrivingLicenseImagePath == null
+                          child: value.selectedDrivingLicenseImagePath ==
+                                      null &&
+                                  globalUser?.strLicenceUrl == ""
                               ? Image.asset(
                                   'assets/images/placeholder_image.webp', // Add your placeholder image
                                   fit: BoxFit.cover,
                                 )
-                              : Image(
-                                  fit: BoxFit.cover,
-                                  image: FileImage(
-                                      value.selectedDrivingLicenseImagePath!
-                                      // Add your placeholder image
-                                      ))),
+                              : value.selectedDrivingLicenseImagePath == null &&
+                                      globalUser?.strLicenceUrl != ""
+                                  ? Image(
+                                      fit: BoxFit.cover,
+                                      image: NetworkImage(
+                                          globalUser!.strLicenceUrl!
+                                          // Add your placeholder image
+                                          ))
+                                  : Image(
+                                      fit: BoxFit.cover,
+                                      image: FileImage(
+                                          value.selectedDrivingLicenseImagePath!
+                                          // Add your placeholder image
+                                          ))),
                     ),
                   ),
                 ],
@@ -122,13 +134,15 @@ class AddDrivingLicenseScreen extends StatelessWidget {
           width: double.infinity,
           height: 50,
           child: ElevatedButton(
-            onPressed: () {
-              profileProvider.addProfileData(context,);
-              // Navigator.push(
-              //     context,
-              //     MaterialPageRoute(
-              //       builder: (context) => const HomeScreen(),
-              //     ));
+            onPressed: () async {
+              await profileProvider.addProfileData(
+                context,
+              );
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const BottomNav(),
+                  ));
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primary,
@@ -136,14 +150,16 @@ class AddDrivingLicenseScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(80),
               ),
             ),
-            child: const Text(
-              'Save',
-              style: TextStyle(
-                color: AppColors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            child: context.watch<ProfileProvider>().isLoading
+                ? const CircularProgressIndicator(color: AppColors.white,)
+                : const Text(
+                    'Save',
+                    style: TextStyle(
+                      color: AppColors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
           ),
         ),
       ),

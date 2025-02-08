@@ -1,8 +1,12 @@
+// To parse this JSON data, do
+//
+//     final addProfileModel = addProfileModelFromJson(jsonString);
+
 import 'dart:convert';
 
-UserModel userModelFromJson(String str) => UserModel.fromJson(json.decode(str));
+UserModel UserModelFromJson(String str) => UserModel.fromJson(json.decode(str));
 
-String userModelToJson(UserModel data) => json.encode(data.toJson());
+String UserModelToJson(UserModel data) => json.encode(data.toJson());
 
 class UserModel {
     bool? success;
@@ -15,16 +19,29 @@ class UserModel {
     String? strOtp;
     String? strName;
     String? strMobileNo;
-    String? strEmail;
+    dynamic strEmail;
     String? strSignupMethode;
     String? strRoleName;
     String? strType;
-    dynamic strProfileUrl;
-    String? strHashPassword;
+    String? strProfileUrl;
+    dynamic strHashPassword;
     DateTime? strCreatedTime;
     String? strAccountId;
     String? strFcmToken;
     String? strRefCode;
+    int? intAdvancePercentage;
+    dynamic intOpningBalance;
+    String? strEmiratesIdUrl;
+    String? strFirstName;
+    String? strFullName;
+    String? strGccIdUrl;
+    dynamic strJoinDate;
+    String? strLastName;
+    String? strLicenceUrl;
+    String? strNationality;
+    String? strPassportUrl;
+    String? strUpdatedBy;
+    DateTime? strUpdatedTime;
 
     UserModel({
         this.success,
@@ -47,6 +64,19 @@ class UserModel {
         this.strAccountId,
         this.strFcmToken,
         this.strRefCode,
+        this.intAdvancePercentage,
+        this.intOpningBalance,
+        this.strEmiratesIdUrl,
+        this.strFirstName,
+        this.strFullName,
+        this.strGccIdUrl,
+        this.strJoinDate,
+        this.strLastName,
+        this.strLicenceUrl,
+        this.strNationality,
+        this.strPassportUrl,
+        this.strUpdatedBy,
+        this.strUpdatedTime,
     });
 
     factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
@@ -70,6 +100,19 @@ class UserModel {
         strAccountId: json["strAccount_Id"],
         strFcmToken: json["strFcmToken"],
         strRefCode: json["strRefCode"],
+        intAdvancePercentage: json["intAdvancePercentage"],
+        intOpningBalance: json["intOpningBalance"],
+        strEmiratesIdUrl: json["strEmiratesIdUrl"],
+        strFirstName: json["strFirstName"],
+        strFullName: json["strFullName"],
+        strGccIdUrl: json["strGCCIdUrl"],
+        strJoinDate: json["strJoinDate"],
+        strLastName: json["strLastName"],
+        strLicenceUrl: json["strLicenceUrl"],
+        strNationality: json["strNationality"],
+        strPassportUrl: json["strPassportUrl"],
+        strUpdatedBy: json["strUpdatedBy"],
+        strUpdatedTime: json["strUpdatedTime"] == null ? null : DateTime.parse(json["strUpdatedTime"]),
     );
 
     Map<String, dynamic> toJson() => {
@@ -93,5 +136,18 @@ class UserModel {
         "strAccount_Id": strAccountId,
         "strFcmToken": strFcmToken,
         "strRefCode": strRefCode,
+        "intAdvancePercentage": intAdvancePercentage,
+        "intOpningBalance": intOpningBalance,
+        "strEmiratesIdUrl": strEmiratesIdUrl,
+        "strFirstName": strFirstName,
+        "strFullName": strFullName,
+        "strGCCIdUrl": strGccIdUrl,
+        "strJoinDate": strJoinDate,
+        "strLastName": strLastName,
+        "strLicenceUrl": strLicenceUrl,
+        "strNationality": strNationality,
+        "strPassportUrl": strPassportUrl,
+        "strUpdatedBy": strUpdatedBy,
+        "strUpdatedTime": strUpdatedTime?.toIso8601String(),
     };
 }

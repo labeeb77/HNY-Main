@@ -17,7 +17,6 @@ class AuthRepository {
         ApiConstants.login,
         data: {'strMobileNo': phoneNumber},
       );
-      log(response.data.toString());
 
       return ApiResponse(
         success: response.data['success'] ?? false,
