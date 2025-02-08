@@ -10,10 +10,13 @@ class BottomNavController extends ChangeNotifier {
     const HomeScreen(),
     const BookingScreen(),
     const FavoriteScreen(),
-const ProfileScreen()  ];
+    const ProfileScreen()
+  ];
 
-  changeScreenIndex(index) {
+  changeScreenIndex(index, [isUpdate = true]) {
     currentScreenIndex = index;
-    notifyListeners();
+    if (isUpdate) {
+      notifyListeners();
+    }
   }
 }

@@ -13,7 +13,7 @@ class FileUploadUIWidget extends StatelessWidget {
     return DottedBorder(
       borderType: BorderType.RRect,
       radius: const Radius.circular(4), // Rounded corners
-      dashPattern: [4, 4], // Define the dot and gap lengths
+      dashPattern: const [4, 4], // Define the dot and gap lengths
       color: AppColors.primary, // Border color
       strokeWidth: 1.5, // Thickness of the border
       child: Container(

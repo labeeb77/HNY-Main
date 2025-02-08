@@ -32,17 +32,12 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> checkAuthAndNavigate() async {
     final prefs = await SharedPreferences.getInstance();
-    final userToken = prefs.getString('userToken');
+    final accessToken = prefs.getString('access_token');
 
     if (!mounted) return;
 
-    if (userToken != null) {
-       Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const BottomNav(),
-              ),
-            );
+    if (accessToken != null) {
+      Navigator.pushReplacementNamed(context, AppRoutes.bottomNav);
     } else {
       Navigator.pushReplacementNamed(context, AppRoutes.loginPage);
     }

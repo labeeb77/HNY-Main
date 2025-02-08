@@ -1,7 +1,4 @@
-import 'dart:developer';
 import 'dart:io';
-
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:hny_main/core/constants/api_constants.dart';
 import 'package:hny_main/core/global/profile.dart';
@@ -15,87 +12,120 @@ import 'package:provider/provider.dart';
 class ProfileProvider with ChangeNotifier {
   bool _isLoading = false;
   String? _error;
+
   bool get isLoading => _isLoading;
   String? get error => _error;
-  changeLoadingStat() {
-    _isLoading = !_isLoading;
-    notifyListeners();
-  }
 
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController lastNameController = TextEditingController();
   final TextEditingController dobController = TextEditingController();
   final TextEditingController mobileController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
+
   String? selectedGender;
-  String? selectedNationality = 'India';
-  String? selectedCitizenship = 'Emirati';
-  File? get selectedProfileImage => _selectedProfileImage;
+  String? selectedNationality;
+  String? selectedCitizenship;
+
   File? _selectedProfileImage;
-
-  setProfileImage(File? image) {
-    _selectedProfileImage = image;
-    notifyListeners();
-  }
-
-  File? get selectedIdCardImagePath => _selectedIdCardImagePath;
   File? _selectedIdCardImagePath;
-
-  setIdCardImagePath(File? image) {
-    _selectedIdCardImagePath = image;
-    notifyListeners();
-  }
-
-  File? get selectedDrivingLicenseImagePath => _selectedDrivingLicenseImagePath;
   File? _selectedDrivingLicenseImagePath;
 
-  setDrivingLicenseImagePath(File? image) {
-    _selectedDrivingLicenseImagePath = image;
+  File? get selectedProfileImage => _selectedProfileImage;
+  File? get selectedIdCardImagePath => _selectedIdCardImagePath;
+  File? get selectedDrivingLicenseImagePath => _selectedDrivingLicenseImagePath;
+
+  void changeLoadingState() {
+    _isLoading = !_isLoading;
     notifyListeners();
   }
 
-  getIdTitleName() {
+  void initialMethod() {
+    firstNameController.text = globalUser?.strFirstName ?? "";
+    lastNameController.text = globalUser?.strLastName ?? "";
+    mobileController.text = globalUser?.strMobileNo ?? "";
+    emailController.text = globalUser?.strEmail ?? "";
+    selectedNationality = globalUser?.strNationality ?? "";
+    notifyListeners();
+  }
+
+  void setProfileImage(File? image) => _updateValue(() => _selectedProfileImage = image);
+
+  void setIdCardImagePath(File? image) => _updateValue(() => _selectedIdCardImagePath = image);
+
+  void setDrivingLicenseImagePath(File? image) => _updateValue(() => _selectedDrivingLicenseImagePath = image);
+
+  void setNationality(String value) => _updateValue(() => selectedNationality = value);
+
+  void setCitizenship(String value) => _updateValue(() => selectedCitizenship = value);
+
+  void setGender(String value) => _updateValue(() => selectedGender = value);
+
+  String getIdTitleName() {
     switch (selectedCitizenship) {
-      case "Emirati":
-        return "Emirate";
-      case "International":
-        return "Passport";
-      case "GCC":
-        return "GCC";
-      default:
+      case "Emirati": return "Emirate";
+      case "International": return "Passport";
+      case "GCC": return "GCC";
+      default: return "";
     }
   }
 
-  Future addProfileData(BuildContext context) async {
+  Future<bool?> addProfileData(BuildContext context) async {
+    String? profileUploadedUrl;
+    String? idCardUploadedUrl;
+    String? licenseUploadedUrl;
+
     try {
-      changeLoadingStat();
-// String? fcmToken = await FirebaseMessaging.instance.getToken();
-      log(_selectedProfileImage?.path.toString() ?? "ld");
-      String profileUploadedUrl =
-          await Provider.of<CommonProvider>(context, listen: false)
-              .commonFileUploadApi(context, _selectedProfileImage?.path);
+      changeLoadingState();
 
-// AddProfileModel data = AddProfileModel(id:currentUserId,strDateOfBirth:dobController.text,strEmail: emailController.text,strEmiratesIdUrl: ,strFcmToken: fcmToken??"",strFirstName:firstNameController.text ,strGccIdUrl: ,strGender:selectedGender,strLastName: lastNameController.text,strLicenceUrl: ,strNationality: selectedNationality,strPassportUrl: ,strProfileUrl: sele )
+      profileUploadedUrl = await _uploadFile(context, _selectedProfileImage);
+      licenseUploadedUrl = await _uploadFile(context, _selectedDrivingLicenseImagePath);
+      idCardUploadedUrl = await _uploadFile(context, _selectedIdCardImagePath);
 
-      ApiResponseModel<dynamic> apiResponse = await ApiService(context).apiCall(
-          endpoint: ApiConstants.updateCustomerUrl,
-          method: 'POST',
-         
-          );
-      log(apiResponse.data.toString(), name: "Data");
+      final AddProfileModel data = AddProfileModel(
+        id: currentUserId,
+        strDateOfBirth: dobController.text,
+        strEmail: emailController.text,
+        strEmiratesIdUrl: selectedCitizenship == "Emirati" ? idCardUploadedUrl ?? globalUser?.strEmiratesIdUrl : "",
+        strFcmToken: "",
+        strFirstName: firstNameController.text,
+        strGccIdUrl: selectedCitizenship == "GCC" ? idCardUploadedUrl ?? globalUser?.strGccIdUrl : "",
+        strGender: selectedGender,
+        strLastName: lastNameController.text,
+        strLicenceUrl: licenseUploadedUrl ?? globalUser?.strLicenceUrl,
+        strNationality: selectedNationality,
+        strPassportUrl: selectedCitizenship == "International" ? idCardUploadedUrl ?? globalUser?.strPassportUrl : "",
+        strProfileUrl: profileUploadedUrl ?? globalUser?.strProfileUrl,
+      );
+
+      final ApiResponseModel<dynamic> apiResponse = await ApiService(context).apiCall(
+        endpoint: ApiConstants.updateCustomerUrl,
+        method: 'POST',
+        data: data,
+      );
 
       if (apiResponse.success && apiResponse.data != null) {
+        globalUser = null;
+        currentUserId = '';
+        return true;
       } else {
-        AppAlerts.showCustomSnackBar(apiResponse.error ?? "Alert",
-            isSuccess: false);
+        AppAlerts.showCustomSnackBar(apiResponse.error ?? "Alert", isSuccess: false);
       }
     } catch (e) {
-      debugPrint('Error fetching car data: $e');
-      AppAlerts.showCustomSnackBar("Failed to fetch the data",
-          isSuccess: false);
-      return null;
+      debugPrint('Error adding profile data: $e');
+      AppAlerts.showCustomSnackBar("Failed to fetch the data", isSuccess: false);
     } finally {
-      changeLoadingStat();
+      changeLoadingState();
     }
+    return null;
+  }
+
+  Future<String?> _uploadFile(BuildContext context, File? file) async {
+    if (file == null) return null;
+    return await Provider.of<CommonProvider>(context, listen: false).commonFileUploadApi(context, file.path);
+  }
+
+  void _updateValue(VoidCallback update) {
+    update();
+    notifyListeners();
   }
 }

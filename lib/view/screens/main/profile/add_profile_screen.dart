@@ -1,8 +1,11 @@
-import 'dart:io';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:hny_main/core/global/profile.dart';
+import 'package:hny_main/core/routes/app_routes.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
 import 'package:hny_main/core/utils/app_image_picker.dart';
+import 'package:hny_main/data/providers/auth_provider.dart';
 import 'package:hny_main/data/providers/profile_provider.dart';
 import 'package:hny_main/view/screens/main/profile/add_id_card_screen.dart';
 import 'package:intl/intl.dart';
@@ -16,11 +19,11 @@ class AddProfileScreen extends StatefulWidget {
 }
 
 class _AddProfileScreenState extends State<AddProfileScreen> {
-  ProfileProvider? profileProvider;
-
   @override
   void initState() {
-    profileProvider = Provider.of<ProfileProvider>(context, listen: false);
+    final profileProvider =
+        Provider.of<ProfileProvider>(context, listen: false);
+
     super.initState();
   }
 
@@ -39,8 +42,9 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
                 title: const Text('Pick from Gallery'),
                 onTap: () async {
                   Navigator.pop(context);
-                  profileProvider?.setProfileImage(
-                      await AppImagePicker().pickImageFromGallery());
+                  Provider.of<ProfileProvider>(context, listen: false)
+                      .setProfileImage(
+                          await AppImagePicker().pickImageFromGallery());
                 },
               ),
               ListTile(
@@ -48,8 +52,9 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
                 title: const Text('Capture from Camera'),
                 onTap: () async {
                   Navigator.pop(context);
-                  profileProvider?.setProfileImage(
-                      await AppImagePicker().captureImageFromCamera());
+                  Provider.of<ProfileProvider>(context, listen: false)
+                      .setProfileImage(
+                          await AppImagePicker().captureImageFromCamera());
                 },
               ),
             ],
@@ -63,27 +68,32 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
   Widget build(BuildContext context) {
     final profileProvider =
         Provider.of<ProfileProvider>(context, listen: false);
+    WidgetsBinding.instance.addPostFrameCallback((callback) {
+      profileProvider.initialMethod();
+    });
+    log(profileProvider.firstNameController.text);
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.background,
         elevation: 0,
-        title: const Text(
-          'Add Profile',
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
+        title: InkWell(
+          onTap: () {
+            profileProvider.initialMethod();
+          },
+          child: const Text(
+            'Add Profile',
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
         actions: [
           TextButton(
             onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const EditGccIdScreen(),
-                  ));
+              Navigator.of(context).pushNamed(AppRoutes.idCardPage);
             },
             child: const Text(
               'Skip',
@@ -112,15 +122,36 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
                         child: Container(
                           width: 100,
                           height: 100,
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                                fit: BoxFit.cover,
-                                image: value.selectedProfileImage == null
-                                    ? const AssetImage(
-                                        "assets/images/Objects.png")
-                                    : FileImage(value.selectedProfileImage!)),
+                          clipBehavior: Clip.hardEdge,
+                          decoration: const BoxDecoration(
+                            // image: DecorationImage(
+                            //     fit: BoxFit.cover,
+                            //     image: value.selectedProfileImage == null
+                            //         ? const AssetImage(
+                            //             "assets/images/Objects.png")
+                            //         : FileImage(value.selectedProfileImage!)),
                             shape: BoxShape.circle,
                           ),
+                          child: value.selectedProfileImage == null &&
+                                  globalUser?.strProfileUrl == ""
+                              ? Image.asset(
+                                  'assets/images/placeholder_image.webp', // Add your placeholder image
+                                  fit: BoxFit.cover,
+                                )
+                              : value.selectedProfileImage == null &&
+                                      globalUser?.strProfileUrl != ""
+                                  ? Image(
+                                      fit: BoxFit.cover,
+                                      image: NetworkImage(
+                                          globalUser!.strProfileUrl!
+                                          // Add your placeholder image
+                                          ))
+                                  : Image(
+                                      fit: BoxFit.cover,
+                                      image:
+                                          FileImage(value.selectedProfileImage!
+                                              // Add your placeholder image
+                                              )),
                         ),
                       ),
                     ),
@@ -157,14 +188,28 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
                   ),
                 ),
               ),
-              Row(
-                children: [
-                  _buildRadioButton('Male', profileProvider),
-                  const SizedBox(width: 32),
-                  _buildRadioButton('Female', profileProvider),
-                ],
+              Consumer<ProfileProvider>(
+                builder: (context, value, child) => Row(
+                  children: [
+                    _buildRadioButton('Male', value),
+                    const SizedBox(width: 32),
+                    _buildRadioButton('Female', value),
+                  ],
+                ),
               ),
               _buildInputField(
+                ontap: () async {
+                  final date = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime(2000),
+                    firstDate: DateTime(1900),
+                    lastDate: DateTime.now(),
+                  );
+                  if (date != null) {
+                    profileProvider.dobController.text = formatDateToISO(date);
+                  }
+                },
+                keyboardType: TextInputType.none,
                 'Date of Birth',
                 profileProvider.dobController,
                 suffix: IconButton(
@@ -191,7 +236,7 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
               _buildDropdownField(
                   'Nationality',
                   profileProvider.selectedNationality,
-                  ['India', 'UAE', 'USA'],
+                  ['India', 'UAE', 'American'],
                   profileProvider),
               _buildDropdownField(
                   'Citizenship Type',
@@ -204,11 +249,7 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
                 height: 50,
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const EditGccIdScreen(),
-                        ));
+                    Navigator.of(context).pushNamed(AppRoutes.idCardPage);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
@@ -242,6 +283,7 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
     TextEditingController controller, {
     TextInputType? keyboardType,
     Widget? suffix,
+    VoidCallback? ontap,
   }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
@@ -258,9 +300,11 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
               ),
             ),
           ),
-          TextField(
+          TextFormField(
+            onTap: ontap,
             controller: controller,
             keyboardType: keyboardType,
+            readOnly: true,
             decoration: InputDecoration(
               fillColor: AppColors.white,
               filled: true,
@@ -293,9 +337,7 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
             value: value,
             groupValue: provider.selectedGender,
             onChanged: (String? newValue) {
-              setState(() {
-                provider.selectedGender = newValue;
-              });
+              provider.setGender(newValue!);
             },
           ),
         ),
@@ -346,13 +388,11 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
               );
             }).toList(),
             onChanged: (String? newValue) {
-              setState(() {
-                if (label == 'Nationality') {
-                  provider.selectedNationality = newValue;
-                } else {
-                  provider.selectedCitizenship = newValue;
-                }
-              });
+              if (label == 'Nationality') {
+                provider.setNationality(newValue!);
+              } else {
+                provider.setCitizenship(newValue!);
+              }
             },
           ),
         ],

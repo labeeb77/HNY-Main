@@ -226,11 +226,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   // Popular Cars Section
                   Padding(
-                    padding: EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(16),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
+                        const Text(
                           'Popular Cars',
                           style: TextStyle(
                             fontSize: 20,
@@ -242,10 +242,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => AddProfileScreen(),
+                                  builder: (context) => const AddProfileScreen(),
                                 ));
                           },
-                          child: Text(
+                          child: const Text(
                             'See All',
                             style: TextStyle(
                               color: Color(0xFF0B5D3A),

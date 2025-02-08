@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:hny_main/core/routes/app_routes.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
 import 'package:hny_main/data/providers/auth_provider.dart';
+import 'package:hny_main/data/providers/bottom_nav_controller.dart';
 import 'package:hny_main/view/screens/main/auth/sign_in_screen.dart';
 import 'package:hny_main/view/screens/main/profile/widgets_elements.dart';
 import 'package:hny_main/view/widgets/app_text_widget.dart';
@@ -197,11 +199,12 @@ class ProfileScreen extends StatelessWidget {
                   onPressed: () {
                     Provider.of<AuthProvider>(context, listen: false)
                         .logout()
-                        .then((_) {
-                      Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(
-                            builder: (context) => const SignInScreen()),
-                        (route) => false, // Remove all previous routes
+                        .then((_) async {
+                      Provider.of<BottomNavController>(context, listen: false)
+                          .changeScreenIndex(0, false);
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                        AppRoutes.loginPage,
+                        (route) => true,
                       );
                     });
                   },

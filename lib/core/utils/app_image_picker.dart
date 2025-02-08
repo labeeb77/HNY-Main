@@ -10,6 +10,7 @@ class AppImagePicker {
     if (image != null) {
       return File(image.path);
     }
+    return null;
   }
 
   Future<File?> captureImageFromCamera() async {
@@ -17,5 +18,6 @@ class AppImagePicker {
     if (image != null) {
       return File(image.path);
     }
+    return null;
   }
 }

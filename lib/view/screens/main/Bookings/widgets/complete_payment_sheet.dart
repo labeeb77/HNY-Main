@@ -3,7 +3,6 @@ import 'package:gap/gap.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
 import 'package:hny_main/data/providers/home_controller.dart';
 import 'package:hny_main/view/screens/main/bookings/widgets/payment_options_widget.dart';
-import 'package:hny_main/view/screens/sub/car_details_screen/widgets/booking_details.dart';
 import 'package:hny_main/view/widgets/app_button.dart';
 import 'package:provider/provider.dart';
 

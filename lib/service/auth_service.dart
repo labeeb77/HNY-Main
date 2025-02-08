@@ -32,12 +32,12 @@ class AuthService {
   Future<void> saveUserData(UserModel user) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('userId', user.id ?? "");
-    await prefs.setString('userToken', user.strToken ?? "");
+    await prefs.setString('access_token', user.strToken ?? "");
   }
 
-  Future<void> clearToken() async {
+  Future<void> clearAllLocalData() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('userToken');
+    await prefs.remove('access_token');
   }
 }
 
@@ -102,7 +102,7 @@ class AuthProvider extends ChangeNotifier {
     try {
       _setLoading(true);
       _clearError();
-      await _authService.clearToken();
+      await _authService.clearAllLocalData();
       _user = null;
       notifyListeners();
     } catch (e) {

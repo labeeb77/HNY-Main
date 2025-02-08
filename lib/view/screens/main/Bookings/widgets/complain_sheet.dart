@@ -1,11 +1,9 @@
-import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
 import 'package:hny_main/core/utils/app_text_styles.dart';
 import 'package:hny_main/data/providers/home_controller.dart';
 import 'package:hny_main/view/screens/main/bookings/widgets/file_upload_ui_widget.dart';
-import 'package:hny_main/view/screens/main/bookings/widgets/payment_options_widget.dart';
 import 'package:hny_main/view/widgets/app_button.dart';
 import 'package:hny_main/view/widgets/app_text_widget.dart';
 import 'package:hny_main/view/widgets/app_textform_widget.dart';
@@ -14,7 +12,7 @@ import 'package:provider/provider.dart';
 class ComplainBottomSheet extends StatelessWidget {
   ComplainBottomSheet({super.key});
 
-  TextEditingController _complainController = TextEditingController();
+  final TextEditingController _complainController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -116,7 +114,7 @@ class ComplainBottomSheet extends StatelessWidget {
                           borderColor: AppColors.textFormFieldBorderColor,
                         )),
                     const Gap(20),
-                    FileUploadUIWidget(),
+                    const FileUploadUIWidget(),
                     const Gap(19),
                     Row(
                       children: [
