@@ -1,26 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
+import 'package:hny_main/data/models/response/car_list_model.dart';
 
 class CarSpecs extends StatelessWidget {
-  const CarSpecs({super.key});
+  final ArrCar arrCar;
+  const CarSpecs({super.key, required this.arrCar});
 
   @override
   Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.all(16.0),
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          SpecItem(icon: Icons.book_outlined, label: 'Manual'),
-          SpecItem(icon: Icons.local_gas_station_outlined, label: 'Petrol'),
-          SpecItem(icon: Icons.people_outlined, label: '5 Seats'),
-          SpecItem(icon: Icons.speed_outlined, label: '138 bhp'),
-          SpecItem(icon: Icons.water_drop_outlined, label: '470 litres'),
+          SpecItem(
+            icon: Icons.book_outlined,
+            label: arrCar.strVarients ?? 'N/A',
+          ),
+          SpecItem(
+            icon: Icons.local_gas_station_outlined,
+            label: arrCar.strFuelType?.toString() ?? 'N/A',
+          ),
+          SpecItem(
+            icon: Icons.people_outlined,
+            label: '${arrCar.strSeatNo ?? 'N/A'} Seats',
+          ),
+          SpecItem(
+            icon: Icons.speed_outlined,
+            label: '${arrCar.intPower ?? 'N/A'} bhp',
+          ),
+          SpecItem(
+            icon: Icons.water_drop_outlined,
+            label: '${arrCar.intFuelCapacity ?? 'N/A'} litres',
+          ),
         ],
       ),
     );
   }
 }
+
 
 class SpecItem extends StatelessWidget {
   final IconData icon;

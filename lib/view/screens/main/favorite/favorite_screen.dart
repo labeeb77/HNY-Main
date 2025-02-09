@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:hny_main/data/providers/home_controller.dart';
 import 'package:hny_main/view/screens/main/home/widgets_elements.dart';
 import 'package:hny_main/view/widgets/common_app_bar.dart';
+import 'package:provider/provider.dart';
 
 class FavoriteScreen extends StatelessWidget {
   const FavoriteScreen({super.key});
@@ -15,11 +17,14 @@ class FavoriteScreen extends StatelessWidget {
         showLeading: false,
       ),
       body: OrientationBuilder(
-        builder: (context, orientation) => ListView.builder(
-          itemCount: 5,
+        builder: (context, orientation) => Consumer<HomeController>(builder: (context, value, child) {
+             final data = value.carListData;
+          return ListView.builder(
+          itemCount: data.length,
           itemBuilder: (context, index) => Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 7),
             child: buildCarCard(
+              data[index],
                 'Toyota Corolla',
                 4.8.toString(),
                 'Sedans',
@@ -27,13 +32,14 @@ class FavoriteScreen extends StatelessWidget {
                 'Petrol',
                 '5 Seats',
                 '7,000',
-                'https://s3-alpha-sig.figma.com/img/ae74/a9e7/f68182d3f5fd6e910be717cb9f8591cb?Expires=1737936000&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=alQGZUI7It7rs8a1I-5cxC~1mRbH6BWzXVfNnxJLLBO7vZ~eN6s-PkRTAwZByNo-p4PD1Y~X1R6iZall1SLd1lRepV9dcgtTJGRrizjrql8vS7-tDOuwcCirAlKtvUA-hhuDoavRc5UObrdvq3P0VNobd5Rx-XO23HogafOW-9~dMl6oyabdMQQpoZ7usDMxZgmta-KiE1ZzSWOv4UbYSpo-DKMtCGo5N70XLJz2FTJH9JEkH6ewsxGLCH5J5LDxhDIQj6qBNSQnothqq~78zzSwLUGMFn-aWntR3tuiXOvWOCZDnBtFjALoiBC-Jimnor0-0YfgQxn92BjVonKBxw__',
+                data[index].strImgUrl ?? '',
                 true,
                 context,
                 orientation,
                 mediaQuery),
           ),
-        ),
+        );
+        },)
       ),
     );
   }

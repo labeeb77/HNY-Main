@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -29,10 +31,23 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
     WidgetsBinding.instance.addPostFrameCallback((va) {
-      Provider.of<HomeController>(context, listen: false)
-          .getCarDataList(context);
+      final homeController =
+          Provider.of<HomeController>(context, listen: false);
+      homeController.getCarDataList(context);
+      homeController.getCarTypeList(); // Add this to fetch car types
     });
     super.initState();
+  }
+
+  String getImageUrlForType(String type) {
+    switch (type.toLowerCase()) {
+      case 'sedan':
+        return 'https://cdn.pixabay.com/photo/2012/05/29/00/43/car-49278_640.jpg';
+      case 'suv':
+        return 'https://static.vecteezy.com/system/resources/thumbnails/031/196/761/small_2x/beautiful-modern-concept-supercar-light-sky-blue-with-maroon-details-photo.jpg';
+      default:
+        return 'https://cdn.pixabay.com/photo/2012/05/29/00/43/car-49278_640.jpg';
+    }
   }
 
   @override
@@ -132,7 +147,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 const Gap(9),
                 CircledIcon(
                   ontap: () {
-                    // log((orientation==Orientation.portrait).toString())''
                     showModalBottomSheet(
                       context: context,
                       isScrollControlled: true,
@@ -197,31 +211,46 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  SizedBox(
-                    height: 100,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        // padding: const EdgeInsets.symmetric(horizontal: 0),
-                        // scrollDirection: Axis.horizontal,
-                        children: [
-                          buildRideOption(
-                              'https://cdn.pixabay.com/photo/2012/05/29/00/43/car-49278_640.jpg',
-                              'Sedans'),
-                          buildRideOption(
-                              'https://static.vecteezy.com/system/resources/thumbnails/031/196/761/small_2x/beautiful-modern-concept-supercar-light-sky-blue-with-maroon-details-photo.jpg',
-                              'SUV'),
-                          buildRideOption(
-                              'https://static.vecteezy.com/system/resources/thumbnails/031/196/761/small_2x/beautiful-modern-concept-supercar-light-sky-blue-with-maroon-details-photo.jpg',
-                              'Trucks'),
-                          buildRideOption(
-                              'https://cdn.pixabay.com/photo/2012/05/29/00/43/car-49278_640.jpg',
-                              'Electric'),
-                          buildRideOption('', 'View All'),
-                        ],
-                      ),
-                    ),
+                  Consumer<HomeController>(
+                    builder: (context, homeController, child) {
+                      if (homeController.isLoading) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+
+                      return SizedBox(
+                        height: 100,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: homeController.carTypeListData.length +
+                                1, // +1 for "View All"
+                            itemBuilder: (context, index) {
+                              // If it's the last item, show "View All"
+                              if (index ==
+                                  homeController.carTypeListData.length) {
+                                return Padding(
+                                  padding: const EdgeInsets.only(right: 16.0),
+                                  child: buildRideOption('', 'View All'),
+                                );
+                              }
+
+                              final carType =
+                                  homeController.carTypeListData[index];
+                              return Padding(
+                                padding: const EdgeInsets.only(right: 16.0),
+                                child: buildRideOption(
+                                  getImageUrlForType(carType.strType ?? ''),
+                                  carType.strName ?? 'Unknown',
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      );
+                    },
                   ),
 
                   // Popular Cars Section
@@ -239,11 +268,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         InkWell(
                           onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const AddProfileScreen(),
-                                ));
+                            
                           },
                           child: const Text(
                             'See All',
@@ -265,6 +290,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           Consumer<HomeController>(
                         builder: (context, value, child) {
                           final data = value.carListData;
+                          log('car items length: ${value.carListData.length}');
                           return value.isLoading
                               ? const Center(
                                   child: CircularProgressIndicator(),
@@ -274,6 +300,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   shrinkWrap: true,
                                   itemCount: value.carListData.length,
                                   itemBuilder: (context, index) => buildCarCard(
+                                    data[index],
                                       data[index].strModel ?? "Unknown",
                                       data[index].intRating.toString() ?? '4.0',
                                       data[index].strCarCategory ?? "Unknown",
@@ -300,29 +327,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
- // const SizedBox(height: 16),
-                          // buildCarCard(
-                          //     'Tesla Model 3',
-                          //     4.8,
-                          //     'Electric',
-                          //     'Automatic',
-                          //     'Electric',
-                          //     '5 Seats',
-                          //     '9,000',
-                          //     'https://s3-alpha-sig.figma.com/img/ae74/a9e7/f68182d3f5fd6e910be717cb9f8591cb?Expires=1736726400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=K715cm5OI1fJp2z6U3vjW8ZaZKaNFcS7GPY9~L9hP1azK1FH4A7MOZ2eev45S2W3CpedLyJZOypyNlkDXeVc3EvuT2a8GRGzkLc0pcUe41xvBrB9F-ZFLnqzoyQiTdVJYJ9j-B~n6JrR5bzBZFbMCa5gATFUZP9CnNyQKeuj9MhBBsyjKoaPKBHyuxi2ePhS4m22uYirfWWsV9z-9NxPKdE7WAmgb-arXkgjnJHtTHq9-RJ3Z36~kCLcuC8TWfDbbonZZm7FyjD-KrerDgskbpfHRVueRN~DxGrwtG50vzvtHr02YN4pqpjuW3qnx24dGVs2JlYgseMIqUXLiidqdA__',
-                          //    false, context,
-                          //     orientation,
-                          //     mediaQuery),
-                          // const SizedBox(height: 16),
-                          // buildCarCard(
-                          //     'Tesla Model 3',
-                          //     4.8,
-                          //     'Electric',
-                          //     'Automatic',
-                          //     'Electric',
-                          //     '5 Seats',
-                          //     '9,000',
-                          //     'https://s3-alpha-sig.figma.com/img/ae74/a9e7/f68182d3f5fd6e910be717cb9f8591cb?Expires=1736726400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=K715cm5OI1fJp2z6U3vjW8ZaZKaNFcS7GPY9~L9hP1azK1FH4A7MOZ2eev45S2W3CpedLyJZOypyNlkDXeVc3EvuT2a8GRGzkLc0pcUe41xvBrB9F-ZFLnqzoyQiTdVJYJ9j-B~n6JrR5bzBZFbMCa5gATFUZP9CnNyQKeuj9MhBBsyjKoaPKBHyuxi2ePhS4m22uYirfWWsV9z-9NxPKdE7WAmgb-arXkgjnJHtTHq9-RJ3Z36~kCLcuC8TWfDbbonZZm7FyjD-KrerDgskbpfHRVueRN~DxGrwtG50vzvtHr02YN4pqpjuW3qnx24dGVs2JlYgseMIqUXLiidqdA__',
-                          //     false,context,
-                          //     orientation,
-                          //     mediaQuery),,)

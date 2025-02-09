@@ -7,6 +7,7 @@ import 'package:hny_main/view/common/bottom_nav.dart';
 import 'package:hny_main/view/screens/main/bookings/widgets/file_upload_ui_widget.dart';
 import 'package:hny_main/view/screens/main/home/home_screen.dart';
 import 'package:hny_main/view/widgets/back_button.dart';
+import 'package:hny_main/view/widgets/liecense_image_widget.dart';
 import 'package:provider/provider.dart';
 
 class AddDrivingLicenseScreen extends StatelessWidget {
@@ -71,10 +72,10 @@ class AddDrivingLicenseScreen extends StatelessWidget {
                   color: const Color(0xFFD9E5E3).withOpacity(0.4),
                   borderRadius: BorderRadius.circular(4),
                   border: Border.all(color: Colors.grey.withOpacity(0.5))),
-              child: Column(
+              child: const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'Driving License ID',
                     style: TextStyle(
                       color: Color(0xFF006C3F),
@@ -82,45 +83,13 @@ class AddDrivingLicenseScreen extends StatelessWidget {
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  SizedBox(height: 12),
                   // ID Card Container
-                  Container(
-                    width: double.infinity,
+                  DrivingLicenseImageWidget(
                     height: 220,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(
-                        color: Colors.grey[300]!,
-                        width: 1,
-                      ),
-                    ),
-                    child: Consumer<ProfileProvider>(
-                      builder: (context, value, child) => ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: value.selectedDrivingLicenseImagePath ==
-                                      null &&
-                                  globalUser?.strLicenceUrl == ""
-                              ? Image.asset(
-                                  'assets/images/placeholder_image.webp', // Add your placeholder image
-                                  fit: BoxFit.cover,
-                                )
-                              : value.selectedDrivingLicenseImagePath == null &&
-                                      globalUser?.strLicenceUrl != ""
-                                  ? Image(
-                                      fit: BoxFit.cover,
-                                      image: NetworkImage(
-                                          globalUser!.strLicenceUrl!
-                                          // Add your placeholder image
-                                          ))
-                                  : Image(
-                                      fit: BoxFit.cover,
-                                      image: FileImage(
-                                          value.selectedDrivingLicenseImagePath!
-                                          // Add your placeholder image
-                                          ))),
-                    ),
-                  ),
+                    defaultImagePath:
+                        'assets/images/custom_placeholder.webp', // Optional
+                  )
                 ],
               ),
             )
@@ -151,7 +120,9 @@ class AddDrivingLicenseScreen extends StatelessWidget {
               ),
             ),
             child: context.watch<ProfileProvider>().isLoading
-                ? const CircularProgressIndicator(color: AppColors.white,)
+                ? const CircularProgressIndicator(
+                    color: AppColors.white,
+                  )
                 : const Text(
                     'Save',
                     style: TextStyle(

@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
 import 'package:hny_main/view/widgets/app_text_widget.dart';
 
-
-
-
-
 class PrimaryElevateButton extends StatelessWidget {
-  final buttonName;
-  final isGrey;
-  final ontap;
+  final String? buttonName;
+  final bool isGrey;
+  final VoidCallback? ontap;
+  final bool loading; // Add this line
+
   const PrimaryElevateButton({
     this.ontap,
-    this.buttonName,this.isGrey,
+    this.buttonName,
+    this.isGrey = false,
+    this.loading = false, // Add this line
     super.key,
   });
 
@@ -21,15 +21,35 @@ class PrimaryElevateButton extends StatelessWidget {
     return SizedBox(
       height: 38,
       child: ElevatedButton(
-        onPressed:ontap??(){},
+        onPressed:
+            loading ? null : ontap ?? () {}, // Disable button when loading
         style: ElevatedButton.styleFrom(
           elevation: 0.0,
-          backgroundColor:isGrey!=null? AppColors.greenShadeBackground :AppColors.primary,
+          backgroundColor: AppColors.primary,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30),
           ),
         ),
-        child:  FittedBox(child: AppText(buttonName??"Book Now",color:isGrey!=null?AppColors.primary: AppColors.white,style: const TextStyle(fontWeight: FontWeight.w700,fontSize: 16),maxLines: 1,)),
+        child: loading
+            ? const SizedBox(
+                height: 25,
+                width: 25,
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                      Colors.white), // Customize loader color
+                ),
+              )
+            : FittedBox(
+                child: AppText(
+                  buttonName ?? "Book Now",
+                  color: isGrey ? AppColors.primary : AppColors.white,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16,
+                  ),
+                  maxLines: 1,
+                ),
+              ),
       ),
     );
   }
@@ -61,7 +81,8 @@ class AppButton extends StatelessWidget {
       width: double.infinity,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: color ?? theme.colorScheme.primary, // Default to theme primary color
+          backgroundColor: color ??
+              theme.colorScheme.primary, // Default to theme primary color
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(borderRadius),
           ),

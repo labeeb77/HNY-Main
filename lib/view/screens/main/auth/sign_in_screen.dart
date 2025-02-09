@@ -5,6 +5,7 @@ import 'package:hny_main/data/providers/auth_provider.dart';
 import 'package:hny_main/view/screens/main/auth/otp_verify_screen.dart';
 import 'package:hny_main/view/widgets/app_button.dart';
 import 'package:hny_main/view/widgets/app_textform_widget.dart';
+import 'package:provider/provider.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -66,20 +67,23 @@ class _SignInScreenState extends State<SignInScreen> {
                     textAlign: TextAlign.center,
                   ),
                   SizedBox(height: screenHeight * 0.1),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 55,
-                    child: PrimaryElevateButton(
-                      buttonName: "Next",
-                      ontap: () {
-                        if (_formKey.currentState != null &&
-                            _formKey.currentState!.validate()) {
-                          _handleLogin(
-                            context,
-                            AuthProvider(context),
-                          );
-                        }
-                      },
+                  Consumer<AuthProvider>(
+                    builder: (context, provider, child) => SizedBox(
+                      width: double.infinity,
+                      height: 55,
+                      child: PrimaryElevateButton(
+                        buttonName: "Next",
+                        loading: provider.isLoading, // Pass the loading state
+                        ontap: () {
+                          if (_formKey.currentState != null &&
+                              _formKey.currentState!.validate()) {
+                            _handleLogin(
+                              context,
+                              provider, // Pass the provider directly
+                            );
+                          }
+                        },
+                      ),
                     ),
                   ),
                   const Gap(20),

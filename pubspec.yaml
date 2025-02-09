@@ -47,10 +47,11 @@ dependencies:
   intl: ^0.20.1
   dotted_border: ^2.1.0
   connectivity_plus: ^6.1.2
-  fluttertoast: ^8.2.10
+  fluttertoast: ^8.2.11
   shared_preferences: 2.3.3
   image_picker: ^1.1.2
   firebase_messaging: ^15.2.1
+  intl_phone_number_input_perci: ^0.7.5
 
 dev_dependencies:
   flutter_test:

@@ -4,7 +4,6 @@ import 'package:hny_main/data/providers/home_controller.dart';
 import 'package:hny_main/view/widgets/app_button.dart';
 import 'package:provider/provider.dart';
 
-
 class PriceRangeBottomSheet extends StatelessWidget {
   const PriceRangeBottomSheet({super.key});
 
@@ -17,8 +16,7 @@ class PriceRangeBottomSheet extends StatelessWidget {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: Consumer<HomeController>(
-        builder: (context, value, child) => 
-         Column(
+        builder: (context, value, child) => Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -33,7 +31,6 @@ class PriceRangeBottomSheet extends StatelessWidget {
             RangeSlider(
               values: value.currentRangeValues,
               min: 0,
-            
               max: 100,
               divisions: 100,
               activeColor: AppColors.primary,
@@ -43,36 +40,46 @@ class PriceRangeBottomSheet extends StatelessWidget {
                 'AED ${value.currentRangeValues.end.round()}',
               ),
               onChanged: (RangeValues values) {
-              value.changeSliderValue(values);
+                value.changeSliderValue(values);
               },
             ),
-           Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: AppColors.primary,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      'AED ${value.currentRangeValues.start.round()}',
-                      style: const TextStyle(color: Colors.white),
-                    ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: AppColors.primary,
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: AppColors.primary,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      'AED ${value.currentRangeValues.end.round()}',
-                      style: const TextStyle(color: Colors.white),
-                    ),
+                  child: Text(
+                    'AED ${value.currentRangeValues.start.round()}',
+                    style: const TextStyle(color: Colors.white),
                   ),
-                ],
+                ),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: AppColors.primary,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    'AED ${value.currentRangeValues.end.round()}',
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 30),
+            const Text(
+              'Car Type',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
               ),
+            ),
             const SizedBox(height: 30),
             const Text(
               'Car Type',
@@ -82,57 +89,68 @@ class PriceRangeBottomSheet extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
-            Wrap(
-              spacing: 10,
-              runSpacing: 10,
-              children: value.carTypes.map((type) {
-                final isSelected = value.selectedCarType == type;
-                return GestureDetector(
-                  onTap: () {
-                    value.changeCarType(type);
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 10,
-                    ),
-                    decoration: BoxDecoration(
-                      color: isSelected ? AppColors.primary : Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: isSelected ? AppColors.primary : Colors.grey.shade300,
-                      ),
-                    ),
-                    child: Text(
-                      type,
-                      style: TextStyle(
-                        color: isSelected ? Colors.white : Colors.black,
-                      ),
-                    ),
+            value.isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : // In your Wrap widget, update the children mapping:
+                Wrap(
+                    spacing: 10,
+                    runSpacing: 10,
+                    children: value.carTypeListData.map((type) {
+                      final isSelected = value
+                          .isCarTypeSelected(type); // Use the new helper method
+                      return GestureDetector(
+                        onTap: () {
+                          value.toggleCarType(
+                              type); // Pass the entire type object
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 10,
+                          ),
+                          decoration: BoxDecoration(
+                            color:
+                                isSelected ? AppColors.primary : Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                              color: isSelected
+                                  ? AppColors.primary
+                                  : Colors.grey.shade300,
+                            ),
+                          ),
+                          child: Text(
+                            type.strName ?? 'Unknown',
+                            style: TextStyle(
+                              color: isSelected ? Colors.white : Colors.black,
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
                   ),
-                );
-              }).toList(),
-            ),
             const SizedBox(height: 100),
             Row(
               children: [
-                const Spacer()
-,                 Expanded(
+                const Spacer(),
+                Expanded(
                   child: PrimaryElevateButton(
-                    buttonName: "Clear All",isGrey: true,
-                  ontap: (){
-                    Navigator.pop(context);
-                  },
+                    buttonName: "Clear All",
+                    isGrey: true,
+                    ontap: () {
+                      value.clearCarTypes();
+                      value.changeSliderValue(const RangeValues(30, 50));
+                      Navigator.pop(context);
+                    },
                   ),
                 ),
                 const SizedBox(width: 10),
-                 Expanded(
+                Expanded(
                   child: PrimaryElevateButton(
-                     ontap: (){
-                    Navigator.pop(context);
-                  },
-                    buttonName:"Apply"
-                  )
+                    ontap: () {
+                      Navigator.pop(context);
+                    },
+                    buttonName: "Apply",
+                  ),
                 ),
               ],
             ),

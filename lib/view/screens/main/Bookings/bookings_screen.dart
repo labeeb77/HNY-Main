@@ -41,12 +41,10 @@ class BookingScreen extends StatelessWidget {
                     ],
                   ),
                   Container(
-                    margin:
-                        const EdgeInsets.symmetric(vertical: 34, horizontal: 16),
+                    margin: const EdgeInsets.symmetric(vertical: 34, horizontal: 16),
                     padding: const EdgeInsets.all(4),
                     decoration: BoxDecoration(
-                      color:
-                          const Color.fromARGB(255, 75, 124, 77).withOpacity(0.4),
+                      color: const Color.fromARGB(255, 75, 124, 77).withOpacity(0.4),
                       borderRadius: BorderRadius.circular(30),
                     ),
                     child: Row(
@@ -107,17 +105,12 @@ class BookingScreen extends StatelessWidget {
             ),
             // Main Content
             Expanded(
-              child: Container(
-                color: Colors.white,
-                child: Expanded(
-                  child: ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    itemCount: 5,
-                    itemBuilder: (context, index) {
-                      return BookingCard(index: index);
-                    },
-                  ),
-                ),
+              child: ListView.builder(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                itemCount: 5,
+                itemBuilder: (context, index) {
+                  return BookingCard(index: index);
+                },
               ),
             ),
           ],

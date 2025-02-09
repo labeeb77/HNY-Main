@@ -20,74 +20,76 @@ class LocationDetails extends StatelessWidget {
         // color: Colors.grey[100],
         borderRadius: BorderRadius.circular(8),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          const Column(
-            children: [
-              Icon(
-                Icons.circle_outlined,
-                color: Colors.green,
-              ),
-              SizedBox(
-                  height: 80,
-                  child: DottedLine(
-                    dashLength: 8,
-                    dashGapLength: 6,
-                    direction: Axis.vertical,
-                  )),
-              Icon(
-                Icons.location_on_outlined,
-                color: Colors.green,
-              ),
-            ],
-          ),
-          const Gap(16),
-          SizedBox(
-            height: 150,
-            width: MediaQuery.of(context).size.width / 1.85,
-            child: const Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Column(
               children: [
-                LocationItem(
-                  title: 'Pick-Up',
-                  address: '22 Street, 59, Al Quoz Industrial 2',
+                Icon(
+                  Icons.circle_outlined,
+                  color: Colors.green,
                 ),
-                Expanded(child: Divider()),
-                LocationItem(
-                  title: 'Drop Off',
-                  address: '567R+876 - 4th St - Al Quoz',
+                SizedBox(
+                    height: 80,
+                    child: DottedLine(
+                      dashLength: 8,
+                      dashGapLength: 6,
+                      direction: Axis.vertical,
+                    )),
+                Icon(
+                  Icons.location_on_outlined,
+                  color: Colors.green,
                 ),
               ],
             ),
-          ),
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: const BoxDecoration(
-                shape: BoxShape.circle, color: AppColors.primary),
-            child: const FittedBox(
-              child: Row(
+            const Gap(16),
+            SizedBox(
+              height: 150,
+              child: const Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(
-                      height: 20,
-                      width: 20,
-                      child: Icon(
-                        color: AppColors.white,
-                        Icons.arrow_upward,
-                      )),
-                  SizedBox(
-                      height: 20,
-                      width: 20,
-                      child: Icon(
-                        Icons.arrow_downward,
-                        color: AppColors.white,
-                      ))
+                  LocationItem(
+                    title: 'Pick-Up',
+                    address: '22 Street, 59, Al Quoz Industrial 2',
+                  ),
+                  Expanded(child: Divider()),
+                  LocationItem(
+                    title: 'Drop Off',
+                    address: '567R+876 - 4th St - Al Quoz',
+                  ),
                 ],
               ),
             ),
-          )
-        ],
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: const BoxDecoration(
+                  shape: BoxShape.circle, color: AppColors.primary),
+              child: const FittedBox(
+                child: Row(
+                  children: [
+                    SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: Icon(
+                          color: AppColors.white,
+                          Icons.arrow_upward,
+                        )),
+                    SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: Icon(
+                          Icons.arrow_downward,
+                          color: AppColors.white,
+                        ))
+                  ],
+                ),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -106,7 +108,13 @@ class LocationItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => Navigator.push(context,MaterialPageRoute(builder: (context) => LocationPickerScreen(from: title,),)),
+      onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => LocationPickerScreen(
+              from: title,
+            ),
+          )),
       child: Row(
         children: [
           Column(
