@@ -161,6 +161,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.0"
+  dlibphonenumber:
+    dependency: transitive
+    description:
+      name: dlibphonenumber
+      sha256: "3cfab900d88863d5df671a0c2995537fbef93dee89af0cbd3248cd4a96bdc2cb"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.31"
   dotted_border:
     dependency: "direct main"
     description:
@@ -177,6 +185,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.2.3"
+  equatable:
+    dependency: transitive
+    description:
+      name: equatable
+      sha256: "567c64b3cb4cf82397aac55f4f0cbd3ca20d77c6c03bedbc4ceaddc08904aef7"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.7"
   fake_async:
     dependency: transitive
     description:
@@ -332,10 +348,10 @@ packages:
     dependency: "direct main"
     description:
       name: fluttertoast
-      sha256: "24467dc20bbe49fd63e57d8e190798c4d22cbbdac30e54209d153a15273721d1"
+      sha256: "8971efe7e59585e9149052e33718d84bca51e806f063d1467622b3dcb2878b6c"
       url: "https://pub.dev"
     source: hosted
-    version: "8.2.10"
+    version: "8.2.11"
   gap:
     dependency: "direct main"
     description:
@@ -520,6 +536,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.20.2"
+  intl_phone_number_input_perci:
+    dependency: "direct main"
+    description:
+      name: intl_phone_number_input_perci
+      sha256: e7931ba45d839857a4cde0e62e126982f61803607c188f594f454ce5f53d6b5e
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.7.5"
   leak_tracker:
     dependency: transitive
     description:
@@ -712,6 +736,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.8"
+  protobuf:
+    dependency: transitive
+    description:
+      name: protobuf
+      sha256: "68645b24e0716782e58948f8467fd42a880f255096a821f9e7d0ec625b00c84d"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.1.0"
   provider:
     dependency: "direct main"
     description:

@@ -4,67 +4,63 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
+import 'package:hny_main/data/models/response/car_list_model.dart';
 import 'package:hny_main/view/screens/sub/car_details_screen/car_details_screen.dart';
 import 'package:hny_main/view/widgets/app_button.dart';
 import 'package:hny_main/view/widgets/app_text_widget.dart';
 
+import 'dart:math' as math;
 class NavItemWidget extends StatelessWidget {
   final bool isSelected;
-  final IconData icon;
   final String label;
+  final IconData icon;
   final VoidCallback ontap;
-  final orientation;
+  final Orientation orientation;
 
   const NavItemWidget({
+    Key? key,
     required this.isSelected,
+    required this.label,
     required this.icon,
     required this.ontap,
-    required this.label,
     required this.orientation,
-    super.key,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+    final bool isPortrait = orientation == Orientation.portrait;
+    
+    // Calculate dynamic sizes
+    final double iconSize = isPortrait 
+        ? math.min(24, screenSize.width * 0.06)
+        : math.min(20, screenSize.height * 0.06);
+    
+    final double fontSize = isPortrait
+        ? math.min(12, screenSize.width * 0.03)
+        : math.min(10, screenSize.height * 0.03);
+
     return InkWell(
       onTap: ontap,
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 8.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            // Fixed height for the indicator
-            SizedBox(
-              height: 2,
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 300),
-                width: isSelected ? MediaQuery.of(context).size.width / 6 : 0,
-                color: isSelected ? AppColors.primary : Colors.transparent,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            icon,
+            color: isSelected ? AppColors.primary : Colors.grey,
+            size: iconSize,
+          ),
+          if (isPortrait || screenSize.width > 600) // Show label in portrait or wide landscape
+            Text(
+              label,
+              style: TextStyle(
+                color: isSelected ? AppColors.primary : Colors.grey,
+                fontSize: fontSize,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
               ),
             ),
-
-            const SizedBox(height: 6),
-            Icon(
-              icon,
-              color: isSelected ? AppColors.primary : AppColors.textSecondary,
-            ),
-            orientation == Orientation.portrait
-                ? Column(
-                    children: [
-                      const SizedBox(height: 4),
-                      AppText(
-                        label,
-                        fontWeight:
-                            isSelected ? FontWeight.w700 : FontWeight.w400,
-                        color: isSelected
-                            ? AppColors.primary
-                            : AppColors.textSecondary,
-                      ),
-                    ],
-                  )
-                : const SizedBox()
-          ],
-        ),
+        ],
       ),
     );
   }
@@ -91,6 +87,7 @@ Widget buildFeature(IconData icon, String label) {
 }
 
 Widget buildCarCard(
+  ArrCar arrCar,
   String name,
   String rating,
   String category,
@@ -109,7 +106,7 @@ Widget buildCarCard(
       Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const CarDetailsScreen(),
+            builder: (context) =>  CarDetailsScreen(arrCar: arrCar,),
           ));
     },
     child: Container(

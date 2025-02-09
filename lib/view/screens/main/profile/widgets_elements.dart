@@ -44,7 +44,7 @@ class DocumentElement extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
         height: 103,
-        width: MediaQuery.of(context).size.width / 4,
+      
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
             color: AppColors.white,

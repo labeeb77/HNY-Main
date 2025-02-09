@@ -5,6 +5,7 @@ import 'package:hny_main/core/utils/app_colors.dart';
 import 'package:hny_main/data/providers/auth_provider.dart';
 import 'package:hny_main/view/widgets/app_button.dart';
 import 'package:hny_main/view/widgets/app_text_widget.dart';
+import 'package:provider/provider.dart';
 
 class OtpVerifyScreen extends StatefulWidget {
   final otpToken;
@@ -92,17 +93,20 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
                     ),
                   ),
                   SizedBox(height: screenHeight * 0.1),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 55,
-                    child: PrimaryElevateButton(
-                      buttonName: "Next",
-                      ontap: () {
-                        if (_formKey.currentState != null &&
-                            _formKey.currentState!.validate()) {
-                          verifyOtp(context, AuthProvider(context), widget.otpToken);
-                        }
-                      },
+                  Consumer<AuthProvider>(
+                    builder: (context, provider, child) => SizedBox(
+                      width: double.infinity,
+                      height: 55,
+                      child: PrimaryElevateButton(
+                        buttonName: "Next",
+                        loading: provider.isLoading, // Pass the loading state
+                        ontap: () {
+                          if (_formKey.currentState != null &&
+                              _formKey.currentState!.validate()) {
+                            verifyOtp(context, provider, widget.otpToken);
+                          }
+                        },
+                      ),
                     ),
                   ),
                   SizedBox(height: screenHeight * 0.1),
@@ -148,7 +152,7 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
 
   Widget otp() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 48 - 16),
+      padding: const EdgeInsets.symmetric(horizontal: 15),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -156,7 +160,7 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
           // OTP Input 1
           SizedBox(
             height: 60,
-            width: 60,
+            width: 55,
             child: TextField(
               focusNode: focus0,
               inputFormatters: <TextInputFormatter>[
@@ -192,7 +196,7 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
           // OTP Input 2
           SizedBox(
             height: 60,
-            width: 60,
+            width: 55,
             child: RawKeyboardListener(
               focusNode: focusListner,
               onKey: (event) {
@@ -240,7 +244,7 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
           // OTP Input 3
           SizedBox(
             height: 60,
-            width: 60,
+            width: 55,
             child: RawKeyboardListener(
               focusNode: focus1Listner,
               onKey: (event) {
@@ -288,7 +292,7 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
           // OTP Input 4
           SizedBox(
             height: 60,
-            width: 60,
+            width: 55,
             child: RawKeyboardListener(
               focusNode: focus2Listner,
               onKey: (event) {
@@ -324,9 +328,7 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
                     if (otp1Controller.text.isNotEmpty &&
                         otp2Controller.text.isNotEmpty &&
                         otp3Controller.text.isNotEmpty &&
-                        otp4Controller.text.isNotEmpty) {
-                      verifyOtp(context, AuthProvider(context), widget.otpToken);
-                    }
+                        otp4Controller.text.isNotEmpty) {}
                   } else {
                     setState(() {
                       otp4Controller.text = '';
@@ -352,7 +354,7 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
           otp4Controller.text;
 
       if (verificationCode.length == 4) {
-        authProvider.verifyOtp(verificationCode, otpTOken,context);
+        authProvider.verifyOtp(verificationCode, otpTOken, context);
       }
     }
   }

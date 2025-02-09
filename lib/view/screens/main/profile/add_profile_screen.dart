@@ -8,6 +8,7 @@ import 'package:hny_main/core/utils/app_image_picker.dart';
 import 'package:hny_main/data/providers/auth_provider.dart';
 import 'package:hny_main/data/providers/profile_provider.dart';
 import 'package:hny_main/view/screens/main/profile/add_id_card_screen.dart';
+import 'package:hny_main/view/widgets/profile_image_widget.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -114,46 +115,11 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
               Center(
                 child: Stack(
                   children: [
-                    Consumer<ProfileProvider>(
-                      builder: (context, value, child) => InkWell(
-                        onTap: () {
-                          _showImageSourceActionSheet(context);
-                        },
-                        child: Container(
-                          width: 100,
-                          height: 100,
-                          clipBehavior: Clip.hardEdge,
-                          decoration: const BoxDecoration(
-                            // image: DecorationImage(
-                            //     fit: BoxFit.cover,
-                            //     image: value.selectedProfileImage == null
-                            //         ? const AssetImage(
-                            //             "assets/images/Objects.png")
-                            //         : FileImage(value.selectedProfileImage!)),
-                            shape: BoxShape.circle,
-                          ),
-                          child: value.selectedProfileImage == null &&
-                                  globalUser?.strProfileUrl == ""
-                              ? Image.asset(
-                                  'assets/images/placeholder_image.webp', // Add your placeholder image
-                                  fit: BoxFit.cover,
-                                )
-                              : value.selectedProfileImage == null &&
-                                      globalUser?.strProfileUrl != ""
-                                  ? Image(
-                                      fit: BoxFit.cover,
-                                      image: NetworkImage(
-                                          globalUser!.strProfileUrl!
-                                          // Add your placeholder image
-                                          ))
-                                  : Image(
-                                      fit: BoxFit.cover,
-                                      image:
-                                          FileImage(value.selectedProfileImage!
-                                              // Add your placeholder image
-                                              )),
-                        ),
-                      ),
+                    ProfileImageWidget(
+                      size: 100,
+                      onTap: () => _showImageSourceActionSheet(context),
+                      defaultImagePath:
+                          'assets/images/custom_placeholder.png', // Optional
                     ),
                     Positioned(
                       right: 0,
@@ -230,7 +196,7 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
               ),
               _buildInputField(
                   'Mobile Number', profileProvider.mobileController,
-                  keyboardType: TextInputType.phone),
+                  keyboardType: TextInputType.phone,readOnly: true),
               _buildInputField('Email ID', profileProvider.emailController,
                   keyboardType: TextInputType.emailAddress),
               _buildDropdownField(
@@ -279,54 +245,56 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
   }
 
   Widget _buildInputField(
-    String label,
-    TextEditingController controller, {
-    TextInputType? keyboardType,
-    Widget? suffix,
-    VoidCallback? ontap,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 4, bottom: 8),
-            child: Text(
-              label,
-              style: const TextStyle(
-                color: Color(0xFF82868B),
-                fontSize: 14,
-              ),
+  String label,
+  TextEditingController controller, {
+  TextInputType? keyboardType,
+  Widget? suffix,
+  VoidCallback? ontap,
+  bool readOnly = false,
+}) {
+  return Padding(
+    padding: const EdgeInsets.only(bottom: 16),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 4, bottom: 8),
+          child: Text(
+            label,
+            style: const TextStyle(
+              color: Color(0xFF82868B),
+              fontSize: 14,
             ),
           ),
-          TextFormField(
-            onTap: ontap,
-            controller: controller,
-            keyboardType: keyboardType,
-            readOnly: true,
-            decoration: InputDecoration(
-              fillColor: AppColors.white,
-              filled: true,
-              suffixIcon: suffix,
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 12,
-              ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(4),
-                borderSide: const BorderSide(color: Colors.grey),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(4),
-                borderSide: const BorderSide(color: Colors.grey),
-              ),
+        ),
+        TextFormField(
+          onTap: ontap,
+          controller: controller,
+          keyboardType: keyboardType,
+          readOnly: readOnly || (ontap != null), // Modified this line
+          enabled: !readOnly, // Added this line
+          decoration: InputDecoration(
+            fillColor: readOnly ? Colors.grey[200] : AppColors.white, // Added this line
+            filled: true,
+            suffixIcon: suffix,
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 12,
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(4),
+              borderSide: const BorderSide(color: Colors.grey),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(4),
+              borderSide: const BorderSide(color: Colors.grey),
             ),
           ),
-        ],
-      ),
-    );
-  }
+        ),
+      ],
+    ),
+  );
+}
 
   Widget _buildRadioButton(String value, ProfileProvider provider) {
     return Row(

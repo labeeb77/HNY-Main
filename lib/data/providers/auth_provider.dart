@@ -1,8 +1,10 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hny_main/core/global/profile.dart';
 import 'package:hny_main/core/routes/app_routes.dart';
+import 'package:hny_main/core/utils/app_colors.dart';
 import 'package:hny_main/data/models/auth/login_res_model.dart';
 import 'package:hny_main/data/models/user_model/user_mode.dart';
 import 'package:hny_main/service/auth_service.dart';
@@ -47,9 +49,11 @@ class AuthProvider extends ChangeNotifier {
       String otpInput, String otpToken, BuildContext context) async {
     try {
       _setLoading(true);
+      notifyListeners();
       _clearError();
       final response = await _authService.verifyOtp(otpInput, otpToken);
       if (response.success && response.data != null) {
+        log('OTP verified successfully ${response.data} ${response.success}');
         _user = UserModel.fromJson(response.data);
         globalUser = UserModel.fromJson(response.data);
         await _authService.saveUserData(_user!).then((_) {
@@ -61,6 +65,15 @@ class AuthProvider extends ChangeNotifier {
         });
         return true;
       } else {
+        Fluttertoast.showToast(
+          msg: response.error.toString(),
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: AppColors.red,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
         _setError(response.error ?? 'OTP verification failed');
         return false;
       }
@@ -69,6 +82,8 @@ class AuthProvider extends ChangeNotifier {
       return false;
     } finally {
       _setLoading(false);
+            notifyListeners();
+
     }
   }
 
