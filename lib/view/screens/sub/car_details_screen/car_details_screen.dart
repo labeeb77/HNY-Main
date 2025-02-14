@@ -28,7 +28,7 @@ class CarDetailsScreen extends StatelessWidget {
             ),
             const Divider(),
             const LocationDetails(),
-            const BookingDetails(),
+            const DateTimeSelection(),
             const Gap(62),
           ],
         ),
