@@ -7,9 +7,10 @@ import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
 import 'package:hny_main/view/widgets/app_button.dart';
+import 'package:hny_main/view/widgets/app_secondary_button.dart';
 
 class LocationPickerScreen extends StatefulWidget {
-  final from;
+  final dynamic from;
   const LocationPickerScreen({super.key, required this.from});
 
   @override
@@ -18,24 +19,18 @@ class LocationPickerScreen extends StatefulWidget {
 
 class _LocationPickerScreenState extends State<LocationPickerScreen> {
   GoogleMapController? mapController;
-
-  // Dubai coordinates
   static LatLng _center = const LatLng(25.2048, 55.2708);
-
-  // final Set<Marker> _markers = {};
-  BitmapDescriptor? carIcon;
+  BitmapDescriptor? myIcon;
   bool isMarkerSetisLoading = true;
   List<Placemark> placemarks = [];
+  String selectedAddress = "";
 
   @override
   void initState() {
     super.initState();
     loadCustomMarkers();
-
-    // _loadCarIcon();
   }
 
-  BitmapDescriptor? myIcon;
   Future<void> loadCustomMarkers() async {
     try {
       myIcon = await getBitmapDescriptorFromAsset(
@@ -61,27 +56,6 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
     return BitmapDescriptor.fromBytes(markerIcon);
   }
 
-  // Future<void> _loadCarIcon() async {
-  //   carIcon = await BitmapDescriptor.fromAssetImage(
-  //     const ImageConfiguration(size: Size(48, 48)),
-  //     'assets/icons/Group 1000006910.png', // Make sure to add this asset
-  //   );
-  //   _addMarker(_center);
-  // }
-
-  // void _addMarker(LatLng position) {
-  //   setState(() {
-  //     _markers.clear();
-  //     _markers.add(
-  //       Marker(
-  //         markerId: const MarkerId('car_location'),
-  //         position: position,
-  //         icon: carIcon ?? BitmapDescriptor.defaultMarker,
-  //       ),
-  //     );
-  //   });
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -97,15 +71,6 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
                   onTap: (argument) async {
                     _center = LatLng(argument.latitude, argument.longitude);
 
-                    Marker(
-                      icon: myIcon!,
-                      infoWindow: const InfoWindow(title: "PICKUP LOCATION"),
-                      markerId: MarkerId(argument.toString()),
-                      position: LatLng(argument.latitude ?? 25.2048,
-                          argument.longitude ?? 55.2708),
-                      draggable: false,
-                    );
-
                     mapController?.animateCamera(CameraUpdate.newCameraPosition(
                       CameraPosition(
                         bearing: 0.0,
@@ -113,10 +78,14 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
                         zoom: 15.0,
                       ),
                     ));
+
                     placemarks = await placemarkFromCoordinates(
                         argument.latitude, argument.longitude);
-                    print(placemarks.first.country.toString() ?? "");
-                    setState(() {});
+
+                    if (placemarks.isNotEmpty) {
+                      selectedAddress = _formatAddress(placemarks.first);
+                      setState(() {});
+                    }
                   },
                   onMapCreated: (controller) {
                     mapController = controller;
@@ -179,7 +148,6 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
             ),
           ),
 
-          // Bottom location selection
           Container(
             padding: const EdgeInsets.all(16),
             decoration: const BoxDecoration(
@@ -197,9 +165,7 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const Divider(
-                  height: 32,
-                ),
+                const Divider(height: 32),
                 Row(
                   children: [
                     Container(
@@ -217,8 +183,8 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
                     const SizedBox(width: 16),
                     Expanded(
                       child: Text(
-                        placemarks.isNotEmpty
-                            ? placemarks.first.name.toString()
+                        selectedAddress.isNotEmpty
+                            ? selectedAddress
                             : "Choose a location",
                         style: const TextStyle(fontSize: 16),
                       ),
@@ -229,22 +195,25 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
                 Row(
                   children: [
                     const Spacer(),
+                    const SizedBox(width: 10),
+                    Expanded(
+                        child: SecondaryButton(
+                      text: "Cancel",
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                    )),
+                    const SizedBox(width: 10),
                     Expanded(
                       child: PrimaryElevateButton(
-                        buttonName: "Cancel",
-                        isGrey: true,
+                        buttonName: "Add Location",
                         ontap: () {
-                          Navigator.pop(context);
+                          if (selectedAddress.isNotEmpty) {
+                            Navigator.pop(context, selectedAddress);
+                          }
                         },
                       ),
                     ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                        child: PrimaryElevateButton(
-                            ontap: () {
-                              Navigator.pop(context);
-                            },
-                            buttonName: "Add Location")),
                   ],
                 ),
                 const Gap(24)
@@ -254,5 +223,17 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
         ],
       ),
     );
+  }
+
+  String _formatAddress(Placemark placemark) {
+    List<String> addressParts = [
+      placemark.street ?? '',
+      placemark.subLocality ?? '',
+      placemark.locality ?? '',
+      placemark.administrativeArea ?? '',
+      placemark.country ?? '',
+    ];
+
+    return addressParts.where((part) => part.isNotEmpty).join(', ');
   }
 }
