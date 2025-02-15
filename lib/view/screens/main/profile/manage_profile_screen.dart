@@ -12,19 +12,22 @@ import 'package:hny_main/view/widgets/profile_image_widget.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-class AddProfileScreen extends StatefulWidget {
-  const AddProfileScreen({super.key});
+class ManageProfileScreen extends StatefulWidget {
+  final screenName;
+  const ManageProfileScreen({required this.screenName, super.key});
 
   @override
-  State<AddProfileScreen> createState() => _AddProfileScreenState();
+  State<ManageProfileScreen> createState() => _ManageProfileScreenState();
 }
 
-class _AddProfileScreenState extends State<AddProfileScreen> {
+class _ManageProfileScreenState extends State<ManageProfileScreen> {
   @override
   void initState() {
     final profileProvider =
         Provider.of<ProfileProvider>(context, listen: false);
-
+    WidgetsBinding.instance.addPostFrameCallback((callback) {
+      profileProvider.initialMethod();
+    });
     super.initState();
   }
 
@@ -69,26 +72,19 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
   Widget build(BuildContext context) {
     final profileProvider =
         Provider.of<ProfileProvider>(context, listen: false);
-    WidgetsBinding.instance.addPostFrameCallback((callback) {
-      profileProvider.initialMethod();
-    });
+
     log(profileProvider.firstNameController.text);
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.background,
         elevation: 0,
-        title: InkWell(
-          onTap: () {
-            profileProvider.initialMethod();
-          },
-          child: const Text(
-            'Add Profile',
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
+        title: Text(
+          "${widget.screenName} Profile",
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
           ),
         ),
         actions: [
@@ -143,7 +139,8 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
               const SizedBox(height: 24),
               _buildInputField(
                   'First Name', profileProvider.firstNameController),
-              _buildInputField('Last Name', profileProvider.lastNameController),
+              _buildInputField('Last Name', profileProvider.lastNameController,
+                  keyboardType: TextInputType.text),
               const Padding(
                 padding: EdgeInsets.only(left: 4, bottom: 8),
                 child: Text(
@@ -210,33 +207,82 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
                   ['Emirati', 'GCC', 'International'],
                   profileProvider),
               const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).pushNamed(AppRoutes.idCardPage);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(80),
-                    ),
-                  ),
-                  child: const Text(
-                    'Save',
-                    style: TextStyle(
-                      color: AppColors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
             ],
           ),
         ),
       ),
+      bottomNavigationBar:SafeArea(child:  widget.screenName == 'Add'
+          ? SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pushNamed(AppRoutes.idCardPage);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(80),
+                  ),
+                ),
+                child: const Text(
+                  'Save',
+                  style: TextStyle(
+                    color: AppColors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            )
+          : Row(
+              children: [
+                Expanded(
+                    child: SizedBox(
+                  width: double.infinity,
+                  height: 60,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pushNamed(AppRoutes.idCardPage);
+                    },
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.greenShadeBackground,
+                        shape: ContinuousRectangleBorder(
+                            borderRadius: BorderRadius.circular(0))),
+                    child: const Text(
+                      'Cancel',
+                      style: TextStyle(
+                        color: AppColors.primary,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                )),
+                Expanded(
+                    child: SizedBox(
+                  width: double.infinity,
+                  height: 60,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pushNamed(AppRoutes.idCardPage);
+                    },
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        shape: ContinuousRectangleBorder(
+                            borderRadius: BorderRadius.circular(0))),
+                    child: const Text(
+                      'Update',
+                      style: TextStyle(
+                        color: AppColors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                )),
+              ],
+            ),)
     );
   }
 
