@@ -9,6 +9,7 @@ class ApiConstants {
   static const String getCartDataListUrl = 'get_home_page';
   static const String fileUploadApiUrl = 'files_upload';
   static const String updateCustomerUrl = 'update_customer';
+  static const String getProfileDetails = 'get_customer_by_id';
   static const String getTypeListUrl = 'get_type_list';
     static const String getAddOnList = 'get_list_add_on';
 

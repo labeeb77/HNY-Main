@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:hny_main/core/global/profile.dart';
 import 'package:hny_main/core/routes/app_routes.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
 import 'package:hny_main/data/providers/auth_provider.dart';
 import 'package:hny_main/data/providers/bottom_nav_controller.dart';
+import 'package:hny_main/data/providers/profile_provider.dart';
 import 'package:hny_main/view/screens/main/auth/sign_in_screen.dart';
 import 'package:hny_main/view/screens/main/profile/widgets_elements.dart';
 import 'package:hny_main/view/widgets/app_text_widget.dart';
@@ -27,45 +29,61 @@ class ProfileScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    color: AppColors.white,
-                    boxShadow: [
-                      BoxShadow(
-                          color: const Color.fromARGB(255, 220, 218, 218)
-                              .withOpacity(0.1),
-                          blurRadius: 1,
-                          spreadRadius: 5,
-                          offset: const Offset(1, 1))
-                    ]),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                child: const Row(
-                  children: [
-                    CircleAvatar(
-                        backgroundImage:
-                            AssetImage('assets/images/placeholder_image.webp')),
-                    Gap(16),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+              InkWell(
+                 onTap: () {
+                            Navigator.pushNamed(context,AppRoutes.manageProfile,arguments: 'Edit');
+                          },
+                child: Container(
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: AppColors.white,
+                      boxShadow: [
+                        BoxShadow(
+                            color: const Color.fromARGB(255, 220, 218, 218)
+                                .withOpacity(0.1),
+                            blurRadius: 1,
+                            spreadRadius: 5,
+                            offset: const Offset(1, 1))
+                      ]),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                  child: Consumer<ProfileProvider>(
+                    builder: (context, value, child) => Row(
                       children: [
-                        AppText("Santosh Pandit"),
-                        Gap(4),
-                        AppText(
-                          "santosh@gmail.com",
-                          style: TextStyle(
-                              fontSize: 12, color: AppColors.textSecondary),
+                        CircleAvatar(
+                            backgroundImage: globalUser!.strProfileUrl
+                                            ?.isNotEmpty !=
+                                        null &&
+                                    globalUser!.strProfileUrl
+                                            ?.isNotEmpty !=
+                                        ""
+                                ? NetworkImage(
+                                    globalUser!.strProfileUrl!)
+                                : const AssetImage(
+                                    'assets/images/placeholder_image.webp')),
+                        const Gap(16),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            AppText(
+                                globalUser?.strFullName ?? "Unknown"),
+                            const Gap(4),
+                            AppText(
+                              globalUser?.strEmail ?? "No email",
+                              style: const TextStyle(
+                                  fontSize: 12, color: AppColors.textSecondary),
+                            ),
+                          ],
                         ),
+                        const Spacer(),
+                        const Icon(
+                          Icons.arrow_forward_ios,
+                          size: 16,
+                          color: AppColors.iconGrey,
+                        )
                       ],
                     ),
-                    Spacer(),
-                    Icon(
-                      Icons.arrow_forward_ios,
-                      size: 16,
-                      color: AppColors.iconGrey,
-                    )
-                  ],
+                  ),
                 ),
               ),
               const Gap(25),

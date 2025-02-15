@@ -8,7 +8,7 @@ import 'package:hny_main/core/utils/app_colors.dart';
 import 'package:hny_main/data/providers/home_controller.dart';
 import 'package:hny_main/view/screens/main/home/filter_bottomsheet.dart';
 import 'package:hny_main/view/screens/main/home/widgets_elements.dart';
-import 'package:hny_main/view/screens/main/profile/add_profile_screen.dart';
+import 'package:hny_main/view/screens/main/profile/manage_profile_screen.dart';
 import 'package:hny_main/view/widgets/app_text_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -266,16 +266,11 @@ class _HomeScreenState extends State<HomeScreen> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        InkWell(
-                          onTap: () {
-                            
-                          },
-                          child: const Text(
-                            'See All',
-                            style: TextStyle(
-                              color: Color(0xFF0B5D3A),
-                              fontWeight: FontWeight.w500,
-                            ),
+                        const Text(
+                          'See All',
+                          style: TextStyle(
+                            color: Color(0xFF0B5D3A),
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       ],

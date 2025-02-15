@@ -7,7 +7,10 @@ import 'package:hny_main/core/routes/app_routes.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
 import 'package:hny_main/data/models/auth/login_res_model.dart';
 import 'package:hny_main/data/models/user_model/user_mode.dart';
+import 'package:hny_main/data/models/user_model/user_profile_model.dart';
+import 'package:hny_main/data/providers/profile_provider.dart';
 import 'package:hny_main/service/auth_service.dart';
+import 'package:provider/provider.dart';
 
 class AuthProvider extends ChangeNotifier {
   final AuthService _authService;
@@ -55,10 +58,13 @@ class AuthProvider extends ChangeNotifier {
       if (response.success && response.data != null) {
         log('OTP verified successfully ${response.data} ${response.success}');
         _user = UserModel.fromJson(response.data);
-        globalUser = UserModel.fromJson(response.data);
-        await _authService.saveUserData(_user!).then((_) {
+
+        await _authService.saveUserData(_user!).then((_) async {
+          await Provider.of<ProfileProvider>(context, listen: false)
+              .getUserProfileDetails(context);
           if (_user?.strEmail.isEmpty || _user?.strFirstName == null) {
-            Navigator.of(context).pushReplacementNamed(AppRoutes.addProfile);
+            Navigator.of(context)
+                .pushReplacementNamed(AppRoutes.manageProfile, arguments: 'Add');
           } else {
             Navigator.of(context).pushReplacementNamed(AppRoutes.bottomNav);
           }

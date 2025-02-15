@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:hny_main/core/constants/api_constants.dart';
@@ -5,11 +6,13 @@ import 'package:hny_main/core/global/profile.dart';
 import 'package:hny_main/core/utils/app_alerts.dart';
 import 'package:hny_main/data/models/request/add_profile_model.dart';
 import 'package:hny_main/data/models/response/api_response_model.dart';
+import 'package:hny_main/data/models/user_model/user_profile_model.dart';
 import 'package:hny_main/data/providers/common_provider.dart';
 import 'package:hny_main/service/api_service.dart';
 import 'package:provider/provider.dart';
 
 class ProfileProvider with ChangeNotifier {
+  // UserProfileModel? userProfileModel;
   bool _isLoading = false;
   String? _error;
 
@@ -45,27 +48,46 @@ class ProfileProvider with ChangeNotifier {
     mobileController.text = globalUser?.strMobileNo ?? "";
     emailController.text = globalUser?.strEmail ?? "";
     selectedNationality = globalUser?.strNationality ?? "";
+
+    if (globalUser?.strGccIdUrl != "") {
+      selectedCitizenship = 'GCC';
+    } else if (globalUser?.strPassportUrl != "") {
+      selectedCitizenship = 'International';
+    } else if (globalUser?.strEmiratesIdUrl != "") {
+      selectedCitizenship = 'Emirati';
+    } else {
+      selectedCitizenship = null;
+    }
     notifyListeners();
   }
 
-  void setProfileImage(File? image) => _updateValue(() => _selectedProfileImage = image);
+  void setProfileImage(File? image) =>
+      _updateValue(() => _selectedProfileImage = image);
 
-  void setIdCardImagePath(File? image) => _updateValue(() => _selectedIdCardImagePath = image);
+  void setIdCardImagePath(File? image) =>
+      _updateValue(() => _selectedIdCardImagePath = image);
 
-  void setDrivingLicenseImagePath(File? image) => _updateValue(() => _selectedDrivingLicenseImagePath = image);
+  void setDrivingLicenseImagePath(File? image) =>
+      _updateValue(() => _selectedDrivingLicenseImagePath = image);
 
-  void setNationality(String value) => _updateValue(() => selectedNationality = value);
+  void setNationality(String value) =>
+      _updateValue(() => selectedNationality = value);
 
-  void setCitizenship(String value) => _updateValue(() => selectedCitizenship = value);
+  void setCitizenship(String value) =>
+      _updateValue(() => selectedCitizenship = value);
 
   void setGender(String value) => _updateValue(() => selectedGender = value);
 
   String getIdTitleName() {
     switch (selectedCitizenship) {
-      case "Emirati": return "Emirate";
-      case "International": return "Passport";
-      case "GCC": return "GCC";
-      default: return "";
+      case "Emirati":
+        return "Emirate";
+      case "International":
+        return "Passport";
+      case "GCC":
+        return "GCC";
+      default:
+        return "";
     }
   }
 
@@ -78,26 +100,34 @@ class ProfileProvider with ChangeNotifier {
       changeLoadingState();
 
       profileUploadedUrl = await _uploadFile(context, _selectedProfileImage);
-      licenseUploadedUrl = await _uploadFile(context, _selectedDrivingLicenseImagePath);
+      licenseUploadedUrl =
+          await _uploadFile(context, _selectedDrivingLicenseImagePath);
       idCardUploadedUrl = await _uploadFile(context, _selectedIdCardImagePath);
 
       final AddProfileModel data = AddProfileModel(
         id: currentUserId,
         strDateOfBirth: dobController.text,
         strEmail: emailController.text,
-        strEmiratesIdUrl: selectedCitizenship == "Emirati" ? idCardUploadedUrl ?? globalUser?.strEmiratesIdUrl : "",
+        strEmiratesIdUrl: selectedCitizenship == "Emirati"
+            ? idCardUploadedUrl ?? globalUser?.strEmiratesIdUrl
+            : "",
         strFcmToken: "",
         strFirstName: firstNameController.text,
-        strGccIdUrl: selectedCitizenship == "GCC" ? idCardUploadedUrl ?? globalUser?.strGccIdUrl : "",
+        strGccIdUrl: selectedCitizenship == "GCC"
+            ? idCardUploadedUrl ?? globalUser?.strGccIdUrl
+            : "",
         strGender: selectedGender,
         strLastName: lastNameController.text,
         strLicenceUrl: licenseUploadedUrl ?? globalUser?.strLicenceUrl,
         strNationality: selectedNationality,
-        strPassportUrl: selectedCitizenship == "International" ? idCardUploadedUrl ?? globalUser?.strPassportUrl : "",
+        strPassportUrl: selectedCitizenship == "International"
+            ? idCardUploadedUrl ?? globalUser?.strPassportUrl
+            : "",
         strProfileUrl: profileUploadedUrl ?? globalUser?.strProfileUrl,
       );
 
-      final ApiResponseModel<dynamic> apiResponse = await ApiService(context).apiCall(
+      final ApiResponseModel<dynamic> apiResponse =
+          await ApiService(context).apiCall(
         endpoint: ApiConstants.updateCustomerUrl,
         method: 'POST',
         data: data,
@@ -108,20 +138,48 @@ class ProfileProvider with ChangeNotifier {
         currentUserId = '';
         return true;
       } else {
-        AppAlerts.showCustomSnackBar(apiResponse.error ?? "Alert", isSuccess: false);
+        AppAlerts.showCustomSnackBar(apiResponse.error ?? "Alert",
+            isSuccess: false);
       }
     } catch (e) {
       debugPrint('Error adding profile data: $e');
-      AppAlerts.showCustomSnackBar("Failed to fetch the data", isSuccess: false);
+      AppAlerts.showCustomSnackBar("Failed to fetch the data",
+          isSuccess: false);
     } finally {
       changeLoadingState();
     }
     return null;
   }
 
+  Future getUserProfileDetails(context) async {
+    try {
+      final ApiResponseModel<dynamic> apiResponse =
+          await ApiService(context).apiCall(
+        endpoint: ApiConstants.getProfileDetails,
+        method: 'POST',
+        sendToken: true,
+        showErrorMessage: true,
+      );
+
+      if (apiResponse.success && apiResponse.data != null) {
+        log(apiResponse.data.toString());
+        globalUser = UserProfileModel.fromJson(apiResponse.data);
+        return true;
+      } else {
+        AppAlerts.showCustomSnackBar(apiResponse.error ?? "Alert",
+            isSuccess: false);
+      }
+    } catch (e) {
+      debugPrint('Error getting profile data: $e');
+      AppAlerts.showCustomSnackBar("Failed to fetch the data",
+          isSuccess: false);
+    }
+  }
+
   Future<String?> _uploadFile(BuildContext context, File? file) async {
     if (file == null) return null;
-    return await Provider.of<CommonProvider>(context, listen: false).commonFileUploadApi(context, file.path);
+    return await Provider.of<CommonProvider>(context, listen: false)
+        .commonFileUploadApi(context, file.path);
   }
 
   void _updateValue(VoidCallback update) {
