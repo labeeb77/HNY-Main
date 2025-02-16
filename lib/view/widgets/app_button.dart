@@ -55,6 +55,64 @@ class PrimaryElevateButton extends StatelessWidget {
   }
 }
 
+class LoadingTextButton extends StatelessWidget {
+  final String? buttonName;
+  final bool isGrey;
+  final VoidCallback? onTap;
+  final bool loading; // Controls the loading state
+
+  const LoadingTextButton({
+    this.onTap,
+    this.buttonName,
+    this.isGrey = false,
+    this.loading = false,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 38,
+      child: ElevatedButton(
+        onPressed: loading ? null : onTap ?? () {}, // Disable button when loading
+        style: ElevatedButton.styleFrom(
+          elevation: 0.0,
+          backgroundColor: isGrey ? AppColors.grey : AppColors.primary,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30),
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (loading) // Show loader if loading is true
+              const SizedBox(
+                height: 20,
+                width: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
+              ),
+            if (loading) const SizedBox(width: 8), // Add spacing between loader and text
+            FittedBox(
+              child: AppText(
+                buttonName ?? "Book Now",
+                color: isGrey ? AppColors.primary : AppColors.white,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 16,
+                ),
+                maxLines: 1,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 /// secondary button
 
 class AppButton extends StatelessWidget {

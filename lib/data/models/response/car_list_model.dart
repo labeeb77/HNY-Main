@@ -49,6 +49,7 @@ class ArrCar {
   List<ArrCarFeature?> arrCarFeatures;
   String? strCreatedBy;
   DateTime strCreatedTime;
+  bool? isFavourite;
 
   ArrCar({
     required this.id,
@@ -74,11 +75,12 @@ class ArrCar {
    required this.arrCarFeatures,
     this.strCreatedBy,
    required  this.strCreatedTime,
+   this.isFavourite
   });
 
   factory ArrCar.fromJson(Map<String, dynamic> json) {
     return ArrCar(
-      id: json['id'],
+      id: json['_id'],
       strCarNumber: json['strCarNumber'],
       strBrand: json['strBrand'],
       strStatus: json['strStatus'],
@@ -103,6 +105,7 @@ class ArrCar {
           .toList(),
       strCreatedBy: json['strCreatedBy'],
       strCreatedTime: DateTime.parse(json['strCreatedTime']),
+      isFavourite: json['isFavourite']
     );
   }
 }

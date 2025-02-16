@@ -5,11 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
+import 'package:hny_main/data/providers/favourite_provider.dart';
 import 'package:hny_main/data/providers/home_controller.dart';
 import 'package:hny_main/view/screens/main/home/filter_bottomsheet.dart';
 import 'package:hny_main/view/screens/main/home/widgets_elements.dart';
 import 'package:hny_main/view/screens/main/profile/manage_profile_screen.dart';
 import 'package:hny_main/view/widgets/app_text_widget.dart';
+import 'package:hny_main/view/widgets/car_card_loader.dart';
+import 'package:hny_main/view/widgets/ride_option_loader.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -214,9 +217,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Consumer<HomeController>(
                     builder: (context, homeController, child) {
                       if (homeController.isLoading) {
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
+                        return const HorizontalRideOptionsLoader(itemCount: 6);
                       }
 
                       return SizedBox(
@@ -266,11 +267,14 @@ class _HomeScreenState extends State<HomeScreen> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const Text(
-                          'See All',
-                          style: TextStyle(
-                            color: Color(0xFF0B5D3A),
-                            fontWeight: FontWeight.w500,
+                        InkWell(
+                          onTap: () {},
+                          child: const Text(
+                            'See All',
+                            style: TextStyle(
+                              color: Color(0xFF0B5D3A),
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
                       ],
@@ -282,20 +286,25 @@ class _HomeScreenState extends State<HomeScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: OrientationBuilder(
                       builder: (context, orientation) =>
-                          Consumer<HomeController>(
-                        builder: (context, value, child) {
-                          final data = value.carListData;
-                          log('car items length: ${value.carListData.length}');
-                          return value.isLoading
-                              ? const Center(
-                                  child: CircularProgressIndicator(),
+                          Consumer2<HomeController, FavouriteProvider>(
+                        builder: (context, homeProvider, favProvider, child) {
+                          final data = homeProvider.carListData;
+                          log('car items length: ${homeProvider.carListData.length}');
+                          return homeProvider.isLoading
+                              ? CarCardSkeletonLoader(
+                                  orientation: orientation,
+                                  mediaQuery: MediaQuery.of(context),
+                                  itemCount:
+                                      3, // You can adjust this number as needed
                                 )
                               : ListView.builder(
                                   physics: const NeverScrollableScrollPhysics(),
                                   shrinkWrap: true,
-                                  itemCount: value.carListData.length,
-                                  itemBuilder: (context, index) => buildCarCard(
-                                    data[index],
+                                  itemCount: homeProvider.carListData.length,
+                                  itemBuilder: (context, index) {
+                                    log('car id: ${data[index].id}');
+                                    return buildCarCard(
+                                      data[index],
                                       data[index].strModel ?? "Unknown",
                                       data[index].intRating.toString() ?? '4.0',
                                       data[index].strCarCategory ?? "Unknown",
@@ -304,10 +313,20 @@ class _HomeScreenState extends State<HomeScreen> {
                                       '${data[index].strSeatNo} Seats',
                                       data[index].intPricePerDay.toString(),
                                       data[index].strImgUrl!,
-                                      false,
+                                      data[index].isFavourite ?? false,
                                       context,
                                       orientation,
-                                      mediaQuery));
+                                      mediaQuery,
+                                      onFavoriteTap: () {
+                                        favProvider
+                                            .addToFavourites(
+                                                data[index].id ?? '0')
+                                            .then((_) {
+                                          homeProvider.getCarDataList(context);
+                                        });
+                                      },
+                                    );
+                                  });
                         },
                       ),
                     ),

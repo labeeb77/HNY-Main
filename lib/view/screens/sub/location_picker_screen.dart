@@ -180,9 +180,9 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
                         color: Colors.white,
                       ),
                     ),
-                    const SizedBox(width: 16),
+                    const SizedBox(width: 16), 
                     Expanded(
-                      child: Text(
+                      child: Text( 
                         selectedAddress.isNotEmpty
                             ? selectedAddress
                             : "Choose a location",
