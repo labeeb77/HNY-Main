@@ -7,8 +7,9 @@ class BookingPrice extends StatelessWidget {
   final value;
   final buttonName;
   final onTap;
+  final bool isLoading;
   const BookingPrice(
-      {super.key, this.title, this.value, this.buttonName, this.onTap});
+      {super.key, this.title, this.value, this.buttonName, this.onTap,this.isLoading = false});
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +42,7 @@ class BookingPrice extends StatelessWidget {
               ),
             ],
           ),
-          PrimaryElevateButton(ontap: onTap, buttonName: buttonName)
+          PrimaryElevateButton(ontap: onTap, buttonName: buttonName,loading: isLoading,)
         ],
       ),
     );

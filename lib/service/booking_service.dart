@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hny_main/core/constants/api_constants.dart';
 import 'package:hny_main/data/models/booking/add_on_list_model.dart';
-import 'package:hny_main/data/models/car_typelist/car_typelist.dart';
 import 'package:hny_main/data/models/response/api_response_model.dart';
-import 'package:hny_main/data/models/response/car_list_model.dart';
 import 'package:hny_main/service/api_service.dart';
 
 class BookingService {
@@ -28,5 +26,23 @@ class BookingService {
       debugPrint('Error fetching add on list: $e');
       return null;
     }
+  }
+
+  Future<ApiResponseModel> createCart(Map<String, dynamic> cartData) async {
+    return await _apiService.apiCall(
+      endpoint: ApiConstants.createCart,
+      method: 'POST',
+      data: cartData,
+      sendToken: true
+    );
+  }
+
+   Future<ApiResponseModel> createBooking(Map<String, dynamic> bookingData) async {
+    return await _apiService.apiCall(
+      endpoint: ApiConstants.createReservation,
+      method: 'POST',
+      data: bookingData,
+      sendToken: true
+    );
   }
 }
