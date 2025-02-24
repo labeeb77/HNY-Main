@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:hny_main/core/utils/app_alerts.dart';
 import 'package:hny_main/data/models/booking/add_on_list_model.dart';
 import 'package:hny_main/data/models/booking/gadgets_model.dart';
+import 'package:hny_main/data/models/booking/get_booking_list_model.dart';
 import 'package:hny_main/data/models/response/api_response_model.dart';
 import 'package:hny_main/data/models/response/car_list_model.dart';
 import 'package:hny_main/service/booking_service.dart';
@@ -16,6 +17,11 @@ class BookingProvider extends ChangeNotifier {
 
   BookingProvider(BuildContext context)
       : _bookingService = BookingService(context);
+
+  List<BookingArrList> _bookingsListData = [];
+
+  //Bookings Getters
+  List<BookingArrList> get bookingsListData => _bookingsListData;
 
   String _pickupAddress = 'Select Location';
   String _dropoffAddress = 'Select Location';
@@ -115,6 +121,11 @@ class BookingProvider extends ChangeNotifier {
 
   void updateDropoffAddress(String address) {
     _dropoffAddress = address;
+    notifyListeners();
+  }
+
+  void updateBookingList(List<BookingArrList> data) {
+    _bookingsListData = data;
     notifyListeners();
   }
 
@@ -322,131 +333,152 @@ class BookingProvider extends ChangeNotifier {
   String _selectedPaymentMethod = "TAP_LINK";
   String get selectedPaymentMethod => _selectedPaymentMethod;
 
-
   void updatePaymentMethod(String method) {
     if (_selectedPaymentMethod != method) {
       _selectedPaymentMethod = method;
       notifyListeners();
     }
   }
+
   Future<bool> createBooking(
-  BuildContext context, {
-  required String email,
-  required String phoneNumber,
-  required double amount,
-  required ArrCar carDetails, // Add car details parameter
-}) async {
-  _setLoading(true);
-  _setError(null);
+    BuildContext context, {
+    required String email,
+    required String phoneNumber,
+    required double amount,
+    required ArrCar carDetails, // Add car details parameter
+  }) async {
+    _setLoading(true);
+    _setError(null);
 
-  try {
-    // Validate required fields
-    if (email.isEmpty || phoneNumber.isEmpty) {
-      _handleError('Email and phone number are required');
+    try {
+      // Validate required fields
+      if (email.isEmpty || phoneNumber.isEmpty) {
+        _handleError('Email and phone number are required');
+        return false;
+      }
+
+      if (_startDate == null || _endDate == null) {
+        _handleError('Please select booking dates');
+        return false;
+      }
+
+      // Create car item
+      final carItem = {
+        "strImgUrl": carDetails.strImgUrl ?? "",
+        "strCarNumber": carDetails.strCarNumber ?? "",
+        "strModel": carDetails.strModel ?? "",
+        "intPricePerDay": carDetails.intPricePerDay ?? 0,
+        "StartDate": _startDate?.toIso8601String(),
+        "EndDate": _endDate?.toIso8601String(),
+        "intPricePerWeek": carDetails.intPricePerWeek ?? 0,
+        "intPricePerMonth": carDetails.intPricePerMonth ?? 0,
+        "intTotalAmount": calculateTotalAmount(carDetails.intPricePerDay ?? 0),
+        "intTotalDays": totalDays,
+        "intUnitPrice": carDetails.intPricePerDay ?? 0,
+        "strCarId": carDetails.id ?? "",
+        "_id": const Uuid().v4(),
+        "type": "CAR",
+        "strPickupLocation": {
+          "type": "Point",
+          "coordinates":
+              _pickupCoordinates ?? [25.28071250637328, 55.41023254394531]
+        },
+        "strPickupLocationAddress": _pickupAddress,
+        "strDeliveryLocation": {
+          "type": "Point",
+          "coordinates": _dropoffCoordinates ?? [25.252777, 55.364445]
+        },
+        "strDeliveryLocationAddress": _dropoffAddress,
+      };
+
+      // Create gadget items (add-ons)
+      final gadgetItems = _gadgets
+          .where((gadget) => gadget.quantity > 0)
+          .map((gadget) => {
+                "strImgUrl": gadget.image,
+                "strName": gadget.name,
+                "_id": gadget.id,
+                "type": "ADD_ON",
+                "intPricePerDay": gadget.price,
+                "intPricePerMonth": gadget.price * 30, // Assuming monthly price
+                "intPricePerWeek": gadget.price * 7, // Assuming weekly price
+                "intQty": gadget.quantity,
+                "intTotalDays": totalDays,
+                "intUnitPrice": gadget.price,
+                "intTotalAmount": gadget.price * gadget.quantity * totalDays,
+                "intAvlQty": 10, // You might want to get this from the API
+                "strDescription": "", // Add description if available
+                "StartDate": _startDate?.toIso8601String(),
+                "EndDate": _endDate?.toIso8601String(),
+              })
+          .toList();
+
+      // Combine car and gadget items
+      final arrCarItems = [carItem, ...gadgetItems];
+
+      // Prepare booking data
+      final bookingData = {
+        "strEmail": email,
+        "strAltMobileNo": phoneNumber,
+        "strPaymentMethod": _selectedPaymentMethod,
+        "strPickupLocation": {
+          "type": "Point",
+          "coordinates":
+              _pickupCoordinates ?? [25.28071250637328, 55.41023254394531]
+        },
+        "strPickupLocationAddress": _pickupAddress,
+        "strDeliveryLocation": {
+          "type": "Point",
+          "coordinates": _dropoffCoordinates ?? [25.252777, 55.364445]
+        },
+        "strDeliveryLocationAddress": _dropoffAddress,
+        "strStartDate": _startDate?.toIso8601String(),
+        "strEndDate": _endDate?.toIso8601String(),
+        "intTotalDays": totalDays,
+        "intTotalDiscount": 0,
+        "intTotalAmount": amount,
+        "intPayedAmount": amount,
+        "intCheckoutAmount": 0,
+        "intBalanceAmt": 0,
+        "arrCarItems": arrCarItems, // Add the combined items array
+      };
+
+      // Call booking API
+      log('Booking Data: $bookingData');
+      final response = await _bookingService.createBooking(bookingData);
+
+      if (response.success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Booking created successfully!')));
+        return true;
+      } else {
+        _handleError('Failed to create booking');
+        return false;
+      }
+    } catch (e) {
+      _handleError('An error occurred while creating the booking');
       return false;
+    } finally {
+      _setLoading(false);
     }
-
-    if (_startDate == null || _endDate == null) {
-      _handleError('Please select booking dates');
-      return false;
-    }
-
-    // Create car item
-    final carItem = {
-      "strImgUrl": carDetails.strImgUrl ?? "",
-      "strCarNumber": carDetails.strCarNumber ?? "",
-      "strModel": carDetails.strModel ?? "",
-      "intPricePerDay": carDetails.intPricePerDay ?? 0,
-      "StartDate": _startDate?.toIso8601String(),
-      "EndDate": _endDate?.toIso8601String(),
-      "intPricePerWeek": carDetails.intPricePerWeek ?? 0,
-      "intPricePerMonth": carDetails.intPricePerMonth ?? 0,
-      "intTotalAmount": calculateTotalAmount(carDetails.intPricePerDay ?? 0),
-      "intTotalDays": totalDays,
-      "intUnitPrice": carDetails.intPricePerDay ?? 0,
-      "strCarId": carDetails.id ?? "",
-      "_id": const Uuid().v4(),
-      "type": "CAR",
-      "strPickupLocation": {
-        "type": "Point",
-        "coordinates": _pickupCoordinates ?? [25.28071250637328, 55.41023254394531]
-      },
-      "strPickupLocationAddress": _pickupAddress,
-      "strDeliveryLocation": {
-        "type": "Point",
-        "coordinates": _dropoffCoordinates ?? [25.252777, 55.364445]
-      },
-      "strDeliveryLocationAddress": _dropoffAddress,
-    };
-
-    // Create gadget items (add-ons)
-    final gadgetItems = _gadgets
-        .where((gadget) => gadget.quantity > 0)
-        .map((gadget) => {
-              "strImgUrl": gadget.image,
-              "strName": gadget.name,
-              "_id": gadget.id,
-              "type": "ADD_ON",
-              "intPricePerDay": gadget.price,
-              "intPricePerMonth": gadget.price * 30, // Assuming monthly price
-              "intPricePerWeek": gadget.price * 7, // Assuming weekly price
-              "intQty": gadget.quantity,
-              "intTotalDays": totalDays,
-              "intUnitPrice": gadget.price,
-              "intTotalAmount": gadget.price * gadget.quantity * totalDays,
-              "intAvlQty": 10, // You might want to get this from the API
-              "strDescription": "", // Add description if available
-              "StartDate": _startDate?.toIso8601String(),
-              "EndDate": _endDate?.toIso8601String(),
-            })
-        .toList();
-
-    // Combine car and gadget items
-    final arrCarItems = [carItem, ...gadgetItems];
-
-    // Prepare booking data
-    final bookingData = {
-      "strEmail": email,
-      "strAltMobileNo": phoneNumber,
-      "strPaymentMethod": _selectedPaymentMethod,
-      "strPickupLocation": {
-        "type": "Point",
-        "coordinates": _pickupCoordinates ?? [25.28071250637328, 55.41023254394531]
-      },
-      "strPickupLocationAddress": _pickupAddress,
-      "strDeliveryLocation": {
-        "type": "Point",
-        "coordinates": _dropoffCoordinates ?? [25.252777, 55.364445]
-      },
-      "strDeliveryLocationAddress": _dropoffAddress,
-      "strStartDate": _startDate?.toIso8601String(),
-      "strEndDate": _endDate?.toIso8601String(),
-      "intTotalDays": totalDays,
-      "intTotalDiscount": 0,
-      "intTotalAmount":amount,
-      "intPayedAmount":amount,
-      "intCheckoutAmount":0,
-      "intBalanceAmt":0,
-      "arrCarItems": arrCarItems, // Add the combined items array
-    };
-
-    // Call booking API
-    log('Booking Data: $bookingData');
-    final response = await _bookingService.createBooking(bookingData);
-
-    if (response.success) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Booking created successfully!')));
-      return true;
-    } else {
-      _handleError('Failed to create booking');
-      return false;
-    }
-  } catch (e) {
-    _handleError('An error occurred while creating the booking');
-    return false;
-  } finally {
-    _setLoading(false);
   }
-}
+
+  Future<void> getBookingList(BuildContext context) async {
+    _setLoading(true);
+    _setError(null);
+
+    try {
+      final data = await _bookingService.fetchBookingList();
+      if (data != null) {
+        updateBookingList(data.arrList!);
+        notifyListeners();
+      } else {
+        _handleError("Failed to fetch booking data");
+      }
+    } catch (e) {
+      _handleError("An unexpected error occurred");
+    } finally {
+      _setLoading(false);
+    }
+  }
 }

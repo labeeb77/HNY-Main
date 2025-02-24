@@ -12,6 +12,7 @@ class ApiConstants {
   static const String getProfileDetails = 'get_customer_by_id';
   static const String getTypeListUrl = 'get_type_list';
   static const String getAddOnList = 'get_list_add_on';
+  static const String getBookingListUrl = 'get_list_reservation';
   static const String addToFavourites = 'addto_favourite';
   static const String removeFavourites = 'remove_favourite';
   static const String getFavouritesList = 'get_list_favourite';
