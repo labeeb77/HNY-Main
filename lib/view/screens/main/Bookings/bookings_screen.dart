@@ -1,12 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
+import 'package:hny_main/data/models/booking/get_booking_list_model.dart';
+import 'package:hny_main/data/providers/booking_provider.dart';
 import 'package:hny_main/view/screens/main/bookings/bookings_details_screen.dart';
 import 'package:hny_main/view/widgets/app_button.dart';
 import 'package:hny_main/view/widgets/app_text_widget.dart';
+import 'package:provider/provider.dart';
 
-class BookingScreen extends StatelessWidget {
+class BookingScreen extends StatefulWidget {
   const BookingScreen({super.key});
+
+  @override
+  State<BookingScreen> createState() => _BookingScreenState();
+}
+
+class _BookingScreenState extends State<BookingScreen> {
+  @override
+  void initState() {
+    Provider.of<BookingProvider>(context, listen: false)
+        .getBookingList(context);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,10 +56,12 @@ class BookingScreen extends StatelessWidget {
                     ],
                   ),
                   Container(
-                    margin: const EdgeInsets.symmetric(vertical: 34, horizontal: 16),
+                    margin: const EdgeInsets.symmetric(
+                        vertical: 34, horizontal: 16),
                     padding: const EdgeInsets.all(4),
                     decoration: BoxDecoration(
-                      color: const Color.fromARGB(255, 75, 124, 77).withOpacity(0.4),
+                      color: const Color.fromARGB(255, 75, 124, 77)
+                          .withOpacity(0.4),
                       borderRadius: BorderRadius.circular(30),
                     ),
                     child: Row(
@@ -105,12 +122,21 @@ class BookingScreen extends StatelessWidget {
             ),
             // Main Content
             Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                itemCount: 5,
-                itemBuilder: (context, index) {
-                  return BookingCard(index: index);
-                },
+              child: Consumer<BookingProvider>(
+                builder: (context, value, child) => value.isLoading
+                    ? const Center(
+                        child: CircularProgressIndicator(),
+                      )
+                    : ListView.builder(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        itemCount: value.bookingsListData.length,
+                        itemBuilder: (context, index) {
+                          return BookingCard(
+                            index: index,
+                            data: value.bookingsListData[index],
+                          );
+                        },
+                      ),
               ),
             ),
           ],
@@ -122,7 +148,8 @@ class BookingScreen extends StatelessWidget {
 
 class BookingCard extends StatelessWidget {
   final index;
-  const BookingCard({super.key, required this.index});
+  final BookingArrList data;
+  const BookingCard({super.key, required this.index, required this.data});
 
   @override
   Widget build(BuildContext context) {
@@ -138,49 +165,49 @@ class BookingCard extends StatelessWidget {
                 color: Color.fromARGB(255, 225, 225, 225),
                 blurRadius: 12)
           ]),
-      child:  Padding(
+      child: Padding(
         padding: const EdgeInsets.all(16),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Column(
+            Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       'Booking Id',
                       style: TextStyle(
                         color: Colors.grey,
                         fontSize: 14,
                       ),
                     ),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     Text(
-                      'BK30001',
-                      style: TextStyle(
+                      data.strBookingId!,
+                      style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                       ),
                     ),
                   ],
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       'Total amount',
                       style: TextStyle(
                         color: Colors.grey,
                         fontSize: 14,
                       ),
                     ),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     Text(
-                      '1,800 AED',
-                      style: TextStyle(
+                      '${data.intTotalAmount?.floor()} AED',
+                      style: const TextStyle(
                         color: Colors.blue,
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
@@ -190,44 +217,44 @@ class BookingCard extends StatelessWidget {
                 ),
               ],
             ),
-            const Column(
+            Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       'Start date',
                       style: TextStyle(
                         color: Colors.grey,
                         fontSize: 14,
                       ),
                     ),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     Text(
-                      'Oct 1, 2024',
-                      style: TextStyle(
+                      formatDateOnly(data.strStartDate.toString()),
+                      style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                       ),
                     ),
                   ],
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       'Balance amount',
                       style: TextStyle(
                         color: Colors.grey,
                         fontSize: 14,
                       ),
                     ),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     Text(
-                      '1,000 AED',
-                      style: TextStyle(
+                      '${data.intBalanceAmt?.floor()} AED',
+                      style: const TextStyle(
                         color: Colors.red,
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
@@ -240,20 +267,20 @@ class BookingCard extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Column(
+                Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       'End date',
                       style: TextStyle(
                         color: Colors.grey,
                         fontSize: 14,
                       ),
                     ),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     Text(
-                      'Oct 1, 2024',
-                      style: TextStyle(
+                      formatDateOnly(data.strEndDate.toString()),
+                      style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                       ),
@@ -267,8 +294,13 @@ class BookingCard extends StatelessWidget {
                         height: 30,
                         width: 104,
                         child: PrimaryElevateButton(
-                          ontap: (){
-Navigator.push(context,MaterialPageRoute(builder: (context) => const MyBookingDetailsScreen(),));
+                          ontap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const MyBookingDetailsScreen(),
+                                ));
                           },
                           buttonName: "View Details",
                         )),
@@ -281,4 +313,10 @@ Navigator.push(context,MaterialPageRoute(builder: (context) => const MyBookingDe
       ),
     );
   }
+  String formatDateOnly(String timestamp) {
+  DateTime dateTime = DateTime.parse(timestamp);
+  return "${dateTime.year}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.day.toString().padLeft(2, '0')}";
+}
+
+
 }
