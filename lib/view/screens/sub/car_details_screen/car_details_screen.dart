@@ -23,11 +23,13 @@ class CarDetailsScreen extends StatelessWidget {
           children: [
             CarHeader(arrCar: arrCar),
             CarSpecs(arrCar: arrCar),
-            const Divider(),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 32),
-              child: CarFeatures(features: arrCar.arrCarFeatures),
-            ),
+            if (arrCar.arrCarFeatures != null) ...[
+              const Divider(),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32),
+                child: CarFeatures(features: arrCar.arrCarFeatures ?? []),
+              ),
+            ],
             const Divider(),
             const LocationDetails(),
             const DateTimeSelection(),
@@ -37,30 +39,34 @@ class CarDetailsScreen extends StatelessWidget {
       ),
       bottomNavigationBar: Consumer<BookingProvider>(
         builder: (context, bookingProvider, child) {
-          final totalAmount = bookingProvider.calculateTotalAmount(arrCar.intPricePerDay ?? 0);
+          final totalAmount =
+              bookingProvider.calculateTotalAmount(arrCar.intPricePerDay ?? 0);
           return SizedBox(
             height: 100,
             child: BookingPrice(
               title: "Total Amount",
               value: totalAmount,
-              onTap: bookingProvider.isLoading 
-                ? null  // Disable button while loading
-                : () async {
-                    // First, create cart and show loader in button
-                    final success = await bookingProvider.createCart(context, arrCar);
-                    
-                    // Only show the bottom sheet if cart creation was successful
-                    if (success) {
-                      await showModalBottomSheet(
-                        showDragHandle: true,
-                        enableDrag: true,
-                        context: context,
-                        isScrollControlled: true,
-                        builder: (context) => GadgetBottomSheet(arrCar: arrCar),
-                      );
-                    }
-                  },
-              buttonName: bookingProvider.isLoading ? "Creating cart..." : "Book Now",
+              onTap: bookingProvider.isLoading
+                  ? null // Disable button while loading
+                  : () async {
+                      // First, create cart and show loader in button
+                      final success =
+                          await bookingProvider.createCart(context, arrCar);
+
+                      // Only show the bottom sheet if cart creation was successful
+                      if (success) {
+                        await showModalBottomSheet(
+                          showDragHandle: true,
+                          enableDrag: true,
+                          context: context,
+                          isScrollControlled: true,
+                          builder: (context) =>
+                              GadgetBottomSheet(arrCar: arrCar),
+                        );
+                      }
+                    },
+              buttonName:
+                  bookingProvider.isLoading ? "Creating cart..." : "Book Now",
             ),
           );
         },

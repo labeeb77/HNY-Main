@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:hny_main/core/constants/api_constants.dart';
 import 'package:hny_main/data/models/car_typelist/car_typelist.dart';
@@ -13,15 +15,15 @@ class HomeService {
   Future<CarListModel?> fetchCarDataList() async {
     try {
       ApiResponseModel<dynamic> apiResponse = await _apiService.apiCall(
-        endpoint: ApiConstants.getCartDataListUrl,
-        method: 'POST',
-        data: {
-          "arrCategory": ["Economy", "Coupe"]
-        },
-        sendToken: true
-      );
+          endpoint: ApiConstants.getCartDataListUrl,
+          method: 'POST',
+          data: {
+            "arrCategory": ["Economy", "Coupe"]
+          },
+          sendToken: true);
 
       if (apiResponse.success && apiResponse.data != null) {
+        log('Car Data: ${apiResponse.data}');
         return CarListModel.fromJson(apiResponse.data);
       }
       return null;
@@ -31,19 +33,14 @@ class HomeService {
     }
   }
 
-
   // New method to fetch car type list
   Future<CarTypeList?> fetchCarTypeList() async {
     try {
       ApiResponseModel<dynamic> apiResponse = await _apiService.apiCall(
-        endpoint: ApiConstants.getTypeListUrl,
-        method: 'POST',
-        data: {
-          "strType": "car_filter_type",
-          "type": "allTypes"
-        },
-        sendToken: true
-      );
+          endpoint: ApiConstants.getTypeListUrl,
+          method: 'POST',
+          data: {"strType": "car_filter_type", "type": "allTypes"},
+          sendToken: true);
 
       if (apiResponse.success && apiResponse.data != null) {
         return CarTypeList.fromJson(apiResponse.data);

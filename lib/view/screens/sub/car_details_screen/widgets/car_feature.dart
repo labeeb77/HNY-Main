@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
 import 'package:another_stepper/another_stepper.dart';
+import 'package:hny_main/data/models/favourites/favourites_model.dart';
 import 'package:hny_main/data/models/response/car_list_model.dart';
 
 class CarFeatures extends StatelessWidget {

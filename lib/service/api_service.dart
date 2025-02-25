@@ -1,4 +1,6 @@
- import 'package:connectivity_plus/connectivity_plus.dart';
+import 'dart:developer';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -108,8 +110,9 @@ class ApiService {
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('access_token');
-    if(currentUserId==""){
-      currentUserId = prefs.getString('userId')??"";
+    log('Token: $token');
+    if (currentUserId == "") {
+      currentUserId = prefs.getString('userId') ?? "";
     }
     Options options = Options(
       headers: {

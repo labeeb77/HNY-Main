@@ -81,7 +81,7 @@ Set<String> selectedCarTypeIds = {};
     try {
       final data = await _homeService.fetchCarDataList();
       if (data != null) {
-        _updateCarList(data.arrCars);
+        _updateCarList(data.arrCars ?? []);
         notifyListeners();
       } else {
         _handleError("Failed to fetch car data");
