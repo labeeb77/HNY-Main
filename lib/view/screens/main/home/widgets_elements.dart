@@ -155,10 +155,15 @@ Widget buildCarCard(
                         borderRadius: BorderRadius.circular(12),
                       ),
                       clipBehavior: Clip.hardEdge,
-                      child: Image(
-                        image: CachedNetworkImageProvider(image),
-                        fit: BoxFit.cover,
-                      ),
+                      child: image.isNotEmpty
+                          ? Image(
+                              image: CachedNetworkImageProvider(image),
+                              fit: BoxFit.cover,
+                            )
+                          : Image.asset(
+                              'assets/images/placeholder_image.webp',
+                              fit: BoxFit.cover,
+                            ),
                     ),
                     Container(
                       width: double.infinity,
