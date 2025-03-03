@@ -35,7 +35,8 @@ class _BottomNavState extends State<BottomNav> {
 
     return Scaffold(
       body: Consumer<BottomNavController>(
-        builder: (context, value, child) => value.screens[value.currentScreenIndex],
+        builder: (context, value, child) =>
+            value.screens[value.currentScreenIndex],
       ),
       bottomNavigationBar: OrientationBuilder(
         builder: (context, orientation) => SafeArea(

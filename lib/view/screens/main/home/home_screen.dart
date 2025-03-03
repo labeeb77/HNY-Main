@@ -23,21 +23,22 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  TextEditingController searchController = TextEditingController();
+
   @override
   void initState() {
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
         systemStatusBarContrastEnforced: false,
-        statusBarColor: AppColors.primary, // Match your app bar color
-        statusBarIconBrightness:
-            Brightness.light, // Adjust icons for visibility
+        statusBarColor: AppColors.primary,
+        statusBarIconBrightness: Brightness.light,
       ),
     );
     WidgetsBinding.instance.addPostFrameCallback((va) {
       final homeController =
           Provider.of<HomeController>(context, listen: false);
       homeController.getCarDataList(context);
-      homeController.getCarTypeList(); // Add this to fetch car types
+      homeController.getCarTypeList();
     });
     super.initState();
   }
@@ -82,34 +83,9 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
         automaticallyImplyLeading: false,
         centerTitle: false,
-        title: const Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            AppText(
-              "LOCATION",
-              fontSize: 12,
-              color: AppColors.white,
-            ),
-            Gap(4),
-            Row(
-              children: [
-                Padding(
-                  padding: EdgeInsets.all(0.0),
-                  child: Icon(
-                    Icons.place,
-                    size: 18,
-                    color: AppColors.white,
-                  ),
-                ),
-                AppText(
-                  "New York, USA",
-                  fontSize: 16,
-                  color: AppColors.textwhiteSecondary,
-                  fontWeight: FontWeight.w500,
-                )
-              ],
-            )
-          ],
+        title: const CircleAvatar(
+          radius: 20,
+          child: Icon(Icons.person),
         ),
         bottom: PreferredSize(
           preferredSize:
@@ -129,13 +105,19 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         const Icon(CupertinoIcons.search, color: Colors.grey),
                         const SizedBox(width: 8),
-                        const Expanded(
-                          child: TextField(
-                            decoration: InputDecoration(
-                              hintText: 'Search "Tata"',
-                              border: InputBorder.none,
-                              // hintStyle:
-                              //     TextStyle(color: Colors.grey[400]),
+                        Consumer<HomeController>(
+                          builder: (context, value, child) => Expanded(
+                            child: TextField(
+                              controller: searchController,
+                              onChanged: (query) {
+                                value.searchFeilds(query);
+                              },
+                              decoration: const InputDecoration(
+                                hintText: 'Search "Tata"',
+                                border: InputBorder.none,
+                                // hintStyle:
+                                //     TextStyle(color: Colors.grey[400]),
+                              ),
                             ),
                           ),
                         ),
@@ -229,7 +211,6 @@ class _HomeScreenState extends State<HomeScreen> {
                             itemCount: homeController.carTypeListData.length +
                                 1, // +1 for "View All"
                             itemBuilder: (context, index) {
-                              // If it's the last item, show "View All"
                               if (index ==
                                   homeController.carTypeListData.length) {
                                 return Padding(
@@ -288,7 +269,17 @@ class _HomeScreenState extends State<HomeScreen> {
                       builder: (context, orientation) =>
                           Consumer2<HomeController, FavouriteProvider>(
                         builder: (context, homeProvider, favProvider, child) {
-                          final data = homeProvider.carListData;
+                          final data = homeProvider.carListData
+                              .where((car) =>
+                                  (car.strModel
+                                          ?.toLowerCase()
+                                          .contains(homeProvider.searchQuery) ??
+                                      false) ||
+                                  (car.strModel
+                                          ?.toLowerCase()
+                                          .contains(homeProvider.searchQuery) ??
+                                      false))
+                              .toList();
                           log('car items length: ${homeProvider.carListData.length}');
                           return homeProvider.isLoading
                               ? CarCardSkeletonLoader(
@@ -300,9 +291,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               : ListView.builder(
                                   physics: const NeverScrollableScrollPhysics(),
                                   shrinkWrap: true,
-                                  itemCount: homeProvider.carListData.length,
+                                  itemCount: data.length,
                                   itemBuilder: (context, index) {
-                                    log('car id: ${data[index].id}');
                                     return buildCarCard(
                                       data[index],
                                       data[index].strModel ?? "Unknown",
@@ -312,7 +302,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       data[index].intFuelCapacity.toString(),
                                       '${data[index].strSeatNo} Seats',
                                       data[index].intPricePerDay.toString(),
-                                      data[index].strImgUrl?? '',
+                                      data[index].strImgUrl ?? '',
                                       data[index].isFavourite ?? false,
                                       context,
                                       orientation,

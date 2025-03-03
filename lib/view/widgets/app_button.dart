@@ -45,6 +45,7 @@ class PrimaryElevateButton extends StatelessWidget {
                   color: isGrey ? AppColors.primary : AppColors.white,
                   style: const TextStyle(
                     fontWeight: FontWeight.w700,
+                    color: AppColors.background,
                     fontSize: 16,
                   ),
                   maxLines: 1,
@@ -74,7 +75,8 @@ class LoadingTextButton extends StatelessWidget {
     return SizedBox(
       height: 38,
       child: ElevatedButton(
-        onPressed: loading ? null : onTap ?? () {}, // Disable button when loading
+        onPressed:
+            loading ? null : onTap ?? () {}, // Disable button when loading
         style: ElevatedButton.styleFrom(
           elevation: 0.0,
           backgroundColor: isGrey ? AppColors.grey : AppColors.primary,
@@ -94,7 +96,8 @@ class LoadingTextButton extends StatelessWidget {
                   valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                 ),
               ),
-            if (loading) const SizedBox(width: 8), // Add spacing between loader and text
+            if (loading)
+              const SizedBox(width: 8), // Add spacing between loader and text
             FittedBox(
               child: AppText(
                 buttonName ?? "Book Now",
