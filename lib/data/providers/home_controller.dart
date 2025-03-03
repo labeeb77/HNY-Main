@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:hny_main/core/utils/app_alerts.dart';
 import 'package:hny_main/data/models/car_typelist/car_typelist.dart';
@@ -8,25 +10,46 @@ class HomeController extends ChangeNotifier {
   final HomeService _homeService;
 
   List<ArrCar> _carListData = [];
-  List<ArrTypeList> _carTypeListData = []; //
+  List<ArrTypeList> _carTypeListData = [];
+
   bool _isLoading = false;
   String? _error;
-
+  String? searchQuery = '';
   RangeValues currentRangeValues = const RangeValues(30, 50);
-Set<String> selectedCarTypeIds = {};
+  Set<String> selectedCarTypeIds = {};
 
   HomeController(BuildContext context) : _homeService = HomeService(context);
 
-  // Getters
+  void filterCars() {
+    List<ArrCar> filteredCars = _carListData.where((car) {
+      bool matchesPrice = car.intPricePerDay != null &&
+          car.intPricePerDay! >= currentRangeValues.start &&
+          car.intPricePerDay! <= currentRangeValues.end;
+
+      bool matchesCarType = selectedCarTypeIds.isEmpty ||
+          (car.strCarCategory != null &&
+              selectedCarTypeIds.contains(car.strCarCategory));
+
+      return matchesPrice && matchesCarType;
+    }).toList();
+
+    _carListData = filteredCars;
+    notifyListeners();
+  }
+
   List<ArrCar> get carListData => _carListData;
   bool get isLoading => _isLoading;
   String? get error => _error;
 
   List<ArrTypeList> get carTypeListData => _carTypeListData;
 
-  // Private Methods
   void _setLoading(bool value) {
     _isLoading = value;
+    notifyListeners();
+  }
+
+  void searchFeilds(query) {
+    searchQuery = query.toLowerCase();
     notifyListeners();
   }
 
@@ -50,10 +73,11 @@ Set<String> selectedCarTypeIds = {};
     currentRangeValues = value;
     notifyListeners();
   }
+
   // Updated toggle method to use IDs
   void toggleCarType(ArrTypeList carType) {
     if (carType.id == null) return;
-    
+
     if (selectedCarTypeIds.contains(carType.id)) {
       selectedCarTypeIds.remove(carType.id);
     } else {
@@ -64,6 +88,7 @@ Set<String> selectedCarTypeIds = {};
 
   // Updated method to check if a car type is selected
   bool isCarTypeSelected(ArrTypeList carType) {
+    log(carType.toString());
     return carType.id != null && selectedCarTypeIds.contains(carType.id);
   }
 
@@ -71,8 +96,6 @@ Set<String> selectedCarTypeIds = {};
     selectedCarTypeIds.clear();
     notifyListeners();
   }
-
-
 
   Future<void> getCarDataList(BuildContext context) async {
     _setLoading(true);
@@ -101,7 +124,7 @@ Set<String> selectedCarTypeIds = {};
       final data = await _homeService.fetchCarTypeList();
       if (data != null && data.arrList != null) {
         _updateCarTypeList(data.arrList!);
-       selectedCarTypeIds.clear();
+        selectedCarTypeIds.clear();
       } else {
         _handleError("Failed to fetch car types");
       }

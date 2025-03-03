@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
-import 'package:hny_main/view/screens/main/bookings/widgets/complain_sheet.dart';
-import 'package:hny_main/view/screens/main/bookings/widgets/complete_payment_sheet.dart';
+import 'package:hny_main/view/screens/main/Bookings/widgets/complain_sheet.dart';
+import 'package:hny_main/view/screens/main/Bookings/widgets/complete_payment_sheet.dart';
+
 import 'package:hny_main/view/screens/sub/checkout_screen/widgets/random_widget.dart';
 import 'package:hny_main/view/widgets/common_app_bar.dart';
 

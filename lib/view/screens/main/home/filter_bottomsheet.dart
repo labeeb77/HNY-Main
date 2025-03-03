@@ -1,7 +1,10 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
 import 'package:hny_main/data/providers/home_controller.dart';
 import 'package:hny_main/view/widgets/app_button.dart';
+import 'package:hny_main/view/widgets/app_text_widget.dart';
 import 'package:provider/provider.dart';
 
 class PriceRangeBottomSheet extends StatelessWidget {
@@ -31,7 +34,7 @@ class PriceRangeBottomSheet extends StatelessWidget {
             RangeSlider(
               values: value.currentRangeValues,
               min: 0,
-              max: 100,
+              max: 1000,
               divisions: 100,
               activeColor: AppColors.primary,
               inactiveColor: Colors.grey.shade200,
@@ -41,6 +44,7 @@ class PriceRangeBottomSheet extends StatelessWidget {
               ),
               onChanged: (RangeValues values) {
                 value.changeSliderValue(values);
+                log(value.currentRangeValues.toString());
               },
             ),
             Row(
@@ -80,14 +84,6 @@ class PriceRangeBottomSheet extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 30),
-            const Text(
-              'Car Type',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
             const SizedBox(height: 20),
             value.isLoading
                 ? const Center(child: CircularProgressIndicator())
@@ -96,12 +92,10 @@ class PriceRangeBottomSheet extends StatelessWidget {
                     spacing: 10,
                     runSpacing: 10,
                     children: value.carTypeListData.map((type) {
-                      final isSelected = value
-                          .isCarTypeSelected(type); // Use the new helper method
+                      final isSelected = value.isCarTypeSelected(type);
                       return GestureDetector(
                         onTap: () {
-                          value.toggleCarType(
-                              type); // Pass the entire type object
+                          value.toggleCarType(type);
                         },
                         child: Container(
                           padding: const EdgeInsets.symmetric(
@@ -133,23 +127,32 @@ class PriceRangeBottomSheet extends StatelessWidget {
               children: [
                 const Spacer(),
                 Expanded(
-                  child: PrimaryElevateButton(
-                    buttonName: "Clear All",
-                    isGrey: true,
-                    ontap: () {
+                  child: AppButton(
+                    color: AppColors.primary,
+                    onPressed: () {
                       value.clearCarTypes();
                       value.changeSliderValue(const RangeValues(30, 50));
+
                       Navigator.pop(context);
                     },
+                    child: const AppText(
+                      'Cancel',
+                      color: AppColors.background,
+                    ),
                   ),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
-                  child: PrimaryElevateButton(
-                    ontap: () {
+                  child: AppButton(
+                    color: AppColors.primary,
+                    onPressed: () {
+                      value.filterCars();
                       Navigator.pop(context);
                     },
-                    buttonName: "Apply",
+                    child: const AppText(
+                      "Apply",
+                      color: AppColors.white,
+                    ),
                   ),
                 ),
               ],

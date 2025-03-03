@@ -21,11 +21,11 @@ class MyApp extends StatelessWidget {
         title: 'HNY-Customer',
         theme: AppTheme.lightTheme, // Apply the light theme
         darkTheme: AppTheme.darkTheme, // Optional: Apply the dark theme
-        themeMode: ThemeMode.light, // Switches based on system preference
+        themeMode: ThemeMode.light,
         debugShowCheckedModeBanner: false,
-         initialRoute: AppRoutes.splashScreen,
-          onGenerateRoute: AppRoutes.generateRoute,
-          home: const SplashScreen(),
+        initialRoute: AppRoutes.splashScreen,
+        onGenerateRoute: AppRoutes.generateRoute,
+        home: const SplashScreen(),
       ),
     );
   }

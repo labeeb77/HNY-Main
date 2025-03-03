@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hny_main/view/screens/main/bookings/bookings_screen.dart';
+import 'package:hny_main/view/screens/main/Bookings/bookings_screen.dart';
 import 'package:hny_main/view/screens/main/favorite/favorite_screen.dart';
 import 'package:hny_main/view/screens/main/home/home_screen.dart';
 import 'package:hny_main/view/screens/main/profile/profile_screen.dart';

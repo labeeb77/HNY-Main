@@ -3,7 +3,7 @@ import 'package:gap/gap.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
 import 'package:hny_main/core/utils/app_text_styles.dart';
 import 'package:hny_main/data/providers/home_controller.dart';
-import 'package:hny_main/view/screens/main/bookings/widgets/file_upload_ui_widget.dart';
+import 'package:hny_main/view/screens/main/Bookings/widgets/file_upload_ui_widget.dart';
 import 'package:hny_main/view/widgets/app_button.dart';
 import 'package:hny_main/view/widgets/app_text_widget.dart';
 import 'package:hny_main/view/widgets/app_textform_widget.dart';
