@@ -94,6 +94,7 @@ class HomeController extends ChangeNotifier {
 
   void clearCarTypes() {
     selectedCarTypeIds.clear();
+
     notifyListeners();
   }
 

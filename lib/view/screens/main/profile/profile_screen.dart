@@ -12,8 +12,21 @@ import 'package:hny_main/view/widgets/app_text_widget.dart';
 import 'package:hny_main/view/widgets/common_app_bar.dart';
 import 'package:provider/provider.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    Provider.of<ProfileProvider>(context, listen: false)
+        .getUserProfileDetails(context);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,9 +43,10 @@ class ProfileScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               InkWell(
-                 onTap: () {
-                            Navigator.pushNamed(context,AppRoutes.manageProfile,arguments: 'Edit');
-                          },
+                onTap: () {
+                  Navigator.pushNamed(context, AppRoutes.manageProfile,
+                      arguments: 'Edit');
+                },
                 child: Container(
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
@@ -51,22 +65,19 @@ class ProfileScreen extends StatelessWidget {
                     builder: (context, value, child) => Row(
                       children: [
                         CircleAvatar(
-                            backgroundImage: globalUser!.strProfileUrl
-                                            ?.isNotEmpty !=
-                                        null &&
-                                    globalUser!.strProfileUrl
-                                            ?.isNotEmpty !=
-                                        ""
-                                ? NetworkImage(
-                                    globalUser!.strProfileUrl!)
-                                : const AssetImage(
-                                    'assets/images/placeholder_image.webp')),
+                          backgroundImage: (globalUser
+                                      ?.strProfileUrl?.isNotEmpty ??
+                                  false)
+                              ? NetworkImage(globalUser!.strProfileUrl!)
+                              : const AssetImage(
+                                      'assets/images/placeholder_image.webp')
+                                  as ImageProvider,
+                        ),
                         const Gap(16),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            AppText(
-                                globalUser?.strFullName ?? "Unknown"),
+                            AppText(globalUser?.strFullName ?? "Unknown"),
                             const Gap(4),
                             AppText(
                               globalUser?.strEmail ?? "No email",

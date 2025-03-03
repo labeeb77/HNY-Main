@@ -53,6 +53,7 @@ dependencies:
   firebase_messaging: ^15.2.1
   intl_phone_number_input_perci: ^0.7.5
   uuid: ^4.5.1
+  file_picker: ^9.0.2
 
 dev_dependencies:
   flutter_test:

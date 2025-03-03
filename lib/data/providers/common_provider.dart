@@ -18,10 +18,12 @@ class CommonProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<String?> commonFileUploadApi(BuildContext context, String imagePath) async {
+  Future<String?> commonFileUploadApi(
+      BuildContext context, String imagePath) async {
     changeLoadingState();
     try {
-      const String uploadUrl = "${ApiConstants.baseUrl}${ApiConstants.fileUploadApiUrl}";
+      const String uploadUrl =
+          "${ApiConstants.baseUrl}${ApiConstants.fileUploadApiUrl}";
       final formData = FormData.fromMap({
         "arrFiles": await MultipartFile.fromFile(imagePath),
       });
@@ -36,12 +38,15 @@ class CommonProvider with ChangeNotifier {
 
       final options = Options(headers: {'Authorization': token});
 
-      final response = await dio.post(uploadUrl, data: formData, options: options);
+      final response =
+          await dio.post(uploadUrl, data: formData, options: options);
       log(response.data.toString(), name: "Upload Response");
 
       if (response.statusCode == 200) {
         final data = response.data;
-        if (data['statusCode'] == 200 && data['arrUrls'] != null && data['arrUrls'].isNotEmpty) {
+        if (data['statusCode'] == 200 &&
+            data['arrUrls'] != null &&
+            data['arrUrls'].isNotEmpty) {
           return data['arrUrls'][0];
         } else {
           debugPrint("Unexpected response format: $data");
@@ -56,4 +61,4 @@ class CommonProvider with ChangeNotifier {
     }
     return null;
   }
-} 
+}
