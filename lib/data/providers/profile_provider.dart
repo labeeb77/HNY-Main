@@ -12,7 +12,6 @@ import 'package:hny_main/service/api_service.dart';
 import 'package:provider/provider.dart';
 
 class ProfileProvider with ChangeNotifier {
-  // UserProfileModel? userProfileModel;
   bool _isLoading = false;
   String? _error;
 
@@ -43,39 +42,34 @@ class ProfileProvider with ChangeNotifier {
   }
 
   void initialMethod() {
-    firstNameController.text = globalUser?.strFirstName ?? "";
-    lastNameController.text = globalUser?.strLastName ?? "";
-    mobileController.text = globalUser?.strMobileNo ?? "";
-    emailController.text = globalUser?.strEmail ?? "";
-    selectedNationality = globalUser?.strNationality ?? "";
+    if (globalUser != null) {
+      firstNameController.text = globalUser?.strFirstName ?? "";
+      lastNameController.text = globalUser?.strLastName ?? "";
+      mobileController.text = globalUser?.strMobileNo ?? "";
+      emailController.text = globalUser?.strEmail ?? "";
+      selectedNationality = globalUser?.strNationality ?? "";
 
-    if (globalUser?.strGccIdUrl != "") {
-      selectedCitizenship = 'GCC';
-    } else if (globalUser?.strPassportUrl != "") {
-      selectedCitizenship = 'International';
-    } else if (globalUser?.strEmiratesIdUrl != "") {
-      selectedCitizenship = 'Emirati';
-    } else {
-      selectedCitizenship = null;
+      selectedCitizenship = globalUser?.strGccIdUrl?.isNotEmpty == true
+          ? 'GCC'
+          : globalUser?.strPassportUrl?.isNotEmpty == true
+              ? 'International'
+              : globalUser?.strEmiratesIdUrl?.isNotEmpty == true
+                  ? 'Emirati'
+                  : null;
     }
     notifyListeners();
   }
 
   void setProfileImage(File? image) =>
       _updateValue(() => _selectedProfileImage = image);
-
   void setIdCardImagePath(File? image) =>
       _updateValue(() => _selectedIdCardImagePath = image);
-
   void setDrivingLicenseImagePath(File? image) =>
       _updateValue(() => _selectedDrivingLicenseImagePath = image);
-
   void setNationality(String value) =>
       _updateValue(() => selectedNationality = value);
-
   void setCitizenship(String value) =>
       _updateValue(() => selectedCitizenship = value);
-
   void setGender(String value) => _updateValue(() => selectedGender = value);
 
   String getIdTitleName() {
@@ -104,8 +98,10 @@ class ProfileProvider with ChangeNotifier {
           await _uploadFile(context, _selectedDrivingLicenseImagePath);
       idCardUploadedUrl = await _uploadFile(context, _selectedIdCardImagePath);
 
+      if (globalUser == null) return false;
+
       final AddProfileModel data = AddProfileModel(
-        id: currentUserId,
+        id: currentUserId ?? "",
         strDateOfBirth: dobController.text,
         strEmail: emailController.text,
         strEmiratesIdUrl: selectedCitizenship == "Emirati"
@@ -136,6 +132,7 @@ class ProfileProvider with ChangeNotifier {
       if (apiResponse.success && apiResponse.data != null) {
         globalUser = null;
         currentUserId = '';
+        notifyListeners();
         return true;
       } else {
         AppAlerts.showCustomSnackBar(apiResponse.error ?? "Alert",
@@ -151,7 +148,7 @@ class ProfileProvider with ChangeNotifier {
     return null;
   }
 
-  Future getUserProfileDetails(context) async {
+  Future getUserProfileDetails(BuildContext context) async {
     try {
       final ApiResponseModel<dynamic> apiResponse =
           await ApiService(context).apiCall(
@@ -164,6 +161,7 @@ class ProfileProvider with ChangeNotifier {
       if (apiResponse.success && apiResponse.data != null) {
         log(apiResponse.data.toString());
         globalUser = UserProfileModel.fromJson(apiResponse.data);
+        notifyListeners();
         return true;
       } else {
         AppAlerts.showCustomSnackBar(apiResponse.error ?? "Alert",
@@ -177,7 +175,7 @@ class ProfileProvider with ChangeNotifier {
   }
 
   Future<String?> _uploadFile(BuildContext context, File? file) async {
-    if (file == null) return null;
+    if (file == null || !context.mounted) return null;
     return await Provider.of<CommonProvider>(context, listen: false)
         .commonFileUploadApi(context, file.path);
   }

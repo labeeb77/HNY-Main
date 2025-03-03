@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hny_main/core/routes/app_routes.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
-import 'package:hny_main/view/common/bottom_nav.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -16,7 +15,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   void initState() {
-    super.initState();  
+    super.initState();
     // Fade in animation
     Future.delayed(const Duration(seconds: 0), () {
       setState(() {
