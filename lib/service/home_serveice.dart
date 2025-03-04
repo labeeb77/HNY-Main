@@ -12,7 +12,7 @@ class HomeService {
 
   HomeService(BuildContext context) : _apiService = ApiService(context);
 
-  Future<CarListModel?> fetchCarDataList() async {
+  Future<CarListModel?> fetchCarDataList({start, end}) async {
     try {
       ApiResponseModel<dynamic> apiResponse = await _apiService.apiCall(
           endpoint: ApiConstants.getCartDataListUrl,
@@ -20,7 +20,8 @@ class HomeService {
           data: {
             "arrCategory": ["Economy", "Coupe"]
           },
-          sendToken: true);
+          sendToken: true,
+          queryParams: {"strStartDate": start, "strEndDate": end});
 
       if (apiResponse.success && apiResponse.data != null) {
         log('Car Data: ${apiResponse.data}');

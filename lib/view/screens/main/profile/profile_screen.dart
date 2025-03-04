@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hny_main/core/global/profile.dart';
@@ -6,7 +7,6 @@ import 'package:hny_main/core/utils/app_colors.dart';
 import 'package:hny_main/data/providers/auth_provider.dart';
 import 'package:hny_main/data/providers/bottom_nav_controller.dart';
 import 'package:hny_main/data/providers/profile_provider.dart';
-import 'package:hny_main/view/screens/main/auth/sign_in_screen.dart';
 import 'package:hny_main/view/screens/main/profile/widgets_elements.dart';
 import 'package:hny_main/view/widgets/app_text_widget.dart';
 import 'package:hny_main/view/widgets/common_app_bar.dart';
@@ -68,7 +68,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           backgroundImage: (globalUser
                                       ?.strProfileUrl?.isNotEmpty ??
                                   false)
-                              ? NetworkImage(globalUser!.strProfileUrl!)
+                              ? CachedNetworkImageProvider(
+                                  globalUser!.strProfileUrl!)
                               : const AssetImage(
                                       'assets/images/placeholder_image.webp')
                                   as ImageProvider,
@@ -232,9 +233,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Provider.of<BottomNavController>(context, listen: false)
                           .changeScreenIndex(0, false);
                       Navigator.of(context).pushNamedAndRemoveUntil(
-                        AppRoutes.loginPage,
-                        (route) => true,
-                      );
+                          AppRoutes.loginPage, (route) => true);
                     });
                   },
                   style: ElevatedButton.styleFrom(

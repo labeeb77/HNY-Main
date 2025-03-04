@@ -67,7 +67,7 @@ class FavouriteProvider extends ChangeNotifier {
       final response = await _favouriteService.addToFavourites(strCarId);
       log('response: ${response.success}');
       if (response.success) {
-        await getFavouritesList(); // Refresh the list
+        await getFavouritesList();
       } else {
         _handleError("Failed to add to favorites");
       }
