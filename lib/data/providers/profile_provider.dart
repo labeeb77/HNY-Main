@@ -99,7 +99,6 @@ class ProfileProvider with ChangeNotifier {
       idCardUploadedUrl = await _uploadFile(context, _selectedIdCardImagePath);
 
       if (globalUser == null) return false;
-
       final AddProfileModel data = AddProfileModel(
         id: currentUserId ?? "",
         strDateOfBirth: dobController.text,
@@ -162,6 +161,7 @@ class ProfileProvider with ChangeNotifier {
       if (apiResponse.success && apiResponse.data != null) {
         log(apiResponse.data.toString());
         globalUser = UserProfileModel.fromJson(apiResponse.data);
+        log(globalUser!.strEmail.toString());
         notifyListeners();
         return true;
       } else {

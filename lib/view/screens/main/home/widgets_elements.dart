@@ -614,16 +614,20 @@ class CircledIcon extends StatelessWidget {
 class DateSectionWidget extends StatelessWidget {
   final title;
   final value;
+  final VoidCallback onTap;
+
   const DateSectionWidget({
     this.title,
     this.value,
+    required this.onTap,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: FittedBox(
+      child: GestureDetector(
+        onTap: onTap,
         child: Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
@@ -637,7 +641,6 @@ class DateSectionWidget extends StatelessWidget {
                     offset: const Offset(1, 1))
               ]),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Icon(
@@ -650,10 +653,6 @@ class DateSectionWidget extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: const TextStyle(
-                      color: Colors.grey,
-                      fontSize: 14,
-                    ),
                   ),
                   const SizedBox(height: 4),
                   Text(

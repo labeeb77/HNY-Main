@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hny_main/core/global/profile.dart';
@@ -67,7 +68,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           backgroundImage: (globalUser
                                       ?.strProfileUrl?.isNotEmpty ??
                                   false)
-                              ? NetworkImage(globalUser!.strProfileUrl!)
+                              ? CachedNetworkImageProvider(
+                                  globalUser!.strProfileUrl!)
                               : const AssetImage(
                                       'assets/images/placeholder_image.webp')
                                   as ImageProvider,
@@ -231,9 +233,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Provider.of<BottomNavController>(context, listen: false)
                           .changeScreenIndex(0, false);
                       Navigator.of(context).pushNamedAndRemoveUntil(
-                        AppRoutes.loginPage,
-                        (route) => true,
-                      );
+                          AppRoutes.loginPage, (route) => true);
                     });
                   },
                   style: ElevatedButton.styleFrom(

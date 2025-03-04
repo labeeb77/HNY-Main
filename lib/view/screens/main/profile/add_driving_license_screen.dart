@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hny_main/core/global/profile.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
 import 'package:hny_main/core/utils/app_image_picker.dart';
 import 'package:hny_main/data/providers/profile_provider.dart';

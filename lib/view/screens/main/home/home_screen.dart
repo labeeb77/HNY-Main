@@ -10,8 +10,6 @@ import 'package:hny_main/data/providers/favourite_provider.dart';
 import 'package:hny_main/data/providers/home_controller.dart';
 import 'package:hny_main/view/screens/main/home/filter_bottomsheet.dart';
 import 'package:hny_main/view/screens/main/home/widgets_elements.dart';
-import 'package:hny_main/view/screens/main/profile/manage_profile_screen.dart';
-import 'package:hny_main/view/widgets/app_text_widget.dart';
 import 'package:hny_main/view/widgets/car_card_loader.dart';
 import 'package:hny_main/view/widgets/ride_option_loader.dart';
 import 'package:provider/provider.dart';
@@ -163,22 +161,43 @@ class _HomeScreenState extends State<HomeScreen> {
                 color: AppColors.primary,
               ),
             ),
-            // Date Selection Section
             Expanded(
               child: ListView(
                 shrinkWrap: true,
                 children: [
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.all(16),
-                    child: Row(
-                      children: [
-                        DateSectionWidget(
-                            value: 'October 1, 2024',
-                            title: "Start Date & Time"),
-                        SizedBox(width: 16),
-                        DateSectionWidget(
-                            value: 'October 4, 2024', title: "End Date"),
-                      ],
+                    child: Consumer<HomeController>(
+                      builder: (context, value, child) => Row(
+                        children: [
+                          DateSectionWidget(
+                              onTap: () async {
+                                final DateTime? picked = await showDatePicker(
+                                  context: context,
+                                  initialDate: DateTime.now(),
+                                  firstDate: DateTime(2000),
+                                  lastDate: DateTime(2101),
+                                );
+                                value.setSelectedStartDate(picked!);
+                              },
+                              value:
+                                  value.selectedDateTOString ?? 'select Date',
+                              title: "Start Date & Time"),
+                          SizedBox(width: 16),
+                          DateSectionWidget(
+                              onTap: () async {
+                                final DateTime? picked = await showDatePicker(
+                                  context: context,
+                                  initialDate: DateTime.now(),
+                                  firstDate: DateTime(2000),
+                                  lastDate: DateTime(2101),
+                                );
+                                value.setSelectedEndtDate(picked!);
+                              },
+                              value: value.selectedEndTOString ?? 'select date',
+                              title: "End Date"),
+                        ],
+                      ),
                     ),
                   ),
 
@@ -206,8 +225,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           padding: const EdgeInsets.symmetric(horizontal: 16.0),
                           child: ListView.builder(
                             scrollDirection: Axis.horizontal,
-                            itemCount: homeController.carTypeListData.length +
-                                1, // +1 for "View All"
+                            itemCount:
+                                homeController.carTypeListData.length + 1,
                             itemBuilder: (context, index) {
                               if (index ==
                                   homeController.carTypeListData.length) {

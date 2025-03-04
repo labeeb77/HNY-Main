@@ -5,6 +5,7 @@ import 'package:hny_main/core/utils/app_alerts.dart';
 import 'package:hny_main/data/models/car_typelist/car_typelist.dart';
 import 'package:hny_main/data/models/response/car_list_model.dart';
 import 'package:hny_main/service/home_serveice.dart';
+import 'package:intl/intl.dart';
 
 class HomeController extends ChangeNotifier {
   final HomeService _homeService;
@@ -19,6 +20,28 @@ class HomeController extends ChangeNotifier {
   Set<String> selectedCarTypeIds = {};
 
   HomeController(BuildContext context) : _homeService = HomeService(context);
+
+  DateTime? selecteStratdDate;
+  String? selectedDateTOString;
+
+  DateTime? selecteEnddDate;
+  String? selectedEndTOString;
+
+  void setSelectedStartDate(DateTime date) {
+    selectedDateTOString = DateFormat('dd-MM-yyyy').format(date);
+    selecteStratdDate = date;
+    log(selectedDateTOString.toString());
+    notifyListeners();
+  }
+
+  void setSelectedEndtDate(DateTime date) {
+    selectedEndTOString = DateFormat('dd-MM-yyyy').format(date);
+    selecteEnddDate = date;
+    log(selectedDateTOString.toString());
+    notifyListeners();
+  }
+
+  void filterWithDate() {}
 
   void filterCars() {
     List<ArrCar> filteredCars = _carListData.where((car) {
@@ -74,7 +97,6 @@ class HomeController extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Updated toggle method to use IDs
   void toggleCarType(ArrTypeList carType) {
     if (carType.id == null) return;
 
@@ -104,6 +126,7 @@ class HomeController extends ChangeNotifier {
 
     try {
       final data = await _homeService.fetchCarDataList();
+
       if (data != null) {
         _updateCarList(data.arrCars ?? []);
         notifyListeners();
@@ -117,6 +140,23 @@ class HomeController extends ChangeNotifier {
     }
   }
 
+  // void filterAndAssignCars(DateTime? startDate, DateTime? endDate) {
+  //   if (startDate == null || endDate == null) return;
+
+  //   _carListData = _carListData.where((item) {
+  //     DateTime itemStartDate = DateTime.parse(item.str);
+  //     DateTime itemEndDate = DateTime.parse(item.endDate);
+
+  //     return (itemStartDate.isAfter(startDate) ||
+  //             itemStartDate.isAtSameMomentAs(startDate)) &&
+  //         (itemEndDate.isBefore(endDate) ||
+  //             itemEndDate.isAtSameMomentAs(endDate));
+  //   }).toList();
+
+  //   log("Filtered Cars: ${_carListData.length}");
+  //   notifyListeners(); // If using Provider
+  // }
+
   // New method to fetch car type list
   Future<void> getCarTypeList() async {
     _setLoading(true);
@@ -126,6 +166,7 @@ class HomeController extends ChangeNotifier {
       if (data != null && data.arrList != null) {
         _updateCarTypeList(data.arrList!);
         selectedCarTypeIds.clear();
+        notifyListeners();
       } else {
         _handleError("Failed to fetch car types");
       }
@@ -133,6 +174,7 @@ class HomeController extends ChangeNotifier {
       _handleError("An unexpected error occurred while fetching car types");
     } finally {
       _setLoading(false);
+      notifyListeners();
     }
   }
 
