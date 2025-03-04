@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
 import 'package:hny_main/data/providers/favourite_provider.dart';
@@ -83,10 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
         automaticallyImplyLeading: false,
         centerTitle: false,
-        title: const CircleAvatar(
-          radius: 20,
-          child: Icon(Icons.person),
-        ),
+        title: SvgPicture.asset("assets/icons/menu-svgrepo-com-2.svg",),
         bottom: PreferredSize(
           preferredSize:
               Size.fromHeight(MediaQuery.of(context).size.height / 13),

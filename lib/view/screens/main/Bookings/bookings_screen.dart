@@ -28,121 +28,118 @@ class _BookingScreenState extends State<BookingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.white,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Header
-            Container(
-              decoration: const BoxDecoration(
-                color: AppColors.primary,
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(14),
-                  bottomRight: Radius.circular(14),
-                ),
+      body: Column(
+        children: [
+          // Header
+          Container(
+            decoration: const BoxDecoration(
+              color: AppColors.primary,
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(14),
+                bottomRight: Radius.circular(14),
               ),
-              child: Column(
-                children: [
-                  const Gap(40),
-                  const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+            ),
+            child: Column(
+              children: [
+                const Gap(40),
+                const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    AppText(
+                      'My Booking',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+                Container(
+                  margin: const EdgeInsets.symmetric(
+                      vertical: 34, horizontal: 16),
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 75, 124, 77)
+                        .withOpacity(0.4),
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  child: Row(
                     children: [
-                      AppText(
-                        'My Booking',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 24,
-                          fontWeight: FontWeight.w500,
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(25),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.1),
+                                spreadRadius: 1,
+                                blurRadius: 1,
+                              ),
+                            ],
+                          ),
+                          child: const Text(
+                            'Upcoming',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          child: const Text(
+                            'Completed',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          child: const Text(
+                            'In rental',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.white,
+                            ),
+                          ),
                         ),
                       ),
                     ],
                   ),
-                  Container(
-                    margin: const EdgeInsets.symmetric(
-                        vertical: 34, horizontal: 16),
-                    padding: const EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                      color: const Color.fromARGB(255, 75, 124, 77)
-                          .withOpacity(0.4),
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(25),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.1),
-                                  spreadRadius: 1,
-                                  blurRadius: 1,
-                                ),
-                              ],
-                            ),
-                            child: const Text(
-                              'Upcoming',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            child: const Text(
-                              'Completed',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            child: const Text(
-                              'In rental',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-            // Main Content
-            Expanded(
-              child: Consumer<BookingProvider>(
-                builder: (context, value, child) => value.isLoading
-                    ? const Center(
-                        child: CircularProgressIndicator(),
-                      )
-                    : ListView.builder(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        itemCount: value.bookingsListData.length,
-                        itemBuilder: (context, index) {
-                          return BookingCard(
-                            index: index,
-                            data: value.bookingsListData[index],
-                          );
-                        },
-                      ),
-              ),
+          ),
+          // Main Content
+          Expanded(
+            child: Consumer<BookingProvider>(
+              builder: (context, value, child) => value.isLoading
+                  ? const Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : ListView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      itemCount: value.bookingsListData.length,
+                      itemBuilder: (context, index) {
+                        return BookingCard(
+                          index: index,
+                          data: value.bookingsListData[index],
+                        );
+                      },
+                    ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -192,7 +189,7 @@ class BookingCard extends StatelessWidget {
                         data.strBookingId!,
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 16,
+                          fontSize: 14,
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -221,7 +218,7 @@ class BookingCard extends StatelessWidget {
                             formatDateOnly(data.strStartDate.toString()),
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
-                              fontSize: 16,
+                              fontSize: 14,
                             ),
                           ),
                         ],
@@ -242,7 +239,7 @@ class BookingCard extends StatelessWidget {
                             formatDateOnly(data.strEndDate.toString()),
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
-                              fontSize: 16,
+                              fontSize: 14,
                             ),
                           ),
                         ],

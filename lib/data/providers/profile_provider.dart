@@ -130,6 +130,7 @@ class ProfileProvider with ChangeNotifier {
       );
 
       if (apiResponse.success && apiResponse.data != null) {
+        log('api response :${apiResponse.data}');
         globalUser = null;
         currentUserId = '';
         notifyListeners();

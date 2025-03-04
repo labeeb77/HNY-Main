@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:hny_main/core/constants/api_constants.dart';
 import 'package:hny_main/data/models/booking/add_on_list_model.dart';
@@ -38,6 +40,7 @@ class BookingService {
           sendToken: true);
 
       if (apiResponse.success && apiResponse.data != null) {
+        log('fetchBookingList : ${apiResponse.data}');
         return BookingsListModel.fromJson(apiResponse.data);
       }
       return null;

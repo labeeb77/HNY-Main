@@ -41,13 +41,13 @@ class BookingsListModel {
 }
 
 class BookingArrList {
-    String? id;
-    String? chrStatus;
-    String? strStatus;
-    String? strCustomerId;
-    String? strBookingId;
+    dynamic id;
+    dynamic chrStatus;
+    dynamic strStatus;
+    dynamic strCustomerId;
+    dynamic strBookingId;
     dynamic strBookingType;
-    String? strPaymentMode;
+    dynamic strPaymentMode;
     dynamic strRemarks;
     dynamic strPromocode;
     dynamic intPromocodeDiscount;
@@ -58,7 +58,7 @@ class BookingArrList {
     int? intTotalDiscount;
     double? intCheckoutAmount;
     dynamic intRewardCoinCount;
-    String? strCusMobileNo;
+    dynamic strCusMobileNo;
     double? intBalanceAmt;
     DateTime? strStartDate;
     DateTime? strEndDate;
@@ -66,9 +66,9 @@ class BookingArrList {
     List<ObjCustomer>? objCustomer;
     List<ArrBookingItem>? arrBookingItems;
     dynamic strCarName;
-    String? strCarNumber;
-    String? strCustomer;
-    String? strCreatedByName;
+    dynamic strCarNumber;
+    dynamic strCustomer;
+    dynamic strCreatedByName;
     bool? upcoming;
     bool? inRental;
     bool? completed;
@@ -177,36 +177,36 @@ class BookingArrList {
 }
 
 class ArrBookingItem {
-    String? id;
-    String? strCarNumber;
-    String? strCarCode;
+    dynamic id;
+    dynamic strCarNumber;
+    dynamic strCarCode;
     DateTime? strStartDate;
     DateTime? strEndDate;
     StrLocation? strDeliveryLocation;
     StrLocation? strPickupLocation;
-    String? strPickupLocationAddress;
-    String? strDeliveryLocationAddress;
+    dynamic strPickupLocationAddress;
+    dynamic strDeliveryLocationAddress;
     double? intTotalAmount;
     dynamic strBookingType;
-    String? type;
-    int? intPricePerDay;
-    String? strImgUrl;
-    String? strModel;
-    int? intPricePerMonth;
-    int? intPricePerWeek;
-    String? arrBookingItemStrBookingId;
-    String? strBookingId;
-    int? strContractId;
-    String? strCarId;
-    String? chrStatus;
+    dynamic type;
+    dynamic intPricePerDay;
+    dynamic strImgUrl;
+    dynamic strModel;
+    dynamic intPricePerMonth;
+    dynamic intPricePerWeek;
+    dynamic arrBookingItemStrBookingId;
+    dynamic strBookingId;
+    dynamic strContractId;
+    dynamic strCarId;
+    dynamic chrStatus;
     double? intUnitPrice;
-    int? intTotalDays;
-    String? strCreatedBy;
+    dynamic intTotalDays;
+    dynamic strCreatedBy;
     DateTime? strCreatedTime;
-    String? strStatus;
-    String? strDeletedBy;
+    dynamic strStatus;
+    dynamic strDeletedBy;
     DateTime? strDeletedTime;
-    String? strUpdatedBy;
+    dynamic strUpdatedBy;
     DateTime? strUpdatedTime;
 
     ArrBookingItem({
@@ -333,23 +333,23 @@ class StrLocation {
 }
 
 class ObjCustomer {
-    String? id;
-    String? chrStatus;
-    String? strFirstName;
-    String? strLastName;
-    String? strMobileNo;
-    String? strFullName;
-    String? strEmail;
-    String? strRoleName;
-    String? strType;
-    int? intOpningBalance;
+    dynamic id;
+    dynamic chrStatus;
+    dynamic strFirstName;
+    dynamic strLastName;
+    dynamic strMobileNo;
+    dynamic strFullName;
+    dynamic strEmail;
+    dynamic strRoleName;
+    dynamic strType;
+    dynamic intOpningBalance;
     double? intCurrentBalance;
     dynamic strJoinDate;
-    String? strNationality;
+    dynamic strNationality;
     dynamic strPromoCode;
     dynamic intAdvancePercentage;
     DateTime? strCreatedTime;
-    String? strCreatedUser;
+    dynamic strCreatedUser;
 
     ObjCustomer({
         this.id,

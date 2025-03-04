@@ -6,7 +6,6 @@ import 'package:hny_main/core/utils/app_colors.dart';
 import 'package:hny_main/data/providers/auth_provider.dart';
 import 'package:hny_main/data/providers/bottom_nav_controller.dart';
 import 'package:hny_main/data/providers/profile_provider.dart';
-import 'package:hny_main/view/screens/main/auth/sign_in_screen.dart';
 import 'package:hny_main/view/screens/main/profile/widgets_elements.dart';
 import 'package:hny_main/view/widgets/app_text_widget.dart';
 import 'package:hny_main/view/widgets/common_app_bar.dart';
