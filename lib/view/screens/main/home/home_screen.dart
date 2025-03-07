@@ -286,17 +286,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       builder: (context, orientation) =>
                           Consumer2<HomeController, FavouriteProvider>(
                         builder: (context, homeProvider, favProvider, child) {
-                          final data = homeProvider.carListData
-                              .where((car) =>
-                                  (car.strModel
-                                          ?.toLowerCase()
-                                          .contains(homeProvider.searchQuery) ??
-                                      false) ||
-                                  (car.strModel
-                                          ?.toLowerCase()
-                                          .contains(homeProvider.searchQuery) ??
-                                      false))
-                              .toList();
+                          final data = homeProvider.carListData;
+                              
                           log('car items length: ${homeProvider.carListData.length}');
                           return homeProvider.isLoading
                               ? CarCardSkeletonLoader(
