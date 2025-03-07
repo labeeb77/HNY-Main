@@ -18,7 +18,6 @@ class HomeService {
           endpoint: ApiConstants.getCartDataListUrl,
           method: 'POST',
           data: {
-            "arrCategory": ["Economy", "Coupe"]
           },
           sendToken: true,
           queryParams: {"strStartDate": start, "strEndDate": end});
