@@ -118,6 +118,7 @@ Widget buildCarCard(
           ));
     },
     child: Container(
+      margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(8.0),
       decoration: BoxDecoration(
         boxShadow: [

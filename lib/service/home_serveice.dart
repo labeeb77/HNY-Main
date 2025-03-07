@@ -17,9 +17,6 @@ class HomeService {
       ApiResponseModel<dynamic> apiResponse = await _apiService.apiCall(
           endpoint: ApiConstants.getCartDataListUrl,
           method: 'POST',
-          data: {
-            "arrCategory": ["Economy", "Coupe"]
-          },
           sendToken: true);
 
       if (apiResponse.success && apiResponse.data != null) {

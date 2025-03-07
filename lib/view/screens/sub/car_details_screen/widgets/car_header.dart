@@ -17,12 +17,19 @@ class CarHeader extends StatelessWidget {
       children: [
         Stack(
           children: [
-            Image.network(
-              arrCar.strImgUrl ?? '',
-              height: 250,
-              width: double.infinity,
-              fit: BoxFit.cover,
-            ),
+          arrCar.strImgUrl != null && arrCar.strImgUrl!.isNotEmpty
+    ? Image.network(
+        arrCar.strImgUrl!,
+        height: 250,
+        width: double.infinity,
+        fit: BoxFit.cover,
+      )
+    : Image.asset(
+        'assets/images/placeholder_image.webp',
+        height: 250,
+        width: double.infinity,
+        fit: BoxFit.cover,
+      ),
             _buildHeaderIcons(context),
           ],
         ),
