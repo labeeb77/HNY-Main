@@ -73,6 +73,7 @@ class HomeController extends ChangeNotifier {
 
   void searchFeilds(query) {
     searchQuery = query.toLowerCase();
+
     notifyListeners();
   }
 
@@ -120,12 +121,14 @@ class HomeController extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getCarDataList(BuildContext context) async {
+  Future<void> getCarDataList(
+      {required BuildContext context, startDate, endDate, search}) async {
     _setLoading(true);
     _setError(null);
 
     try {
-      final data = await _homeService.fetchCarDataList();
+      final data = await _homeService.fetchCarDataList(
+          end: endDate, start: startDate, search: search);
 
       if (data != null) {
         _updateCarList(data.arrCars ?? []);
