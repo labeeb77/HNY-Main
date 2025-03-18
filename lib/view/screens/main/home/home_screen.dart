@@ -8,6 +8,7 @@ import 'package:gap/gap.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
 import 'package:hny_main/data/providers/favourite_provider.dart';
 import 'package:hny_main/data/providers/home_controller.dart';
+import 'package:hny_main/view/screens/Search/search.dart';
 import 'package:hny_main/view/screens/main/home/filter_bottomsheet.dart';
 import 'package:hny_main/view/screens/main/home/widgets_elements.dart';
 import 'package:hny_main/view/widgets/car_card_loader.dart';
@@ -36,7 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((va) {
       final homeController =
           Provider.of<HomeController>(context, listen: false);
-      homeController.getCarDataList(context);
+      homeController.getCarDataList(context: context);
       homeController.getCarTypeList();
     });
     super.initState();
@@ -82,7 +83,9 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
         automaticallyImplyLeading: false,
         centerTitle: false,
-        title: SvgPicture.asset("assets/icons/menu-svgrepo-com-2.svg",),
+        title: SvgPicture.asset(
+          "assets/icons/menu-svgrepo-com-2.svg",
+        ),
         bottom: PreferredSize(
           preferredSize:
               Size.fromHeight(MediaQuery.of(context).size.height / 13),
@@ -103,16 +106,29 @@ class _HomeScreenState extends State<HomeScreen> {
                         const SizedBox(width: 8),
                         Consumer<HomeController>(
                           builder: (context, value, child) => Expanded(
-                            child: TextField(
-                              controller: searchController,
-                              onChanged: (query) {
-                                value.searchFeilds(query);
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => SearchPage()),
+                                );
                               },
-                              decoration: const InputDecoration(
-                                hintText: 'Search "Tata"',
-                                border: InputBorder.none,
-                                // hintStyle:
-                                //     TextStyle(color: Colors.grey[400]),
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 10),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(
+                                      10), // Rounded corners
+                                ),
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      'Search "Tata"',
+                                      style: TextStyle(color: Colors.grey[600]),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
@@ -128,6 +144,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 const Gap(9),
                 CircledIcon(
                   ontap: () {
+                    Provider.of<HomeController>(context, listen: false)
+                        .getCarDataList(context: context);
                     showModalBottomSheet(
                       context: context,
                       isScrollControlled: true,
@@ -182,7 +200,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               },
                               value:
                                   value.selectedDateTOString ?? 'select Date',
-                              title: "Start Date & Time"),
+                              title: "Start Date "),
                           SizedBox(width: 16),
                           DateSectionWidget(
                               onTap: () async {
@@ -192,7 +210,42 @@ class _HomeScreenState extends State<HomeScreen> {
                                   firstDate: DateTime(2000),
                                   lastDate: DateTime(2101),
                                 );
-                                value.setSelectedEndtDate(picked!);
+                                if (picked != null) {
+                                  value.setSelectedEndtDate(picked);
+                                }
+                                if (value.selecteEnddDate != null &&
+                                    value.selecteStratdDate != null) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: Text("Date"),
+                                        content: Text(
+                                            "Start Date: ${value.selectedDateTOString}\nEnd Date: ${value.selectedEndTOString}"),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () {
+                                              var a = value.selecteStratdDate;
+                                              var b = value.selecteEnddDate;
+                                              log(a.toString(),
+                                                  name: 'start date -----');
+                                              log(b.toString(),
+                                                  name: 'end date -----');
+                                              value.getCarDataList(
+                                                  context: context,
+                                                  endDate:
+                                                      value.selecteEnddDate,
+                                                  startDate:
+                                                      value.selecteStratdDate);
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: Text("OK"),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                }
                               },
                               value: value.selectedEndTOString ?? 'select date',
                               title: "End Date"),
@@ -201,7 +254,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
 
-                  // Ride Options Section
                   const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16),
                     child: Text(
@@ -287,7 +339,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           Consumer2<HomeController, FavouriteProvider>(
                         builder: (context, homeProvider, favProvider, child) {
                           final data = homeProvider.carListData;
-                              
+
                           log('car items length: ${homeProvider.carListData.length}');
                           return homeProvider.isLoading
                               ? CarCardSkeletonLoader(
@@ -320,7 +372,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                             .addToFavourites(
                                                 data[index].id ?? '0')
                                             .then((_) {
-                                          homeProvider.getCarDataList(context);
+                                          homeProvider.getCarDataList(
+                                              context: context);
                                         });
                                       },
                                     );

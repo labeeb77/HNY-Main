@@ -1,0 +1,2 @@
+/home/rinshid/Desktop/hny_mobile/hny_mobile/android/app/.cxx/RelWithDebInfo/61514w53/x86/CMakeFiles/edit_cache.dir
+/home/rinshid/Desktop/hny_mobile/hny_mobile/android/app/.cxx/RelWithDebInfo/61514w53/x86/CMakeFiles/rebuild_cache.dir
