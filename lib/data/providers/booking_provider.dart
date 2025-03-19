@@ -463,12 +463,17 @@ class BookingProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> getBookingList(BuildContext context) async {
+  String _activeTab = 'Upcoming'; // Default active tab
+  String get activeTab => _activeTab;
+
+  Future<void> getBookingList(BuildContext context,
+      {Map<String, dynamic>? filters}) async {
     _setLoading(true);
     _setError(null);
 
     try {
-      final data = await _bookingService.fetchBookingList();
+      // Add filters to the request
+      final data = await _bookingService.fetchBookingList(filters: filters);
       if (data != null) {
         updateBookingList(data.arrList!);
         notifyListeners();
@@ -480,5 +485,11 @@ class BookingProvider extends ChangeNotifier {
     } finally {
       _setLoading(false);
     }
+  }
+
+  // Add a method to update the active tab
+  void updateActiveTab(String tab) {
+    _activeTab = tab;
+    notifyListeners();
   }
 }

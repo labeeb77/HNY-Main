@@ -1,26 +1,50 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
-import 'package:hny_main/view/screens/main/Bookings/widgets/complain_sheet.dart';
-import 'package:hny_main/view/screens/main/Bookings/widgets/complete_payment_sheet.dart';
+import 'package:hny_main/data/models/booking/get_booking_list_model.dart';
 
-import 'package:hny_main/view/screens/sub/checkout_screen/widgets/random_widget.dart';
-import 'package:hny_main/view/widgets/common_app_bar.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
-class MyBookingDetailsScreen extends StatefulWidget {
-  const MyBookingDetailsScreen({super.key});
+class MyBookingDetailsScreen extends StatelessWidget {
+  final BookingArrList bookingData;
 
-  @override
-  State<MyBookingDetailsScreen> createState() => _MyBookingDetailsScreenState();
-}
+  const MyBookingDetailsScreen({
+    super.key,
+    required this.bookingData,
+  });
 
-class _MyBookingDetailsScreenState extends State<MyBookingDetailsScreen> {
   @override
   Widget build(BuildContext context) {
+    // Get car and add-ons from the booking items
+    final carItems = bookingData.arrBookingItems
+            ?.where((item) => item.type == ArrBookingItemType.CAR)
+            .toList() ??
+        [];
+    final addOnItems = bookingData.arrBookingItems
+            ?.where((item) => item.type == ArrBookingItemType.ADD_ON)
+            .toList() ??
+        [];
+
     return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: const CommonAppBar(
-        title: 'My Booking',
+      backgroundColor: Colors.grey[50], // AppColors.background equivalent
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        title: const Text(
+          'My Booking',
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.black, size: 20),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -30,217 +54,549 @@ class _MyBookingDetailsScreenState extends State<MyBookingDetailsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildVehicleCard(
-                    'Ford Escape',
-                    'AED 5,000',
-                    'https://cdn.pixabay.com/photo/2012/05/29/00/43/car-49278_640.jpg',
-                    'October 1, 2024',
-                    'October 4, 2024',
-                    'Nagavara, Bengaluru',
-                    'Mentric Technology Park',
-                  ),
-                  const SizedBox(height: 16),
-                  _buildVehicleCard(
-                    'Hyundai Creta',
-                    'AED 7,000',
-                    'https://cdn.pixabay.com/photo/2012/05/29/00/43/car-49278_640.jpg',
-                    'October 5, 2024',
-                    'October 10, 2024',
-                    'Nagavara, Bengaluru',
-                    'Mentric Technology Park',
-                  ),
-                  const SizedBox(height: 16),
-                  buildAddonCard(
-                      'Child Seat',
-                      10,
-                      'https://cdn.pixabay.com/photo/2012/05/29/00/43/car-49278_640.jpg',
-                      true),
-                  const SizedBox(height: 16),
-                  buildAddonCard(
-                      'iPhone Charger',
-                      10,
-                      'https://cdn.pixabay.com/photo/2012/05/29/00/43/car-49278_640.jpg',
-                      true),
+                  // Car Items
+                  ...carItems.map((item) => _buildVehicleCard(item)).toList(),
+
+                  // Add-on Items
+                  ...addOnItems.map((item) => _buildAddonCard(item)).toList(),
                 ],
               ),
             ),
-            const Gap(16),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-              decoration: const BoxDecoration(
-                  color: AppColors.white,
-                  border: Border(
-                      top: BorderSide(color: AppColors.containerBorderColor))),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  buildBookingSummary(),
-                  const SizedBox(height: 24),
-                  InkWell(
-                    onTap: () {
-                      showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        shape: const RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.vertical(top: Radius.circular(20)),
-                        ),
-                        builder: (context) => const CompletePaymentSheet(),
-                      );
-                    },
-                    child: const Text(
-                      "Are you want to complete payment?",
-                      style: TextStyle(
-                          color: AppColors.blue,
-                          fontWeight: FontWeight.w600,
-                          decoration: TextDecoration.underline),
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(6),
-                      color: const Color.fromARGB(255, 219, 219, 219)
-                          .withOpacity(0.6),
-                    ),
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      children: [
-                        const Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text("Need Help?"),
-                            Icon(Icons.keyboard_arrow_down_rounded)
-                          ],
-                        ),
-                        const Divider(),
-                        Row(
-                          children: [
-                            ElevatedButton(
-                              onPressed: () {
-                                showModalBottomSheet(
-                                  context: context,
-                                  isScrollControlled: true,
-                                  shape: const RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.vertical(
-                                        top: Radius.circular(20)),
-                                  ),
-                                  builder: (context) => ComplainBottomSheet(),
-                                );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.red,
-                              ),
-                              child: const Text(
-                                "Support",
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ),
-                            const Gap(12),
-                            ElevatedButton(
-                              onPressed: () {},
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.blue,
-                              ),
-                              child: const Text(
-                                "Replacement",
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  )
-                ],
-              ),
-            )
+            const SizedBox(height: 16),
+
+           Container(
+            padding: const EdgeInsets.all(24),
+            color: Colors.white,
+            width: double.infinity,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildBookingSummary(bookingData),
+                const SizedBox(height: 24),
+                _buildSupportSection(context),
+              ],
+            ),
+          ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildVehicleCard(
-    String name,
-    String price,
-    String imagePath,
-    String startDate,
-    String endDate,
-    String pickup,
-    String dropoff,
-  ) {
+  Widget _buildVehicleCard(ArrBookingItem carItem) {
     return Container(
+      margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-          color: AppColors.white,
-          borderRadius: BorderRadius.circular(8),
-          boxShadow: const [
-            BoxShadow(
-                offset: Offset(1, 1),
-                spreadRadius: 4,
-                color: Color.fromARGB(255, 231, 231, 231),
-                blurRadius: 6)
-          ]),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(
+            offset: const Offset(1, 1),
+            spreadRadius: 4,
+            color: Colors.grey.shade200,
+            blurRadius: 6,
+          ),
+        ],
+      ),
       child: Padding(
         padding: const EdgeInsets.all(8),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
+            // Car image
             ClipRRect(
               borderRadius: BorderRadius.circular(8),
               child: SizedBox(
                 width: 100,
                 height: 134,
                 child: Image.network(
-                  imagePath,
+                  carItem.strImgUrl ?? 'https://via.placeholder.com/150',
                   fit: BoxFit.cover,
                 ),
               ),
             ),
             const SizedBox(width: 8),
+
+            // Car details
             Expanded(
               child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          name,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          ),
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        _getCarModel(carItem.strModel),
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
                         ),
-                        CircleAvatar(
-                          radius: 14,
-                          backgroundColor: AppColors.orange,
-                          child: IconButton(
-                            icon: const Icon(Icons.edit,
-                                size: 18, color: AppColors.white),
-                            onPressed: () {},
-                            constraints: const BoxConstraints(),
-                            padding: EdgeInsets.zero,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Text(
-                      price,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        color: AppColors.orange,
-                        fontWeight: FontWeight.w500,
                       ),
+                      CircleAvatar(
+                        radius: 14,
+                        backgroundColor: Colors.deepOrange,
+                        child: IconButton(
+                          icon: const Icon(
+                            Icons.edit,
+                            size: 18,
+                            color: Colors.white,
+                          ),
+                          onPressed: () {
+                            // Handle edit booking
+                          },
+                          constraints: const BoxConstraints(),
+                          padding: EdgeInsets.zero,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Text(
+                    'AED ${carItem.intTotalAmount?.floor() ?? 0}',
+                    style: const TextStyle(
+                      fontSize: 18,
+                      color: Colors.deepOrange,
+                      fontWeight: FontWeight.w700,
                     ),
-                    buildDateRow(startDate, endDate),
-                    buildLocationRow(pickup, dropoff),
-                  ]),
+                  ),
+                  _buildDateRow(
+                    _formatDate(carItem.strStartDate),
+                    _formatDate(carItem.strEndDate),
+                  ),
+                  const SizedBox(height: 5),
+                  _buildLocationRow(
+                    _getLocationText(carItem.strPickupLocationAddress),
+                    _getLocationText(carItem.strDeliveryLocationAddress),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildAddonCard(ArrBookingItem addOnItem) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(
+            offset: const Offset(1, 1),
+            spreadRadius: 4,
+            color: Colors.grey.shade200,
+            blurRadius: 6,
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(8),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // Add-on image
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: SizedBox(
+                width: 100,
+                height: 100,
+                child: addOnItem.strImgUrl != null &&
+                        addOnItem.strImgUrl!.isNotEmpty
+                    ? Image.network(
+                        addOnItem.strImgUrl!,
+                        fit: BoxFit.cover,
+                      )
+                    : Icon(Icons.image, size: 50, color: Colors.grey[400]),
+              ),
+            ),
+            const SizedBox(width: 8),
+
+            // Add-on details
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        addOnItem.strName ?? addOnItem.strAddOnName ?? 'Add-on',
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      CircleAvatar(
+                        radius: 14,
+                        backgroundColor: Colors.deepOrange,
+                        child: IconButton(
+                          icon: const Icon(
+                            Icons.edit,
+                            size: 18,
+                            color: Colors.white,
+                          ),
+                          onPressed: () {
+                            // Handle edit add-on
+                          },
+                          constraints: const BoxConstraints(),
+                          padding: EdgeInsets.zero,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Text(
+                    'AED ${addOnItem.intTotalAmount?.floor() ?? 0}',
+                    style: const TextStyle(
+                      fontSize: 18,
+                      color: Colors.deepOrange,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      const Text(
+                        'Qty: ',
+                        style: TextStyle(fontSize: 14, color: Colors.grey),
+                      ),
+                      Text(
+                        '${addOnItem.intQty ?? 1}',
+                        style: const TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDateRow(String startDate, String endDate) {
+    log('start date : $startDate');
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.lightBlue.shade50,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 2,
+            child: Text(
+              startDate,
+              style: const TextStyle(
+                fontSize: 12,
+              ),
+            ),
+          ),
+          const SizedBox(width: 4),
+          const Icon(
+            Icons.arrow_forward,
+            size: 15,
+          ),
+          const SizedBox(width: 4),
+          Expanded(
+            flex: 2,
+            child: Text(
+              endDate,
+              style: const TextStyle(
+                fontSize: 12,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLocationRow(String pickup, String dropoff) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.green.shade50,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        children: [
+          // Pickup location
+          Expanded(
+            child: Row(
+              children: [
+                const Icon(Icons.location_on, size: 16, color: Colors.grey),
+                const SizedBox(width: 4),
+                Expanded(
+                  child: Text(
+                    pickup,
+                    style: const TextStyle(fontSize: 12, color: Colors.grey),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(width: 8),
+          const Icon(
+            Icons.arrow_forward,
+            size: 15,
+            color: Colors.grey,
+          ),
+          const SizedBox(width: 8),
+
+          // Dropoff location
+          Expanded(
+            child: Row(
+              children: [
+                const Icon(Icons.location_on, size: 16, color: Colors.grey),
+                const SizedBox(width: 4),
+                Expanded(
+                  child: Text(
+                    dropoff,
+                    style: const TextStyle(fontSize: 12, color: Colors.grey),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+ Widget _buildBookingSummary(BookingArrList bookingData) {
+  // Calculate total amount
+  double totalAmount = 0;
+  bookingData.arrBookingItems?.forEach((item) {
+    totalAmount += item.intTotalAmount ?? 0;
+  });
+  
+  // Get start and end dates from the first car item (if exists)
+  final carItem = bookingData.arrBookingItems?.firstWhere(
+    (item) => item.type == ArrBookingItemType.CAR,
+    orElse: () => ArrBookingItem(),
+  );
+  final startDate = carItem?.strStartDate;
+  final endDate = carItem?.strEndDate;
+  
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      const Text(
+        'Booking Summary',
+        style: TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      const SizedBox(height: 16),
+      
+      // Download Invoice Button
+      Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: Colors.green.shade50,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: TextButton.icon(
+          
+          onPressed: () {
+            // Handle invoice download
+          },
+          icon: const Icon(Icons.download, color: Color.fromARGB(255, 59, 96, 60)),
+          label: const Text(
+            'Download Invoice',
+            style: TextStyle(color: Color.fromARGB(255, 46, 92, 47), fontWeight: FontWeight.w500),
+          ),
+        ),
+      ),
+      
+      const SizedBox(height: 24),
+      
+      // Booking Details
+      _buildDetailRow('Booking id', 'BK${bookingData.strBookingId ?? "00000"}'),
+      const SizedBox(height: 16),
+      
+      _buildDetailRow('Start date', _formatDate(startDate)),
+      const SizedBox(height: 16),
+      
+      _buildDetailRow('End date', _formatDate(endDate)),
+      const SizedBox(height: 16),
+      
+      // Assuming 'Balance amount' is pending payment
+      _buildDetailRow(
+        'Balance amount', 
+        '${bookingData.intBalanceAmt ?? 1000} AED',
+        valueColor: Colors.orange,
+      ),
+      const SizedBox(height: 16),
+      
+      _buildDetailRow(
+        'Total amount', 
+        '${(totalAmount * 1.05).floor()} AED',
+        valueStyle: const TextStyle(
+          fontSize: 22,
+          fontWeight: FontWeight.bold,
+          color: Color.fromARGB(255, 69, 106, 71),
+        ),
+      ),
+      
+      const SizedBox(height: 24),
+      
+      // Complete Payment Link
+      Center(
+        child: InkWell(
+          onTap: () {
+            // Handle payment completion
+          },
+          child: const Text(
+            "Are you want to complete payment?",
+            style: TextStyle(
+              color: Colors.blue,
+              fontWeight: FontWeight.w500,
+              decoration: TextDecoration.underline,
+            ),
+          ),
+        ),
+      ),
+    ],
+  );
+}
+
+Widget _buildDetailRow(String label, String value, {
+  Color? valueColor,
+  TextStyle? valueStyle,
+}) {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      Text(
+        label,
+        style: TextStyle(
+          fontSize: 13,
+          color: Colors.grey[600],
+        ),
+      ),
+      Text(
+        value,
+        style: valueStyle ?? TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+          color: valueColor ?? Colors.black,
+        ),
+      ),
+    ],
+  );
+}
+
+  Widget _buildSupportSection(BuildContext context) {
+  return Container(
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(12),
+      color: Colors.grey.shade100,
+    ),
+    child: Column(
+      children: [
+        // Header with dropdown
+        Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                "Need Help ?",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              Icon(Icons.keyboard_arrow_down, color: Colors.grey[700]),
+            ],
+          ),
+        ),
+        const Divider(height: 1),
+        
+        // Buttons
+        Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () {
+                    // Handle support action
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(50),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                  child: const Text(
+                    "Support",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () {
+                    // Handle replacement action
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(50),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                  child: const Text(
+                    "Replacement",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+  // Helper methods
+  String _formatDate(DateTime? date) {
+    if (date == null) return 'N/A';
+    return DateFormat('MMMM d, yyyy').format(date);
+  }
+
+  String _getCarModel(StrModel? model) {
+    if (model == null) return 'Unknown Model';
+
+    switch (model) {
+      case StrModel.JAGUAR_100:
+        return 'Jaguar 100';
+      case StrModel.V8:
+        return 'V8';
+      default:
+        return 'Unknown Model';
+    }
+  }
+
+  String _getLocationText(String? location) {
+    return location ?? 'Location not specified';
   }
 }

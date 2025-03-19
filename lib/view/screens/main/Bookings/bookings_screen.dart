@@ -19,10 +19,35 @@ class _BookingScreenState extends State<BookingScreen> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<BookingProvider>(context, listen: false)
-          .getBookingList(context);
+      // Initial load with "Upcoming" filter
+      Provider.of<BookingProvider>(context, listen: false).getBookingList(
+        context,
+        filters: {
+          "filters": {
+            "strStatus": ["SETTLED", "COMPLETED"]
+          }
+        },
+      );
     });
     super.initState();
+  }
+
+  // Method to handle tab changes
+  void _handleTabChange(String tabName) {
+    final provider = Provider.of<BookingProvider>(context, listen: false);
+    provider.updateActiveTab(tabName);
+
+    // Set appropriate filters based on tab
+    Map<String, dynamic> filters = {
+      "filters": {
+        "strStatus": tabName == "Upcoming"
+            ? ["SETTLED", "COMPLETED"]
+            : (tabName == "In rental" ? ["ISSUE", "IN RENTAL"] : [])
+      }
+    };
+
+    // Fetch bookings with the new filters
+    provider.getBookingList(context, filters: filters);
   }
 
   @override
@@ -41,7 +66,7 @@ class _BookingScreenState extends State<BookingScreen> {
             ),
             child: Column(
               children: [
-                const Gap(40),
+                const Gap(60),
                 const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -49,72 +74,95 @@ class _BookingScreenState extends State<BookingScreen> {
                       'My Booking',
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 24,
+                        fontSize: 20,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
                   ],
                 ),
-                Container(
-                  margin: const EdgeInsets.symmetric(
-                      vertical: 34, horizontal: 16),
-                  padding: const EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 75, 124, 77)
-                        .withOpacity(0.4),
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(25),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.1),
-                                spreadRadius: 1,
-                                blurRadius: 1,
+                Consumer<BookingProvider>(
+                  builder: (context, provider, _) => Container(
+                    margin: const EdgeInsets.symmetric(
+                        vertical: 34, horizontal: 16),
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: const Color.fromARGB(255, 75, 124, 77)
+                          .withOpacity(0.4),
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    child: Row(
+                      children: [
+                        // Upcoming Tab
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () => _handleTabChange('Upcoming'),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              decoration: BoxDecoration(
+                                color: provider.activeTab == 'Upcoming'
+                                    ? Colors.white
+                                    : Colors.transparent,
+                                borderRadius: BorderRadius.circular(25),
+                                boxShadow: provider.activeTab == 'Upcoming'
+                                    ? [
+                                        BoxShadow(
+                                          color: Colors.grey.withOpacity(0.1),
+                                          spreadRadius: 1,
+                                          blurRadius: 1,
+                                        ),
+                                      ]
+                                    : [],
                               ),
-                            ],
-                          ),
-                          child: const Text(
-                            'Upcoming',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.w500,
+                              child: Text(
+                                'Upcoming',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: provider.activeTab == 'Upcoming'
+                                      ? Colors.black
+                                      : Colors.white,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          child: const Text(
-                            'Completed',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Colors.white,
+                        // In rental Tab
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () => _handleTabChange('In rental'),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              decoration: BoxDecoration(
+                                color: provider.activeTab == 'In rental'
+                                    ? Colors.white
+                                    : Colors.transparent,
+                                borderRadius: BorderRadius.circular(25),
+                                boxShadow: provider.activeTab == 'In rental'
+                                    ? [
+                                        BoxShadow(
+                                          color: Colors.grey.withOpacity(0.1),
+                                          spreadRadius: 1,
+                                          blurRadius: 1,
+                                        ),
+                                      ]
+                                    : [],
+                              ),
+                              child: Text(
+                                'In rental',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: provider.activeTab == 'In rental'
+                                      ? Colors.black
+                                      : Colors.white,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          child: const Text(
-                            'In rental',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+                        // Remove "Completed" tab or add it back if needed
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -127,16 +175,20 @@ class _BookingScreenState extends State<BookingScreen> {
                   ? const Center(
                       child: CircularProgressIndicator(),
                     )
-                  : ListView.builder(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      itemCount: value.bookingsListData.length,
-                      itemBuilder: (context, index) {
-                        return BookingCard(
-                          index: index,
-                          data: value.bookingsListData[index],
-                        );
-                      },
-                    ),
+                  : value.bookingsListData.isEmpty
+                      ? const Center(
+                          child: Text('No bookings found'),
+                        )
+                      : ListView.builder(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          itemCount: value.bookingsListData.length,
+                          itemBuilder: (context, index) {
+                            return BookingCard(
+                              index: index,
+                              data: value.bookingsListData[index],
+                            );
+                          },
+                        ),
             ),
           ),
         ],
@@ -319,8 +371,9 @@ class BookingCard extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>
-                                const MyBookingDetailsScreen(),
+                            builder: (context) => MyBookingDetailsScreen(
+                              bookingData: data,
+                            ),
                           ),
                         );
                       },

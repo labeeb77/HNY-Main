@@ -18,9 +18,11 @@ class _SearchPageState extends State<SearchPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    final homeController = Provider.of<HomeController>(context, listen: false);
-    homeController.getCarDataList(context: context);
-    homeController.getCarTypeList();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final homeController = Provider.of<HomeController>(context, listen: false);
+      homeController.getCarDataList(context: context);
+      homeController.getCarTypeList();
+    });
   }
 
   @override
