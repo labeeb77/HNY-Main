@@ -30,31 +30,32 @@ class BookingService {
     }
   }
 
-  Future<BookingsListModel?> fetchBookingList({Map<String, dynamic>? filters}) async {
-  try {
-    Map<String, dynamic> requestData = {};
-    
-    // Add filters if provided
-    if (filters != null) {
-      requestData = filters;
+  Future<BookingsListModel?> fetchBookingList(
+      {Map<String, dynamic>? filters}) async {
+    try {
+      Map<String, dynamic> requestData = {};
+
+      // Add filters if provided
+      if (filters != null) {
+        requestData = filters;
+      }
+
+      ApiResponseModel<dynamic> apiResponse = await _apiService.apiCall(
+          endpoint: ApiConstants.getBookingListUrl,
+          method: 'POST',
+          data: requestData,
+          sendToken: true);
+
+      if (apiResponse.success && apiResponse.data != null) {
+        log('fetchBookingList : ${apiResponse.data}');
+        return BookingsListModel.fromJson(apiResponse.data);
+      }
+      return null;
+    } catch (e) {
+      debugPrint('Error fetching booking list: $e');
+      return null;
     }
-    
-    ApiResponseModel<dynamic> apiResponse = await _apiService.apiCall(
-      endpoint: ApiConstants.getBookingListUrl,
-      method: 'POST',
-      data: requestData,
-      sendToken: true);
-      
-    if (apiResponse.success && apiResponse.data != null) {
-      log('fetchBookingList : ${apiResponse.data}');
-      return BookingsListModel.fromJson(apiResponse.data);
-    }
-    return null;
-  } catch (e) {
-    debugPrint('Error fetching booking list: $e');
-    return null;
   }
-}
 
   Future<ApiResponseModel> createCart(Map<String, dynamic> cartData) async {
     return await _apiService.apiCall(
@@ -68,6 +69,15 @@ class BookingService {
       Map<String, dynamic> bookingData) async {
     return await _apiService.apiCall(
         endpoint: ApiConstants.createReservation,
+        method: 'POST',
+        data: bookingData,
+        sendToken: true);
+  }
+
+  Future<ApiResponseModel> updateBookingLocation(
+      Map<String, dynamic> bookingData) async {
+    return await _apiService.apiCall(
+        endpoint: ApiConstants.updateBookingLocation,
         method: 'POST',
         data: bookingData,
         sendToken: true);

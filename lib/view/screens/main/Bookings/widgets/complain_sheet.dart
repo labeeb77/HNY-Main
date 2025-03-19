@@ -159,7 +159,7 @@ class ComplainBottomSheet extends StatelessWidget {
                       children: [
                         PrimaryElevateButton(
                           buttonName: "Cancel",
-                          isGrey: true,
+                          isGrey: false,
                           ontap: () {
                             Navigator.pop(context);
                           },

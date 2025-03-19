@@ -3,7 +3,7 @@ import 'package:gap/gap.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
 import 'package:hny_main/data/models/booking/get_booking_list_model.dart';
 import 'package:hny_main/data/providers/booking_provider.dart';
-import 'package:hny_main/view/screens/main/Bookings/bookings_details_screen.dart';
+import 'package:hny_main/view/screens/main/bookings/bookings_details_screen.dart';
 import 'package:hny_main/view/widgets/app_button.dart';
 import 'package:hny_main/view/widgets/app_text_widget.dart';
 import 'package:provider/provider.dart';
@@ -371,9 +371,8 @@ class BookingCard extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => MyBookingDetailsScreen(
-                              bookingData: data,
-                            ),
+                            builder: (context) =>
+                                MyBookingDetailsScreen(bookingData: data ,),
                           ),
                         );
                       },

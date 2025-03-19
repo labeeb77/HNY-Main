@@ -1,10 +1,12 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:hny_main/core/utils/app_colors.dart';
+import 'package:gap/gap.dart';
 import 'package:hny_main/data/models/booking/get_booking_list_model.dart';
+import 'package:hny_main/view/screens/main/Bookings/widgets/complain_sheet.dart';
+import 'package:hny_main/view/screens/main/Bookings/widgets/complete_payment_sheet.dart';
+import 'package:hny_main/view/screens/main/bookings/payment_bottom_sheet.dart';
 
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class MyBookingDetailsScreen extends StatelessWidget {
@@ -55,7 +57,9 @@ class MyBookingDetailsScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Car Items
-                  ...carItems.map((item) => _buildVehicleCard(item)).toList(),
+                  ...carItems
+                      .map((item) => _buildVehicleCard(item, context ))
+                      .toList(),
 
                   // Add-on Items
                   ...addOnItems.map((item) => _buildAddonCard(item)).toList(),
@@ -63,27 +67,26 @@ class MyBookingDetailsScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-
-           Container(
-            padding: const EdgeInsets.all(24),
-            color: Colors.white,
-            width: double.infinity,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildBookingSummary(bookingData),
-                const SizedBox(height: 24),
-                _buildSupportSection(context),
-              ],
+            Container(
+              padding: const EdgeInsets.all(24),
+              color: Colors.white,
+              width: double.infinity,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildBookingSummary(bookingData, context),
+                  const SizedBox(height: 24),
+                  _buildSupportSection(context),
+                ],
+              ),
             ),
-          ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildVehicleCard(ArrBookingItem carItem) {
+  Widget _buildVehicleCard(ArrBookingItem carItem, context) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
@@ -133,20 +136,22 @@ class MyBookingDetailsScreen extends StatelessWidget {
                           fontWeight: FontWeight.w700,
                         ),
                       ),
-                      CircleAvatar(
-                        radius: 14,
-                        backgroundColor: Colors.deepOrange,
-                        child: IconButton(
-                          icon: const Icon(
-                            Icons.edit,
-                            size: 18,
-                            color: Colors.white,
+                      InkWell(
+                        child: CircleAvatar(
+                          radius: 14,
+                          backgroundColor: Colors.deepOrange,
+                          child: IconButton(
+                            icon: const Icon(
+                              Icons.edit,
+                              size: 18,
+                              color: Colors.white,
+                            ),
+                            onPressed: () {
+                              showPaymentSheet(context, carItem);
+                            },
+                            constraints: const BoxConstraints(),
+                            padding: EdgeInsets.zero,
                           ),
-                          onPressed: () {
-                            // Handle edit booking
-                          },
-                          constraints: const BoxConstraints(),
-                          padding: EdgeInsets.zero,
                         ),
                       ),
                     ],
@@ -174,6 +179,16 @@ class MyBookingDetailsScreen extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  // Example of how to show this bottom sheet
+  void showPaymentSheet(BuildContext context, carItem) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => PaymentBottomSheet(carItem: carItem,),
     );
   }
 
@@ -375,90 +390,95 @@ class MyBookingDetailsScreen extends StatelessWidget {
     );
   }
 
- Widget _buildBookingSummary(BookingArrList bookingData) {
-  // Calculate total amount
-  double totalAmount = 0;
-  bookingData.arrBookingItems?.forEach((item) {
-    totalAmount += item.intTotalAmount ?? 0;
-  });
-  
-  // Get start and end dates from the first car item (if exists)
-  final carItem = bookingData.arrBookingItems?.firstWhere(
-    (item) => item.type == ArrBookingItemType.CAR,
-    orElse: () => ArrBookingItem(),
-  );
-  final startDate = carItem?.strStartDate;
-  final endDate = carItem?.strEndDate;
-  
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      const Text(
-        'Booking Summary',
-        style: TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      const SizedBox(height: 16),
-      
-      // Download Invoice Button
-      Container(
-        width: double.infinity,
-        decoration: BoxDecoration(
-          color: Colors.green.shade50,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: TextButton.icon(
-          
-          onPressed: () {
-            // Handle invoice download
-          },
-          icon: const Icon(Icons.download, color: Color.fromARGB(255, 59, 96, 60)),
-          label: const Text(
-            'Download Invoice',
-            style: TextStyle(color: Color.fromARGB(255, 46, 92, 47), fontWeight: FontWeight.w500),
+  Widget _buildBookingSummary(BookingArrList bookingData, context) {
+    // Calculate total amount
+    double totalAmount = 0;
+    bookingData.arrBookingItems?.forEach((item) {
+      totalAmount += item.intTotalAmount ?? 0;
+    });
+
+    // Get start and end dates from the first car item (if exists)
+    final carItem = bookingData.arrBookingItems?.firstWhere(
+      (item) => item.type == ArrBookingItemType.CAR,
+      orElse: () => ArrBookingItem(),
+    );
+    final startDate = carItem?.strStartDate;
+    final endDate = carItem?.strEndDate;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Booking Summary',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
           ),
         ),
-      ),
-      
-      const SizedBox(height: 24),
-      
-      // Booking Details
-      _buildDetailRow('Booking id', 'BK${bookingData.strBookingId ?? "00000"}'),
-      const SizedBox(height: 16),
-      
-      _buildDetailRow('Start date', _formatDate(startDate)),
-      const SizedBox(height: 16),
-      
-      _buildDetailRow('End date', _formatDate(endDate)),
-      const SizedBox(height: 16),
-      
-      // Assuming 'Balance amount' is pending payment
-      _buildDetailRow(
-        'Balance amount', 
-        '${bookingData.intBalanceAmt ?? 1000} AED',
-        valueColor: Colors.orange,
-      ),
-      const SizedBox(height: 16),
-      
-      _buildDetailRow(
-        'Total amount', 
-        '${(totalAmount * 1.05).floor()} AED',
-        valueStyle: const TextStyle(
-          fontSize: 22,
-          fontWeight: FontWeight.bold,
-          color: Color.fromARGB(255, 69, 106, 71),
+        const SizedBox(height: 16),
+
+        // Download Invoice Button
+        Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: Colors.green.shade50,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: TextButton.icon(
+            onPressed: () {
+              // Handle invoice download
+            },
+            icon: const Icon(Icons.download,
+                color: Color.fromARGB(255, 59, 96, 60)),
+            label: const Text(
+              'Download Invoice',
+              style: TextStyle(
+                  color: Color.fromARGB(255, 46, 92, 47),
+                  fontWeight: FontWeight.w500),
+            ),
+          ),
         ),
-      ),
-      
-      const SizedBox(height: 24),
-      
-      // Complete Payment Link
-      Center(
-        child: InkWell(
+
+        const SizedBox(height: 24),
+
+        // Booking Details
+        _buildDetailRow(
+            'Booking id', 'BK${bookingData.strBookingId ?? "00000"}'),
+        const SizedBox(height: 16),
+
+        _buildDetailRow('Start date', _formatDate(startDate)),
+        const SizedBox(height: 16),
+
+        _buildDetailRow('End date', _formatDate(endDate)),
+        const SizedBox(height: 16),
+
+        // Assuming 'Balance amount' is pending payment
+        _buildDetailRow(
+          'Balance amount',
+          '${bookingData.intBalanceAmt ?? 1000} AED',
+          valueColor: Colors.orange,
+        ),
+        const SizedBox(height: 16),
+
+        _buildDetailRow(
+          'Total amount',
+          '${(totalAmount * 1.05).floor()} AED',
+          valueStyle: const TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            color: Color.fromARGB(255, 69, 106, 71),
+          ),
+        ),
+
+        const SizedBox(height: 24),
+
+        // Complete Payment Link
+        InkWell(
           onTap: () {
-            // Handle payment completion
+            showModalBottomSheet(
+              context: context,
+              builder: (context) => CompletePaymentSheet(),
+            );
           },
           child: const Text(
             "Are you want to complete payment?",
@@ -469,113 +489,115 @@ class MyBookingDetailsScreen extends StatelessWidget {
             ),
           ),
         ),
-      ),
-    ],
-  );
-}
+      ],
+    );
+  }
 
-Widget _buildDetailRow(String label, String value, {
-  Color? valueColor,
-  TextStyle? valueStyle,
-}) {
-  return Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: [
-      Text(
-        label,
-        style: TextStyle(
-          fontSize: 13,
-          color: Colors.grey[600],
-        ),
-      ),
-      Text(
-        value,
-        style: valueStyle ?? TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.w600,
-          color: valueColor ?? Colors.black,
-        ),
-      ),
-    ],
-  );
-}
-
-  Widget _buildSupportSection(BuildContext context) {
-  return Container(
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(12),
-      color: Colors.grey.shade100,
-    ),
-    child: Column(
+  Widget _buildDetailRow(
+    String label,
+    String value, {
+    Color? valueColor,
+    TextStyle? valueStyle,
+  }) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        // Header with dropdown
-        Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                "Need Help ?",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              Icon(Icons.keyboard_arrow_down, color: Colors.grey[700]),
-            ],
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 13,
+            color: Colors.grey[600],
           ),
         ),
-        const Divider(height: 1),
-        
-        // Buttons
-        Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            children: [
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () {
-                    // Handle support action
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                  ),
-                  child: const Text(
-                    "Support",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
+        Text(
+          value,
+          style: valueStyle ??
+              TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: valueColor ?? Colors.black,
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () {
-                    // Handle replacement action
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                  ),
-                  child: const Text(
-                    "Replacement",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-              ),
-            ],
-          ),
         ),
       ],
-    ),
-  );
-}
+    );
+  }
+
+  Widget _buildSupportSection(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        color: Colors.grey.shade100,
+      ),
+      child: Column(
+        children: [
+          // Header with dropdown
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  "Need Help ?",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                Icon(Icons.keyboard_arrow_down, color: Colors.grey[700]),
+              ],
+            ),
+          ),
+          const Divider(height: 1),
+
+          // Buttons
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      // Handle support action
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                    child: const Text(
+                      "Support",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                    showModalBottomSheet(context: context, builder:(context) => ComplainBottomSheet(),);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                    child: const Text(
+                      "Replacement",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   // Helper methods
   String _formatDate(DateTime? date) {
