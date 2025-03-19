@@ -1,4 +1,3 @@
-
 // Updated LocationDetails widget
 import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
@@ -117,7 +116,7 @@ class LocationItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () async {
-        final result = await Navigator.push<String>(
+        final result = await Navigator.push<dynamic>(
           context,
           MaterialPageRoute(
             builder: (context) => LocationPickerScreen(
@@ -125,9 +124,11 @@ class LocationItem extends StatelessWidget {
             ),
           ),
         );
-        
+
         if (result != null) {
-          context.read<BookingProvider>().updateLocation(title, result);
+          context
+              .read<BookingProvider>()
+              .updateLocation(title, result['address']!);
         }
       },
       child: Row(

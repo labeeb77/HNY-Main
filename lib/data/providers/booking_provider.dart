@@ -463,11 +463,59 @@ class BookingProvider extends ChangeNotifier {
     }
   }
 
+  Future<bool> updateBooking(
+    BuildContext context, {
+    required String locationAddress,
+    required List<double> coordinates,
+    required String bookingId,
+    required bool isPickup,
+  }) async {
+    _setLoading(true);
+    _setError(null);
+
+    try {
+      // Validate required fields
+      if (bookingId.isEmpty || locationAddress.isEmpty) {
+        _handleError('Location Address not found!');
+        return false;
+      }
+
+      // Create car item
+      final locationData = {
+        "_id": "67b4b5495e0f5fb01f00dcb0",
+        isPickup ? "strPickupLocation" : 'strDeliveryLocation': {
+          "type": "Point",
+          "coordinates": [coordinates[0], coordinates[1]]
+        },
+        isPickup ? "strPickupLocationAddress" : 'strDeliveryLocationAddress':
+            locationAddress
+      };
+
+      final response =
+          await _bookingService.updateBookingLocation(locationData);
+
+      if (response.success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Booking updated successfully!')));
+        return true;
+      } else {
+        _handleError('Failed to update booking');
+        return false;
+      }
+    } catch (e) {
+      _handleError('An error occurred while updating the booking');
+      return false;
+    } finally {
+      _setLoading(false);
+    }
+  }
+
   String _activeTab = 'Upcoming'; // Default active tab
   String get activeTab => _activeTab;
 
   Future<void> getBookingList(BuildContext context,
       {Map<String, dynamic>? filters}) async {
+        log("Booking List called");
     _setLoading(true);
     _setError(null);
 

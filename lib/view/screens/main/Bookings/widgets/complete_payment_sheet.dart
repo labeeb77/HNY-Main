@@ -25,6 +25,7 @@ class CompletePaymentSheet extends StatelessWidget {
             children: [
               const Text(
                 'Are you want to complete payment?',
+                textAlign: TextAlign.start,
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -59,7 +60,7 @@ class CompletePaymentSheet extends StatelessWidget {
                 children: [
                   PrimaryElevateButton(
                     buttonName: "Cancel",
-                    isGrey: true,
+                    isGrey: false,
                     ontap: () {
                       Navigator.pop(context);
                     },

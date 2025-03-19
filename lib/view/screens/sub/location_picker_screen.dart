@@ -6,6 +6,7 @@ import 'package:gap/gap.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
+import 'package:hny_main/service/map_service.dart';
 import 'package:hny_main/view/widgets/app_button.dart';
 import 'package:hny_main/view/widgets/app_secondary_button.dart';
 
@@ -79,11 +80,14 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
                       ),
                     ));
 
-                    placemarks = await placemarkFromCoordinates(
-                        argument.latitude, argument.longitude);
+                    // placemarks = await placemarkFromCoordinates(
+                    //     argument.latitude, argument.longitude);
 
-                    if (placemarks.isNotEmpty) {
-                      selectedAddress = _formatAddress(placemarks.first);
+                    final response = await getAddressFromLatLng(
+                        argument.latitude, argument.longitude);
+                    if (response.isNotEmpty) {
+                      selectedAddress = response;
+                      //  _formatAddress(placemarks.first);
                       setState(() {});
                     }
                   },
@@ -180,9 +184,9 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
                         color: Colors.white,
                       ),
                     ),
-                    const SizedBox(width: 16), 
+                    const SizedBox(width: 16),
                     Expanded(
-                      child: Text( 
+                      child: Text(
                         selectedAddress.isNotEmpty
                             ? selectedAddress
                             : "Choose a location",
@@ -209,7 +213,11 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
                         buttonName: "Add Location",
                         ontap: () {
                           if (selectedAddress.isNotEmpty) {
-                            Navigator.pop(context, selectedAddress);
+                            Navigator.pop(context, {
+                              'address': selectedAddress,
+                              'lat': _center.latitude,
+                              'long': _center.longitude
+                            });
                           }
                         },
                       ),
