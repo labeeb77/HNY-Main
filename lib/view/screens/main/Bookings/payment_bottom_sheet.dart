@@ -259,7 +259,7 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(Icons.calendar_today, size: 20, color: Colors.grey[600]),
+
             const SizedBox(width: 8),
             const SizedBox(height: 4),
             Column(
