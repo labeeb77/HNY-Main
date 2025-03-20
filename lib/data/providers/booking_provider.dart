@@ -351,11 +351,7 @@ class BookingProvider extends ChangeNotifier {
     _setError(null);
 
     try {
-      // Validate required fields
-      if (email.isEmpty || phoneNumber.isEmpty) {
-        _handleError('Email and phone number are required');
-        return false;
-      }
+
 
       if (_startDate == null || _endDate == null) {
         _handleError('Please select booking dates');

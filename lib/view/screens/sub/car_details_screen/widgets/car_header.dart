@@ -76,13 +76,18 @@ class CarHeader extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          '${arrCar.strBrand} ${arrCar.strModel}',
-          style: const TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
+        Expanded(
+          child: Text(
+            '${arrCar.strBrand} ${arrCar.strModel}',
+            style: const TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
           ),
         ),
+        
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
           decoration: BoxDecoration(
