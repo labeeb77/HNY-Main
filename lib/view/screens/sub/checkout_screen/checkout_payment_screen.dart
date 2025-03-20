@@ -163,12 +163,14 @@ class _CheckoutPaymentScreenState extends State<CheckoutPaymentScreen> {
 
   Future<void> _handlePayNow(BuildContext context, BookingProvider provider) async {
     // Validate inputs
+   if (provider.selectedPaymentMethod == "TAP_LINK") {
     if (_emailController.text.isEmpty || _phoneController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please fill in all required fields'))
       );
       return;
     }
+  }
 
     // Create booking
     final success = await provider.createBooking(
