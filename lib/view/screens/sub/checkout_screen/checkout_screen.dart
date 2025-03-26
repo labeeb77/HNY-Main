@@ -19,6 +19,7 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
+  var totalFinalAmount = 0.0;
   @override
   Widget build(BuildContext context) {
     return Consumer<BookingProvider>(
@@ -28,10 +29,7 @@ class _CartScreenState extends State<CartScreen> {
             .where((gadget) => gadget.quantity > 0)
             .toList();
 
-             final vehiclePrice = bookingProvider.calculateTotalAmount(
-            widget.arrCar.intPricePerDay?.toInt() ?? 0);
-        final gadgetPrice = bookingProvider.totalGadgetPrice.toInt();
-        final totalAmount = vehiclePrice + gadgetPrice;
+     
 
         return Scaffold(
           backgroundColor: AppColors.background,
@@ -110,7 +108,7 @@ class _CartScreenState extends State<CartScreen> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) =>
-                                        CheckoutPaymentScreen(totalAmount: totalAmount,carDetails: widget.arrCar,),
+                                        CheckoutPaymentScreen(totalAmount: totalFinalAmount.toInt(),carDetails: widget.arrCar,),
                                   ));
                             },
                             buttonName: "Proceed to checkout",
@@ -376,6 +374,7 @@ Widget buildOrderSummary({
   final totalVehiclePrice = vehiclePriceCalculation.totalPrice;
   final totalGadgetPrice = gadgetPriceCalculation.totalPrice;
   final totalPrice = totalVehiclePrice + totalGadgetPrice;
+  totalFinalAmount = totalPrice;
 
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
