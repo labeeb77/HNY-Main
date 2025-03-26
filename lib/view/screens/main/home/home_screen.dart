@@ -340,6 +340,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         builder: (context, homeProvider, favProvider, child) {
                           final data = homeProvider.carListData;
                           log('car items length: ${homeProvider.carListData.length}');
+                          
                           return homeProvider.isLoading
                               ? CarCardSkeletonLoader(
                                   orientation: orientation,

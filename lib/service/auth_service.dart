@@ -37,7 +37,7 @@ class AuthService {
 
   Future<void> clearAllLocalData() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('access_token');
+    await prefs.clear();
   }
 }
 
