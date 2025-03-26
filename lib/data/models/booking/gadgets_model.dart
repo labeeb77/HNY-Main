@@ -5,6 +5,7 @@ class GadgetModel {
   final String image;
   bool isQuantityItem;
   int quantity;
+  String? cartItemId;
 
   GadgetModel({
     required this.id,
@@ -13,5 +14,6 @@ class GadgetModel {
     required this.image,
     this.isQuantityItem = false,
     this.quantity = 0,
+    this.cartItemId,
   });
 }

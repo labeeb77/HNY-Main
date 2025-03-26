@@ -65,6 +65,16 @@ class BookingService {
         sendToken: true);
   }
 
+   Future<ApiResponseModel> updateCart(Map<String, dynamic> cartData) async {
+    return await _apiService.apiCall(
+        endpoint: ApiConstants.updateCart,
+        method: 'POST',
+        data: cartData,
+        sendToken: true);
+  }
+
+  
+
   Future<ApiResponseModel> createBooking(
       Map<String, dynamic> bookingData) async {
     return await _apiService.apiCall(

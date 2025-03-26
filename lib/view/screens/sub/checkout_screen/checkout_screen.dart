@@ -3,6 +3,7 @@ import 'package:hny_main/core/utils/app_colors.dart';
 import 'package:hny_main/data/models/response/car_list_model.dart';
 import 'package:hny_main/data/providers/booking_provider.dart';
 import 'package:hny_main/view/screens/sub/checkout_screen/checkout_payment_screen.dart';
+import 'package:hny_main/view/screens/sub/checkout_screen/price_calculation.dart';
 import 'package:hny_main/view/screens/sub/checkout_screen/widgets/random_widget.dart';
 import 'package:hny_main/view/widgets/app_button.dart';
 import 'package:hny_main/view/widgets/common_app_bar.dart';
@@ -28,7 +29,7 @@ class _CartScreenState extends State<CartScreen> {
             .toList();
 
              final vehiclePrice = bookingProvider.calculateTotalAmount(
-            widget.arrCar.intPricePerDay ?? 0);
+            widget.arrCar.intPricePerDay?.toInt() ?? 0);
         final gadgetPrice = bookingProvider.totalGadgetPrice.toInt();
         final totalAmount = vehiclePrice + gadgetPrice;
 
@@ -48,7 +49,7 @@ class _CartScreenState extends State<CartScreen> {
                       _buildVehicleCard(
                         widget.arrCar.strModel ?? 'Ford Escape',
                         bookingProvider.calculateTotalAmount(
-                            widget.arrCar.intPricePerDay ?? 00),
+                            widget.arrCar.intPricePerDay?.toInt() ?? 00),
                         widget.arrCar.strImgUrl ??
                             'https://cdn.pixabay.com/photo/2012/05/29/00/43/car-49278_640.jpg',
                         bookingProvider.formattedStartDate,
@@ -96,7 +97,7 @@ class _CartScreenState extends State<CartScreen> {
                     children: [
                       buildOrderSummary(
                         vehiclePrice:  bookingProvider.calculateTotalAmount(
-                            widget.arrCar.intPricePerDay ?? 00), // Replace with actual vehicle price
+                            widget.arrCar.intPricePerDay?.toInt() ?? 00), // Replace with actual vehicle price
                         gadgetPrice: bookingProvider.totalGadgetPrice.toInt(),
                       ),
                       const SizedBox(height: 24),
@@ -290,62 +291,183 @@ class _CartScreenState extends State<CartScreen> {
     );
   }
 
-  // Updated order summary to include gadget price
-  Widget buildOrderSummary({
-    required int vehiclePrice,
-    required int gadgetPrice,
-  }) {
-    final totalPrice = vehiclePrice + gadgetPrice;
+  PriceCalculation _calculatePricing(
+  num dailyRate, 
+  num weeklyRate, 
+  num monthlyRate,
+) {
+  // Get total days from BookingProvider
+  final totalDays = Provider.of<BookingProvider>(context, listen: false).totalDays;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Order Summary',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        const SizedBox(height: 16),
-        buildSummaryRow('Vehicle Rental', 'AED $vehiclePrice'),
-        if (gadgetPrice > 0) buildSummaryRow('Add-ons', 'AED $gadgetPrice'),
-        const Divider(height: 24),
-        buildSummaryRow(
-          'Total',
-          'AED $totalPrice',
-          isTotal: true,
-        ),
-      ],
+  if (totalDays >= 30) {
+    // Monthly pricing
+    final monthlyPrice = (monthlyRate / 30) * totalDays;
+    return PriceCalculation(
+      totalPrice: monthlyPrice.toDouble(),
+      priceType: 'Monthly Rate',
+    );
+  } else if (totalDays >= 8) {
+    // Weekly pricing
+    final weeklyPrice = (weeklyRate / 7) * totalDays;
+    return PriceCalculation(
+      totalPrice: weeklyPrice.toDouble(),
+      priceType: 'Weekly Rate',
+    );
+  } else {
+    // Daily pricing
+    final dailyPrice = dailyRate * totalDays;
+    return PriceCalculation(
+      totalPrice: dailyPrice.toDouble(),
+      priceType: 'Daily Rate',
     );
   }
+}
 
-  Widget buildSummaryRow(String label, String value, {bool isTotal = false}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: isTotal ? 16 : 14,
-              fontWeight: isTotal ? FontWeight.w600 : FontWeight.normal,
+  PriceCalculation _calculateGadgetPricing() {
+  final bookingProvider = Provider.of<BookingProvider>(context, listen: false);
+  final totalDays = bookingProvider.totalDays;
+
+  double totalGadgetPrice = 0;
+  String? priceType;
+
+  for (var gadget in bookingProvider.gadgets) {
+    if (gadget.quantity > 0) {
+      if (totalDays >= 30) {
+        // Monthly pricing for gadgets
+        final monthlyPrice = (gadget.price * 30 / 30) * totalDays * gadget.quantity;
+        totalGadgetPrice += monthlyPrice;
+        priceType = 'Monthly Rate';
+      } else if (totalDays >= 8) {
+        // Weekly pricing for gadgets
+        final weeklyPrice = (gadget.price * 7 / 7) * totalDays * gadget.quantity;
+        totalGadgetPrice += weeklyPrice;
+        priceType = 'Weekly Rate';
+      } else {
+        // Daily pricing for gadgets
+        final dailyPrice = gadget.price * totalDays * gadget.quantity;
+        totalGadgetPrice += dailyPrice;
+        priceType = 'Daily Rate';
+      }
+    }
+  }
+
+  return PriceCalculation(
+    totalPrice: totalGadgetPrice,
+    priceType: priceType,
+  );
+}
+
+
+  // Updated order summary to include gadget price
+Widget buildOrderSummary({
+  required int vehiclePrice,
+  required int gadgetPrice,
+}) {
+  // Calculate vehicle pricing
+  final vehiclePriceCalculation = _calculatePricing(
+    widget.arrCar.intPricePerDay ?? 0,
+    widget.arrCar.intPricePerWeek ?? 0,
+    widget.arrCar.intPricePerMonth ?? 0,
+  );
+
+  // Calculate gadget pricing (assuming there's a similar method for gadgets)
+  final gadgetPriceCalculation = _calculateGadgetPricing();
+
+  final totalVehiclePrice = vehiclePriceCalculation.totalPrice;
+  final totalGadgetPrice = gadgetPriceCalculation.totalPrice;
+  final totalPrice = totalVehiclePrice + totalGadgetPrice;
+
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      const Text(
+        'Order Summary',
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+      const SizedBox(height: 16),
+      buildSummaryRow(
+        'Vehicle Rental',
+        'AED ${totalVehiclePrice.toStringAsFixed(2)}',
+        subRows: [
+          if (vehiclePriceCalculation.priceType != null)
+            Text(
+              '(${vehiclePriceCalculation.priceType})',
+              style: const TextStyle(
+                fontSize: 12,
+                color: Colors.grey,
+              ),
             ),
-          ),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: isTotal ? 16 : 14,
-              fontWeight: isTotal ? FontWeight.w600 : FontWeight.normal,
-              color: isTotal ? AppColors.orange : null,
-            ),
-          ),
         ],
       ),
-    );
-  }
+      if (totalGadgetPrice > 0)
+        buildSummaryRow(
+          'Add-ons',
+          'AED ${totalGadgetPrice.toStringAsFixed(2)}',
+          subRows: [
+            if (gadgetPriceCalculation.priceType != null)
+              Text(
+                '(${gadgetPriceCalculation.priceType})',
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey,
+                ),
+              ),
+          ],
+        ),
+      const Divider(height: 24),
+      buildSummaryRow(
+        'Total',
+        'AED ${totalPrice.toStringAsFixed(2)}',
+        isTotal: true,
+      ),
+    ],
+  );
+}
 
+ Widget buildSummaryRow(
+  String label, 
+  String value, 
+  {
+    bool isTotal = false, 
+    List<Widget>? subRows,
+  }
+) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 4),
+    child: Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: isTotal ? 16 : 14,
+                fontWeight: isTotal ? FontWeight.w600 : FontWeight.normal,
+              ),
+            ),
+            Text(
+              value,
+              style: TextStyle(
+                fontSize: isTotal ? 16 : 14,
+                fontWeight: isTotal ? FontWeight.w600 : FontWeight.normal,
+                color: isTotal ? AppColors.orange : null,
+              ),
+            ),
+          ],
+        ),
+        if (subRows != null)
+          ...subRows.map((subRow) => Padding(
+            padding: const EdgeInsets.only(top: 4),
+            child: subRow,
+          )),
+      ],
+    ),
+  );
+}
   // Placeholder methods for the other widgets
   Widget buildDateRow(String startDate, String endDate) {
     return Row(

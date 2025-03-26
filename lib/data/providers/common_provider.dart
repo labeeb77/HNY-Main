@@ -23,7 +23,7 @@ class CommonProvider with ChangeNotifier {
     changeLoadingState();
     try {
       const String uploadUrl =
-          "${ApiConstants.baseUrl}${ApiConstants.fileUploadApiUrl}";
+          "${ApiConstants.baseUrl2}${ApiConstants.fileUploadApiUrl}";
       final formData = FormData.fromMap({
         "arrFiles": await MultipartFile.fromFile(imagePath),
       });

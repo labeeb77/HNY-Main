@@ -1,5 +1,7 @@
 class ApiConstants {
-  static const String baseUrl = 'https://be.hny.elementron.xyz/';
+  static const String baseUrl1 = 'https://be.hny.elementron.xyz/';
+  static const String baseUrl2 = 'http://3.28.53.113:4100/';
+
   static const int connectionTimeout = 30;
   static const int receiveTimeout = 30;
 
@@ -17,11 +19,11 @@ class ApiConstants {
   static const String removeFavourites = 'remove_favourite';
   static const String getFavouritesList = 'get_list_favourite';
   static const String createCart = 'create_cart';
+  static const String updateCart = 'update_cart';
+
+  static const String deleteCart = 'delete_cart';
+
   static const String getCart = 'get_cart';
-    static const String createReservation = 'create_reservation';
-    static const String updateBookingLocation = 'update_booking_item';
-
-
-
-  
+  static const String createReservation = 'create_reservation';
+  static const String updateBookingLocation = 'update_booking_item';
 }

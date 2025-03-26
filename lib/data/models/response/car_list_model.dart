@@ -55,9 +55,9 @@ class ArrCar {
     dynamic intRating;
     String? strVarients;
     dynamic strYear;
-    int? intPricePerDay;
-    double? intPricePerWeek;
-    double? intPricePerMonth;
+    num? intPricePerDay;
+    num? intPricePerWeek;
+    num? intPricePerMonth;
     List<ArrCarFeature>? arrCarFeatures;
     String? strCreatedBy;
     DateTime? strCreatedTime;

@@ -24,7 +24,15 @@ class _BookingScreenState extends State<BookingScreen> {
         context,
         filters: {
           "filters": {
-            "strStatus": ["SETTLED", "COMPLETED"]
+            "strStatus": [
+                        "SETTLED",
+                        "COMPLETED",
+                        "ISSUE",
+                        "IN RENTAL",
+                        "PENDING",
+                        "CONFIRMED",
+                        "CANCELLED"
+                      ]
           }
         },
       );
@@ -32,6 +40,7 @@ class _BookingScreenState extends State<BookingScreen> {
     super.initState();
   }
 
+  // Method to handle tab changes
   // Method to handle tab changes
   void _handleTabChange(String tabName) {
     final provider = Provider.of<BookingProvider>(context, listen: false);
@@ -42,7 +51,19 @@ class _BookingScreenState extends State<BookingScreen> {
       "filters": {
         "strStatus": tabName == "Upcoming"
             ? ["SETTLED", "COMPLETED"]
-            : (tabName == "In rental" ? ["ISSUE", "IN RENTAL"] : [])
+            : (tabName == "In rental"
+                ? ["ISSUE", "IN RENTAL"]
+                : (tabName == "All"
+                    ? [
+                        "SETTLED",
+                        "COMPLETED",
+                        "ISSUE",
+                        "IN RENTAL",
+                        "PENDING",
+                        "CONFIRMED",
+                        "CANCELLED"
+                      ]
+                    : []))
       }
     };
 
@@ -92,6 +113,40 @@ class _BookingScreenState extends State<BookingScreen> {
                     ),
                     child: Row(
                       children: [
+                        // All Tab
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () => _handleTabChange('All'),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              decoration: BoxDecoration(
+                                color: provider.activeTab == 'All'
+                                    ? Colors.white
+                                    : Colors.transparent,
+                                borderRadius: BorderRadius.circular(25),
+                                boxShadow: provider.activeTab == 'All'
+                                    ? [
+                                        BoxShadow(
+                                          color: Colors.grey.withOpacity(0.1),
+                                          spreadRadius: 1,
+                                          blurRadius: 1,
+                                        ),
+                                      ]
+                                    : [],
+                              ),
+                              child: Text(
+                                'All',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: provider.activeTab == 'All'
+                                      ? Colors.black
+                                      : Colors.white,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
                         // Upcoming Tab
                         Expanded(
                           child: GestureDetector(
@@ -160,6 +215,7 @@ class _BookingScreenState extends State<BookingScreen> {
                             ),
                           ),
                         ),
+
                         // Remove "Completed" tab or add it back if needed
                       ],
                     ),
@@ -371,8 +427,9 @@ class BookingCard extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>
-                                MyBookingDetailsScreen(bookingData: data ,),
+                            builder: (context) => MyBookingDetailsScreen(
+                              bookingData: data,
+                            ),
                           ),
                         );
                       },
