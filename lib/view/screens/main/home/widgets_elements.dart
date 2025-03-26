@@ -303,7 +303,15 @@ Widget buildCarCard(
                     ),
                   ],
                 ),
-                const PrimaryElevateButton(),
+                 PrimaryElevateButton(ontap: () {
+                   Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CarDetailsScreen(
+              arrCar: arrCar,
+            ),
+          ));
+                },),
               ],
             ),
           ),
