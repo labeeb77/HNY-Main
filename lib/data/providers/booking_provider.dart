@@ -2,6 +2,8 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:hny_main/core/utils/app_alerts.dart';
+import 'package:hny_main/core/utils/app_colors.dart';
+import 'package:hny_main/core/utils/app_overlays.dart';
 import 'package:hny_main/data/models/booking/add_on_list_model.dart';
 import 'package:hny_main/data/models/booking/gadgets_model.dart';
 import 'package:hny_main/data/models/booking/get_booking_list_model.dart';
@@ -113,6 +115,8 @@ class BookingProvider extends ChangeNotifier {
     return pricePerDay * totalDays;
   }
 
+  
+
   // Location update methods
   void updatePickupAddress(String address) {
     _pickupAddress = address;
@@ -217,11 +221,90 @@ class BookingProvider extends ChangeNotifier {
   }
 
   // Update gadget quantity
-  void updateGadgetQuantity(String id, int quantity) {
-    final gadget = _gadgets.firstWhere((g) => g.id == id);
-    gadget.quantity = quantity;
-    notifyListeners();
+void updateGadgetQuantity(String id, int quantity) async {
+  final gadget = _gadgets.firstWhere((g) => g.id == id);
+  final prevQuantity = gadget.quantity;
+
+  gadget.quantity = quantity;
+  notifyListeners();
+
+  if (_startDate == null || _endDate == null) {
+    _handleError("Please select booking dates");
+    return;
   }
+
+  if (_pickupAddress == 'Select Location' || _dropoffAddress == 'Select Location') {
+    _handleError("Please select pickup and dropoff locations");
+    return;
+  }
+
+  final pickupCoords = _pickupCoordinates ?? [25.28071250637328, 55.41023254394531];
+  final dropoffCoords = _dropoffCoordinates ?? [25.252777, 55.364445];
+
+  if (prevQuantity == 0 && quantity > 0) {
+    // 👉 Call createCart
+    final data = {
+      "strItemId": id,
+      "strStartDate": _startDate?.toIso8601String(),
+      "strEndDate": _endDate?.toIso8601String(),
+      "strPickupLocation": {
+        "type": "Point",
+        "coordinates": pickupCoords,
+      },
+      "strDeliveryLocation": {
+        "type": "Point",
+        "coordinates": dropoffCoords,
+      },
+      "strPickupLocationAddress": _pickupAddress,
+      "strDeliveryLocationAddress": _dropoffAddress,
+    };
+    log('add gadget to cart data: $data');
+
+    final response = await _bookingService.createCart(data);
+    if (response.success) {
+      log('add gadget to cart response: ${response.data}');
+      final cartItemId = response.data['_id'];
+      if (cartItemId != null) {
+        gadget.cartItemId = cartItemId; // 💾 store _id for updates
+      }
+    } else {
+      _handleError("Failed to add gadget to cart");
+    }
+
+  } else if (prevQuantity > 0 && quantity >= 0) {
+    if (gadget.cartItemId == null) {
+      _handleError("Cart item ID not found for gadget. Please try again.");
+      return;
+    }
+
+    // 👉 Call updateCart
+    final data = {
+      "_id": gadget.cartItemId, // ✅ use stored cartItemId
+      "intCount": quantity,
+      "strStartDate": _startDate?.toIso8601String(),
+      "strEndDate": _endDate?.toIso8601String(),
+      "strPickupLocation": {
+        "type": "Point",
+        "coordinates": pickupCoords,
+      },
+      "strDeliveryLocation": {
+        "type": "Point",
+        "coordinates": dropoffCoords,
+      },
+      "strPickupLocationAddress": _pickupAddress,
+      "strDeliveryLocationAddress": _dropoffAddress,
+    };
+    log('update gadget in cart data: $data');
+
+    final response = await _bookingService.updateCart(data);
+    if (response.success) {
+      log('update gadget in cart response: ${response.data}');
+    } else {
+      _handleError("Failed to update gadget in cart");
+    }
+  }
+}
+
 
   // Calculate total price of selected gadgets
   double get totalGadgetPrice {
@@ -246,87 +329,75 @@ class BookingProvider extends ChangeNotifier {
 
   // Create Cart
 
-  Future<bool> createCart(BuildContext context, ArrCar arrCar) async {
-    _setLoading(true);
-    _setError(null);
-
-    try {
-      // Validate required fields
-      if (_startDate == null || _endDate == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Please select start and end dates')));
-        return false;
-      }
-
-      if (_endDate!.isBefore(_startDate!)) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('End date cannot be before the start date')),
-        );
-        return false;
-      }
-
-      if (_pickupAddress == 'Select Location' ||
-          _dropoffAddress == 'Select Location') {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text('Please select pickup and dropoff locations')));
-        return false;
-      }
-
-      // Calculate total amount
-      final totalAmount = calculateTotalAmount(arrCar.intPricePerDay ?? 0);
-
-      // Use stored coordinates or default ones
-      final pickupCoords =
-          _pickupCoordinates ?? [25.28071250637328, 55.41023254394531];
-      final dropoffCoords = _dropoffCoordinates ?? [25.252777, 55.364445];
-
-      // Create cart item
-      final cartItem = {
-        "strImgUrl": arrCar.strImgUrl ?? "",
-        "strCarNumber": arrCar.strCarNumber ?? "",
-        "strModel": arrCar.strModel ?? "",
-        "intPricePerDay": arrCar.intPricePerDay ?? 0,
-        "StartDate": _startDate?.toIso8601String(),
-        "EndDate": _endDate?.toIso8601String(),
-        "intPricePerWeek": arrCar.intPricePerWeek ?? 0,
-        "intPricePerMonth": arrCar.intPricePerMonth ?? 0,
-        "intTotalAmount": totalAmount,
-        "type": "CAR",
-        "intUnitPrice": arrCar.intPricePerDay ?? 0,
-        "intTotalDays": totalDays,
-        "strCarId": arrCar.id ?? "",
-        "_id": const Uuid().v4(),
-        "strPickupLocation": {"type": "Point", "coordinates": pickupCoords},
-        "strPickupLocationAddress": _pickupAddress,
-        "strDeliveryLocation": {"type": "Point", "coordinates": dropoffCoords},
-        "strDeliveryLocationAddress": _dropoffAddress
-      };
-
-      // Create request payload
-      final data = {
-        "arrCarItems": [cartItem],
-      };
-
-      // Call API
-      final response = await _bookingService.createCart(data);
-
-      if (response.success) {
-        // Show success message
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Cart created successfully!')));
-        return true;
-      } else {
-        _handleError('Failed to create cart');
-        return false;
-      }
-    } catch (e) {
-      _handleError(e.toString());
+Future<bool> createCart(BuildContext context, ArrCar arrCar) async {
+  _setLoading(true);
+  _setError(null);
+  try {
+    // Validate required fields
+    if (_startDate == null || _endDate == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select start and end dates')));
       return false;
-    } finally {
-      _setLoading(false);
     }
+    
+    if (_endDate!.isBefore(_startDate!)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('End date cannot be before the start date')),
+      );
+      return false;
+    }
+    
+    if (_pickupAddress == 'Select Location' ||
+        _dropoffAddress == 'Select Location') {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Please select pickup and dropoff locations')));
+      return false;
+    }
+    
+    // Use stored coordinates or default ones
+    final pickupCoords =
+        _pickupCoordinates ?? [25.28071250637328, 55.41023254394531];
+    final dropoffCoords = _dropoffCoordinates ?? [25.252777, 55.364445];
+    
+    // Create new request payload based on the updated format
+    final data = {
+      "strItemId": arrCar.id ?? "",
+      "strStartDate": _startDate?.toIso8601String(),
+      "strEndDate": _endDate?.toIso8601String(),
+      "strPickupLocation": {
+        "type": "Point", 
+        "coordinates": pickupCoords
+      },
+      "strDeliveryLocation": {
+        "type": "Point", 
+        "coordinates": dropoffCoords
+      },
+      "strPickupLocationAddress": _pickupAddress,
+      "strDeliveryLocationAddress": _dropoffAddress
+    };
+    
+    // Call API
+    final response = await _bookingService.createCart(data);
+    if (response.success) {
+      // Show success message
+   if (response.success) {
+  // Show custom animation instead of SnackBar
+  showSuccessAnimation(context);
+  return true;
+}
+      return true;
+    } else {
+      _handleError('Failed to create cart');
+      return false;
+    }
+  } catch (e) {
+    _handleError(e.toString());
+    return false;
+  } finally {
+    _setLoading(false);
   }
+}
 
 // Create Booking
 
@@ -368,7 +439,7 @@ class BookingProvider extends ChangeNotifier {
         "EndDate": _endDate?.toIso8601String(),
         "intPricePerWeek": carDetails.intPricePerWeek ?? 0,
         "intPricePerMonth": carDetails.intPricePerMonth ?? 0,
-        "intTotalAmount": calculateTotalAmount(carDetails.intPricePerDay ?? 0),
+        "intTotalAmount": calculateTotalAmount(carDetails.intPricePerDay?.toInt() ?? 0),
         "intTotalDays": totalDays,
         "intUnitPrice": carDetails.intPricePerDay ?? 0,
         "strCarId": carDetails.id ?? "",
@@ -536,4 +607,8 @@ class BookingProvider extends ChangeNotifier {
     _activeTab = tab;
     notifyListeners();
   }
+
+
+// Then in your createCart function, replace the SnackBar with:
+
 }

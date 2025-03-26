@@ -69,7 +69,7 @@ class ApiService {
       bool showErrorMessage = true,
       bool sendToken = true}) async {
     try {
-      dio.options.baseUrl = ApiConstants.baseUrl;
+      dio.options.baseUrl = ApiConstants.baseUrl2;
       Response response = await _handleHttpRequest(
         endpoint: endpoint,
         method: method,

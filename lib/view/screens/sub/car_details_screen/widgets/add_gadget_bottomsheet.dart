@@ -8,7 +8,7 @@ import 'package:hny_main/view/widgets/app_secondary_button.dart';
 import 'package:provider/provider.dart';
 
 class GadgetBottomSheet extends StatefulWidget {
-    final ArrCar arrCar;
+  final ArrCar arrCar;
 
   const GadgetBottomSheet({super.key, required this.arrCar});
 
@@ -135,13 +135,13 @@ class _GadgetBottomSheetState extends State<GadgetBottomSheet> {
 
                               SecondaryButton(
                                 text: 'Add',
-                                 onTap: () {
+                                onTap: () {
                                   bookingProvider.updateGadgetQuantity(
                                     gadget.id,
-                                    1,
+                                    gadget.quantity + 1,
                                   );
-                              },),
-                             
+                                },
+                              ),
                           ],
                         ),
                       );
@@ -154,7 +154,10 @@ class _GadgetBottomSheetState extends State<GadgetBottomSheet> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) =>  CartScreen(arrCar: widget.arrCar,)),
+                    MaterialPageRoute(
+                        builder: (context) => CartScreen(
+                              arrCar: widget.arrCar,
+                            )),
                   );
                 },
                 buttonName: "Continue",

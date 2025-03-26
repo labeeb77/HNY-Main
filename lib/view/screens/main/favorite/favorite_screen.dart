@@ -56,7 +56,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                 data[index].carData?.intRating.toString() ?? '4.0',
                 data[index].carData?.strCarCategory ?? "Unknown",
                 'Manual',
-                data[index].carData?.intFuelCapacity ?? "Unknown",
+                data[index].carData?.intFuelCapacity ?? 0.0,
                 '${data[index].carData?.strSeatNo} Seats',
                 data[index].carData?.intPricePerDay.toString() ?? '0',
                 data[index].carData?.strImgUrl ?? '',

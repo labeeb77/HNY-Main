@@ -1,9 +1,10 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:http/http.dart' as http;
 
 Future<String> getAddressFromLatLng(double latitude, double longitude) async {
   const String apiKey =
-      "AIzaSyBKmlLrkw4DYk2jylNc8DbfGgB7QWyuxqk"; // Replace with your API key
+      "AIzaSyCK4qZ_Nbz1xqiVgI7lkc8LZSiJuZf6rPU"; // Replace with your API key
   final String url =
       "https://maps.googleapis.com/maps/api/geocode/json?latlng=$latitude,$longitude&key=$apiKey";
 
@@ -11,6 +12,7 @@ Future<String> getAddressFromLatLng(double latitude, double longitude) async {
 
   if (response.statusCode == 200) {
     final data = json.decode(response.body);
+    log('location data: $data');
     if (data["status"] == "OK") {
       final formattedAddress = data["results"][0]["formatted_address"];
       return formattedAddress;

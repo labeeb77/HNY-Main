@@ -70,7 +70,7 @@ class NavItemWidget extends StatelessWidget {
   }
 }
 
-Widget buildFeature(IconData icon, String label) {
+Widget buildFeature(IconData icon, dynamic label) {
   return Row(
     children: [
       Icon(
@@ -80,7 +80,7 @@ Widget buildFeature(IconData icon, String label) {
       ),
       const SizedBox(width: 4),
       Text(
-        label,
+        label.toString(),
         style: const TextStyle(
           color: AppColors.white,
           fontSize: 14,
@@ -319,7 +319,7 @@ Widget buildFavCarCard(
   String rating,
   String category,
   String transmission,
-  String fuelType,
+  dynamic fuelType,
   String seats,
   String price,
   String image,
