@@ -38,8 +38,8 @@ class ApiService {
         return handler.next(error);
       },
     ));
-    dio.options.connectTimeout = const Duration(minutes: 2);
-    dio.options.receiveTimeout = const Duration(minutes: 2);
+    dio.options.connectTimeout = const Duration(minutes: 5);
+    dio.options.receiveTimeout = const Duration(minutes: 5);
     dio.interceptors.add(LogInterceptor(
       responseBody: true,
       requestBody: true,

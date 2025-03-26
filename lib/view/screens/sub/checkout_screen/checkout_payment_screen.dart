@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
@@ -15,11 +17,10 @@ class CheckoutPaymentScreen extends StatefulWidget {
   final int totalAmount;
   final ArrCar carDetails;
   
-  
   const CheckoutPaymentScreen({
     super.key,
     required this.totalAmount,
-    required this. carDetails, 
+    required this.carDetails, 
   });
 
   @override
@@ -29,9 +30,16 @@ class CheckoutPaymentScreen extends StatefulWidget {
 class _CheckoutPaymentScreenState extends State<CheckoutPaymentScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _customAmountController = TextEditingController();
+
+  String _selectedPaymentAmountOption = 'Full Amount';
+  
+  // Calculate minimum amount (30% of total)
+  double get _minimumAmount => widget.totalAmount * 0.3;
 
   @override
   Widget build(BuildContext context) {
+    log("minimum amount: ${widget.totalAmount}");
     return Consumer<BookingProvider>(
       builder: (context, bookingProvider, child) {
         return Scaffold(
@@ -53,6 +61,7 @@ class _CheckoutPaymentScreenState extends State<CheckoutPaymentScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Payment Method Selection
                   const AppText(
                     "Select Payment Option",
                     fontWeight: FontWeight.w600,
@@ -91,7 +100,8 @@ class _CheckoutPaymentScreenState extends State<CheckoutPaymentScreen> {
                       ],
                     ),
                   ),
-                  const Gap(15),
+
+                     const Gap(15),
                   const AppText(
                     "Enter Email Id",
                     style: AppTextStyles.subText,
@@ -116,6 +126,8 @@ class _CheckoutPaymentScreenState extends State<CheckoutPaymentScreen> {
                       borderColor: AppColors.textFormFieldBorderColor,
                     )
                   ),
+
+                  // Phone Number Input
                   const Gap(15),
                   const AppText(
                     "Enter Mobile Number",
@@ -138,9 +150,27 @@ class _CheckoutPaymentScreenState extends State<CheckoutPaymentScreen> {
                       controller: _phoneController,
                       label: "",
                       hint: "Enter your mobile number",
+                      keyboardType: TextInputType.phone,
                       borderColor: AppColors.textFormFieldBorderColor,
                     )
                   ),
+                  
+                  // Payment Amount Options
+                  const Gap(15),
+                  const AppText(
+                    "Select Payment Amount",
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                  ),
+                  const Gap(10),
+                  _buildPaymentAmountOptions(),
+                  
+                  // Custom amount field (conditionally rendered)
+                  if (_selectedPaymentAmountOption == 'Custom Amount')
+                    _buildCustomAmountField(),
+
+                  // Email Input
+               
                 ],
               ),
             ),
@@ -153,7 +183,6 @@ class _CheckoutPaymentScreenState extends State<CheckoutPaymentScreen> {
               buttonName: "Pay now",
               isLoading: bookingProvider.isLoading,
               onTap: () => _handlePayNow(context, bookingProvider),
-              
             )
           ),
         );
@@ -161,23 +190,128 @@ class _CheckoutPaymentScreenState extends State<CheckoutPaymentScreen> {
     );
   }
 
+  Widget _buildPaymentAmountOptions() {
+    final paymentOptions = ['Full Amount', 'Minimum Amount', 'Custom Amount'];
+    
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        color: AppColors.paymentScreenBackgroundColor,
+        boxShadow: const [
+          BoxShadow(
+            offset: Offset(1, 1),
+            spreadRadius: 1,
+            color: Color.fromARGB(255, 231, 231, 231),
+            blurRadius: 6
+          )
+        ]
+      ),
+      child: Column(
+        children: paymentOptions.map((option) {
+          return Column(
+            children: [
+              RadioBoxElement(
+                title: option,
+                status: _selectedPaymentAmountOption == option,
+                padding: const EdgeInsets.only(right: 16, left: 16),
+                onChanged: (_) {
+                  setState(() {
+                    _selectedPaymentAmountOption = option;
+                  });
+                },
+              ),
+              if (option != paymentOptions.last) 
+                const SizedBox(width: double.infinity, child: Divider()),
+            ],
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  Widget _buildCustomAmountField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Gap(15),
+        AppText(
+          "Enter Custom Amount (Minimum: ${_minimumAmount.toStringAsFixed(2)} AED)",
+          style: AppTextStyles.subText,
+        ),
+        const Gap(6),
+        Container(
+          decoration: const BoxDecoration(
+            color: AppColors.paymentScreenBackgroundColor,
+            boxShadow: [
+              BoxShadow(
+                offset: Offset(1, 1),
+                spreadRadius: 0.1,
+                color: Color.fromARGB(255, 240, 240, 240),
+                blurRadius: 15
+              )
+            ]
+          ),
+          child: CustomTextFormField(
+            controller: _customAmountController,
+            label: "",
+            hint: "Enter custom amount",
+            keyboardType: TextInputType.number,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter an amount';
+              }
+              final amount = double.tryParse(value);
+              if (amount == null || amount < _minimumAmount) {
+                return 'Amount must be at least ${_minimumAmount.toStringAsFixed(2)} AED';
+              }
+              return null;
+            },
+          )
+        ),
+      ],
+    );
+  }
+
   Future<void> _handlePayNow(BuildContext context, BookingProvider provider) async {
     // Validate inputs
-   if (provider.selectedPaymentMethod == "TAP_LINK") {
-    if (_emailController.text.isEmpty || _phoneController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill in all required fields'))
-      );
-      return;
+    if (provider.selectedPaymentMethod == "TAP_LINK") {
+      if (_emailController.text.isEmpty || _phoneController.text.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please fill in all required fields'))
+        );
+        return;
+      }
     }
-  }
+
+    // Determine the payment amount
+    double paymentAmount;
+    switch (_selectedPaymentAmountOption) {
+      case 'Full Amount':
+        paymentAmount = widget.totalAmount.toDouble();
+        break;
+      case 'Minimum Amount':
+        paymentAmount = _minimumAmount;
+        break;
+      case 'Custom Amount':
+        final customAmount = double.tryParse(_customAmountController.text);
+        if (customAmount == null || customAmount < _minimumAmount) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Minimum is ${_minimumAmount.toStringAsFixed(2)} AED'))
+          );
+          return;
+        }
+        paymentAmount = customAmount;
+        break;
+      default:
+        paymentAmount = widget.totalAmount.toDouble();
+    }
 
     // Create booking
     final success = await provider.createBooking(
       context,
       email: _emailController.text,
       phoneNumber: _phoneController.text,
-      amount: widget.totalAmount.toDouble(),
+      amount: paymentAmount,
       carDetails: widget.carDetails
     );
 
@@ -191,6 +325,7 @@ class _CheckoutPaymentScreenState extends State<CheckoutPaymentScreen> {
   void dispose() {
     _emailController.dispose();
     _phoneController.dispose();
+    _customAmountController.dispose();
     super.dispose();
   }
 }
