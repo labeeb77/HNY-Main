@@ -19,13 +19,24 @@ class CarListModel {
         this.objUser,
     });
 
-    factory CarListModel.fromJson(Map<String, dynamic> json) => CarListModel(
-        success: json["success"],
-        message: json["message"],
-        statusCode: json["statusCode"],
-        arrCars: json["arrCars"] == null ? [] : List<ArrCar>.from(json["arrCars"]!.map((x) => ArrCar.fromJson(x))),
-        objUser: json["objUser"] == null ? null : ObjUser.fromJson(json["objUser"]),
-    );
+    factory CarListModel.fromJson(Map<String, dynamic>? json) {
+        if (json == null) {
+            return CarListModel(
+                success: false,
+                message: 'Invalid response',
+                statusCode: 500,
+                arrCars: [],
+                objUser: null,
+            );
+        }
+        return CarListModel(
+            success: json["success"] ?? false,
+            message: json["message"] ?? '',
+            statusCode: json["statusCode"] ?? 0,
+            arrCars: json["arrCars"] == null ? [] : List<ArrCar>.from(json["arrCars"]!.map((x) => ArrCar.fromJson(x))),
+            objUser: json["objUser"] == null ? null : ObjUser.fromJson(json["objUser"]),
+        );
+    }
 
     Map<String, dynamic> toJson() => {
         "success": success,
@@ -41,27 +52,33 @@ class ArrCar {
     String? strCarCode;
     String? strCarNumber;
     String? strBrand;
-    String? strStatus;
-    String? chrStatus;
+    StrStatus? strStatus;
+    ChrStatus? chrStatus;
     String? strModel;
     String? strDescription;
-    String? strCarCategory;
+    StrCarCategory? strCarCategory;
     int? strSeatNo;
-    String? strFuelType;
+    StrFuelType? strFuelType;
     String? strImgUrl;
     List<String>? arrImgUrl;
     int? intPower;
-    dynamic intFuelCapacity;
-    dynamic intRating;
+    int? intFuelCapacity;
+    int? intRating;
     String? strVarients;
-    dynamic strYear;
-    num? intPricePerDay;
-    num? intPricePerWeek;
-    num? intPricePerMonth;
+    int? strYear;
+    String? strColor;
+    int? intPricePerDay;
+    int? intPricePerWeek;
+    int? intPricePerMonth;
     List<ArrCarFeature>? arrCarFeatures;
-    String? strCreatedBy;
+    StrAtedBy? strCreatedBy;
     DateTime? strCreatedTime;
+    StrAtedBy? strUpdatedBy;
+    DateTime? strUpdatedTime;
     bool? isFavourite;
+    int? intKm;
+    StrInsurance? strInsurance;
+    String? strChasis;
 
     ArrCar({
         this.id,
@@ -82,55 +99,72 @@ class ArrCar {
         this.intRating,
         this.strVarients,
         this.strYear,
+        this.strColor,
         this.intPricePerDay,
         this.intPricePerWeek,
         this.intPricePerMonth,
         this.arrCarFeatures,
         this.strCreatedBy,
         this.strCreatedTime,
+        this.strUpdatedBy,
+        this.strUpdatedTime,
         this.isFavourite,
+        this.intKm,
+        this.strInsurance,
+        this.strChasis,
     });
 
-    factory ArrCar.fromJson(Map<String, dynamic> json) => ArrCar(
-        id: json["_id"],
-        strCarCode: json["strCarCode"],
-        strCarNumber: json["strCarNumber"],
-        strBrand: json["strBrand"],
-        strStatus: json["strStatus"],
-        chrStatus: json["chrStatus"],
-        strModel: json["strModel"],
-        strDescription: json["strDescription"],
-        strCarCategory: json["strCarCategory"],
-        strSeatNo: json["strSeatNo"],
-        strFuelType: json["strFuelType"],
-        strImgUrl: json["strImgUrl"],
-        arrImgUrl: json["arrImgUrl"] == null ? [] : List<String>.from(json["arrImgUrl"]!.map((x) => x)),
-        intPower: json["intPower"],
-        intFuelCapacity: json["intFuelCapacity"],
-        intRating: json["intRating"],
-        strVarients: json["strVarients"],
-        strYear: json["strYear"],
-        intPricePerDay: json["intPricePerDay"],
-        intPricePerWeek: json["intPricePerWeek"]?.toDouble(),
-        intPricePerMonth: json["intPricePerMonth"]?.toDouble(),
-        arrCarFeatures: json["arrCarFeatures"] == null ? [] : List<ArrCarFeature>.from(json["arrCarFeatures"]!.map((x) => ArrCarFeature.fromJson(x))),
-        strCreatedBy: json["strCreatedBy"],
-        strCreatedTime: json["strCreatedTime"] == null ? null : DateTime.parse(json["strCreatedTime"]),
-        isFavourite: json["isFavourite"],
-    );
+    factory ArrCar.fromJson(Map<String, dynamic>? json) {
+        if (json == null) {
+            return ArrCar();
+        }
+        return ArrCar(
+            id: json["_id"] ?? '',
+            strCarCode: json["strCarCode"] ?? '',
+            strCarNumber: json["strCarNumber"] ?? '',
+            strBrand: json["strBrand"] ?? '',
+            strStatus: strStatusValues.map[json["strStatus"]] ?? StrStatus.AVAILABLE,
+            chrStatus: chrStatusValues.map[json["chrStatus"]] ?? ChrStatus.N,
+            strModel: json["strModel"] ?? '',
+            strDescription: json["strDescription"] ?? '',
+            strCarCategory: strCarCategoryValues.map[json["strCarCategory"]] ?? StrCarCategory.EMPTY,
+            strSeatNo: json["strSeatNo"] ?? 0,
+            strFuelType: strFuelTypeValues.map[json["strFuelType"]] ?? StrFuelType.PETROL,
+            strImgUrl: json["strImgUrl"] ?? '',
+            arrImgUrl: json["arrImgUrl"] == null ? [] : List<String>.from(json["arrImgUrl"]!.map((x) => x.toString())),
+            intPower: json["intPower"] ?? 0,
+            intFuelCapacity: json["intFuelCapacity"] ?? 0,
+            intRating: json["intRating"] ?? 0,
+            strVarients: json["strVarients"] ?? '',
+            strYear: json["strYear"] ?? 0,
+            strColor: json["strColor"] ?? '',
+            intPricePerDay: json["intPricePerDay"] ?? 0,
+            intPricePerWeek: json["intPricePerWeek"] ?? 0,
+            intPricePerMonth: json["intPricePerMonth"] ?? 0,
+            arrCarFeatures: json["arrCarFeatures"] == null ? [] : List<ArrCarFeature>.from(json["arrCarFeatures"]!.map((x) => ArrCarFeature.fromJson(x))),
+            strCreatedBy: strAtedByValues.map[json["strCreatedBy"]] ?? StrAtedBy.SYSTEM,
+            strCreatedTime: json["strCreatedTime"] == null ? null : DateTime.tryParse(json["strCreatedTime"]),
+            strUpdatedBy: strAtedByValues.map[json["strUpdatedBy"]] ?? StrAtedBy.SYSTEM,
+            strUpdatedTime: json["strUpdatedTime"] == null ? null : DateTime.tryParse(json["strUpdatedTime"]),
+            isFavourite: json["isFavourite"] ?? false,
+            intKm: json["intKm"] ?? 0,
+            strInsurance: strInsuranceValues.map[json["strInsurance"]] ?? StrInsurance.AL_SAGR_NATIONAL_INSURANCE_CO_PSC,
+            strChasis: json["strChasis"] ?? '',
+        );
+    }
 
     Map<String, dynamic> toJson() => {
         "_id": id,
         "strCarCode": strCarCode,
         "strCarNumber": strCarNumber,
         "strBrand": strBrand,
-        "strStatus": strStatus,
-        "chrStatus": chrStatus,
+        "strStatus": strStatusValues.reverse[strStatus],
+        "chrStatus": chrStatusValues.reverse[chrStatus],
         "strModel": strModel,
         "strDescription": strDescription,
-        "strCarCategory": strCarCategory,
+        "strCarCategory": strCarCategoryValues.reverse[strCarCategory],
         "strSeatNo": strSeatNo,
-        "strFuelType": strFuelType,
+        "strFuelType": strFuelTypeValues.reverse[strFuelType],
         "strImgUrl": strImgUrl,
         "arrImgUrl": arrImgUrl == null ? [] : List<dynamic>.from(arrImgUrl!.map((x) => x)),
         "intPower": intPower,
@@ -138,13 +172,19 @@ class ArrCar {
         "intRating": intRating,
         "strVarients": strVarients,
         "strYear": strYear,
+        "strColor": strColor,
         "intPricePerDay": intPricePerDay,
         "intPricePerWeek": intPricePerWeek,
         "intPricePerMonth": intPricePerMonth,
         "arrCarFeatures": arrCarFeatures == null ? [] : List<dynamic>.from(arrCarFeatures!.map((x) => x.toJson())),
-        "strCreatedBy": strCreatedBy,
+        "strCreatedBy": strAtedByValues.reverse[strCreatedBy],
         "strCreatedTime": strCreatedTime?.toIso8601String(),
+        "strUpdatedBy": strAtedByValues.reverse[strUpdatedBy],
+        "strUpdatedTime": strUpdatedTime?.toIso8601String(),
         "isFavourite": isFavourite,
+        "intKm": intKm,
+        "strInsurance": strInsuranceValues.reverse[strInsurance],
+        "strChasis": strChasis,
     };
 }
 
@@ -157,10 +197,15 @@ class ArrCarFeature {
         this.strDescription,
     });
 
-    factory ArrCarFeature.fromJson(Map<String, dynamic> json) => ArrCarFeature(
-        strFeatures: json["strFeatures"],
-        strDescription: json["strDescription"],
-    );
+    factory ArrCarFeature.fromJson(Map<String, dynamic>? json) {
+        if (json == null) {
+            return ArrCarFeature();
+        }
+        return ArrCarFeature(
+            strFeatures: json["strFeatures"] ?? '',
+            strDescription: json["strDescription"] ?? '',
+        );
+    }
 
     Map<String, dynamic> toJson() => {
         "strFeatures": strFeatures,
@@ -168,14 +213,68 @@ class ArrCarFeature {
     };
 }
 
+enum ChrStatus {
+    N
+}
+
+final chrStatusValues = EnumValues({
+    "N": ChrStatus.N
+});
+
+enum StrCarCategory {
+    EMPTY,
+    LUXURY
+}
+
+final strCarCategoryValues = EnumValues({
+    "": StrCarCategory.EMPTY,
+    "Luxury": StrCarCategory.LUXURY
+});
+
+enum StrAtedBy {
+    SYSTEM,
+    THE_67_C8_CCE3342_B65_B85_D6_AB507
+}
+
+final strAtedByValues = EnumValues({
+    "System": StrAtedBy.SYSTEM,
+    "67c8cce3342b65b85d6ab507": StrAtedBy.THE_67_C8_CCE3342_B65_B85_D6_AB507
+});
+
+enum StrFuelType {
+    PETROL
+}
+
+final strFuelTypeValues = EnumValues({
+    "Petrol": StrFuelType.PETROL
+});
+
+enum StrInsurance {
+    AL_SAGR_NATIONAL_INSURANCE_CO_PSC
+}
+
+final strInsuranceValues = EnumValues({
+    "AL SAGR NATIONAL INSURANCE CO. (PSC)\n": StrInsurance.AL_SAGR_NATIONAL_INSURANCE_CO_PSC
+});
+
+enum StrStatus {
+    AVAILABLE,
+    IN_RENTAL
+}
+
+final strStatusValues = EnumValues({
+    "Available": StrStatus.AVAILABLE,
+    "IN RENTAL": StrStatus.IN_RENTAL
+});
+
 class ObjUser {
     String? id;
-    String? chrStatus;
+    ChrStatus? chrStatus;
     String? strOtpToken;
     String? strOtp;
     String? strName;
     String? strMobileNo;
-    String? strEmail;
+    dynamic strEmail;
     String? strSignupMethode;
     String? strRoleName;
     String? strType;
@@ -186,13 +285,13 @@ class ObjUser {
     String? strFcmToken;
     String? strRefCode;
     int? intAdvancePercentage;
-    String? strEmiratesIdUrl;
-    String? strFirstName;
+    dynamic strEmiratesIdUrl;
+    dynamic strFirstName;
     String? strFullName;
-    String? strGccIdUrl;
-    String? strLastName;
+    dynamic strGccIdUrl;
+    dynamic strLastName;
     dynamic strLicenceUrl;
-    String? strNationality;
+    dynamic strNationality;
     String? strPassportUrl;
     String? strUpdatedBy;
     DateTime? strUpdatedTime;
@@ -229,7 +328,7 @@ class ObjUser {
 
     factory ObjUser.fromJson(Map<String, dynamic> json) => ObjUser(
         id: json["_id"],
-        chrStatus: json["chrStatus"],
+        chrStatus: chrStatusValues.map[json["chrStatus"]]!,
         strOtpToken: json["strOTPToken"],
         strOtp: json["strOtp"],
         strName: json["strName"],
@@ -259,7 +358,7 @@ class ObjUser {
 
     Map<String, dynamic> toJson() => {
         "_id": id,
-        "chrStatus": chrStatus,
+        "chrStatus": chrStatusValues.reverse[chrStatus],
         "strOTPToken": strOtpToken,
         "strOtp": strOtp,
         "strName": strName,
@@ -286,4 +385,16 @@ class ObjUser {
         "strUpdatedBy": strUpdatedBy,
         "strUpdatedTime": strUpdatedTime?.toIso8601String(),
     };
+}
+
+class EnumValues<T> {
+    Map<String, T> map;
+    late Map<T, String> reverseMap;
+
+    EnumValues(this.map);
+
+    Map<T, String> get reverse {
+            reverseMap = map.map((k, v) => MapEntry(v, k));
+            return reverseMap;
+    }
 }

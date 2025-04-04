@@ -81,9 +81,9 @@ class _IDCardImageWidget extends StatelessWidget {
 
   Widget _buildIDCardImage(ProfileProvider profileProvider) {
     // Case 1: Selected image exists (highest priority)
-    if (profileProvider.selectedIdCardImagePath != null) {
+    if (profileProvider.selectedGCCIdCardImagePath != null) {
       return Image.file(
-        profileProvider.selectedIdCardImagePath!,
+        profileProvider.selectedGCCIdCardImagePath!,
         fit: BoxFit.cover,
         errorBuilder: (context, error, stackTrace) => _buildDefaultImage(),
       );

@@ -27,11 +27,12 @@ class DateTimeSelection extends StatelessWidget {
                   title: 'Start Date & Time',
                   date: bookingProvider.formattedStartDate,
                   time: bookingProvider.formattedStartTime,
-                  onTap: () => _selectDateTime(
-                    context,
-                    isStart: true,
-                    bookingProvider: bookingProvider,
-                  ),
+                  onTap: () {}
+                  //  _selectDateTime(
+                  //   context,
+                  //   isStart: true,
+                  //   bookingProvider: bookingProvider,
+                  // ),
                 ),
               ),
               const Divider(height: 32),
@@ -42,11 +43,12 @@ class DateTimeSelection extends StatelessWidget {
                   title: 'End Date & Time',
                   date: bookingProvider.formattedEndDate,
                   time: bookingProvider.formattedEndTime,
-                  onTap: () => _selectDateTime(
-                    context,
-                    isStart: false,
-                    bookingProvider: bookingProvider,
-                  ),
+                  onTap: () {}
+                  //  _selectDateTime(
+                  //   context,
+                  //   isStart: false,
+                  //   bookingProvider: bookingProvider,
+                  // ),
                 ),
               ),
             ],

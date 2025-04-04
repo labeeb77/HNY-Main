@@ -105,18 +105,30 @@ Widget buildCarCard(
   orientation,
   mediaQuery, {
   required VoidCallback onFavoriteTap,
+  bool datesSelected = false, // New parameter to check if dates are selected
 }) {
   log('isFromFave :$isFromFav');
   return GestureDetector(
-    onTap: () {
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => CarDetailsScreen(
-              arrCar: arrCar,
-            ),
-          ));
-    },
+    onTap: datesSelected 
+        ? () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CarDetailsScreen(
+                    arrCar: arrCar,
+                  ),
+                ));
+          }
+        : () {
+            // Show snackbar when dates are not selected
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Please choose start date and end date to get available cars'),
+                duration: Duration(seconds: 2),
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+          },
     child: Container(
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(8.0),
@@ -303,15 +315,20 @@ Widget buildCarCard(
                     ),
                   ],
                 ),
-                 PrimaryElevateButton(ontap: () {
-                   Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => CarDetailsScreen(
-              arrCar: arrCar,
-            ),
-          ));
-                },),
+                // Only show the Book Now button if dates are selected
+                if (datesSelected)
+                  PrimaryElevateButton(
+                    ontap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CarDetailsScreen(
+                            arrCar: arrCar,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
               ],
             ),
           ),

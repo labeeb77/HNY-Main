@@ -73,6 +73,19 @@ class BookingService {
         sendToken: true);
   }
 
+
+
+  Future<ApiResponseModel> createInvoice(
+      String bookingId) async {
+    return await _apiService.apiCall(
+        endpoint: ApiConstants.saveInvoice,
+        method: 'POST',
+       data: {
+        "_id": bookingId
+      },
+        sendToken: true);
+  }
+
   
 
   Future<ApiResponseModel> createBooking(

@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:hny_main/view/common/bottom_nav.dart';
 import 'package:hny_main/view/screens/main/auth/sign_in_screen.dart';
+import 'package:hny_main/view/screens/main/cart/my_cart_screen.dart';
 import 'package:hny_main/view/screens/main/home/home_screen.dart';
-import 'package:hny_main/view/screens/main/profile/add_driving_license_screen.dart';
-import 'package:hny_main/view/screens/main/profile/add_id_card_screen.dart';
+import 'package:hny_main/view/screens/main/profile/manage_license.dart';
+import 'package:hny_main/view/screens/main/profile/manage_gcc_id.dart';
+import 'package:hny_main/view/screens/main/profile/manage_passport.dart';
 import 'package:hny_main/view/screens/main/profile/manage_profile_screen.dart';
 import 'package:hny_main/view/screens/main/splash_screen/splash_screen.dart';
+import 'package:hny_main/view/screens/sub/checkout_screen/checkout_screen.dart';
 
 class AppRoutes {
   static const String splashScreen = '/';
@@ -13,8 +16,11 @@ class AppRoutes {
   static const String manageProfile = '/manageProfile';
   static const String homePage = '/home';
   static const String bottomNav = '/bottomNav';
-  static const String idCardPage = '/idCardPage';
-  static const String licensePage = '/licensePage';
+  static const String manageGccId = '/manageGccId';
+  static const String manageLicense = '/manageLicense';
+  static const String managePassport = '/managePassport';
+
+  static const String myCartPage = '/myCartPage';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     dynamic args;
@@ -27,16 +33,22 @@ class AppRoutes {
       case loginPage:
         return MaterialPageRoute(builder: (_) => const SignInScreen());
       case manageProfile:
-        return MaterialPageRoute(builder: (_) =>  ManageProfileScreen(screenName: args,));
+        return MaterialPageRoute(
+            builder: (_) => ManageProfileScreen(
+                  screenName: args,
+                ));
       case homePage:
         return MaterialPageRoute(builder: (_) => const HomeScreen());
       case bottomNav:
         return MaterialPageRoute(builder: (_) => const BottomNav());
-      case idCardPage:
-        return MaterialPageRoute(builder: (_) => const EditIdScreen());
-      case licensePage:
-        return MaterialPageRoute(builder: (_) => const AddDrivingLicenseScreen());
-
+      case manageGccId:
+        return MaterialPageRoute(builder: (_) => const ManageGCCId());
+      case manageLicense:
+        return MaterialPageRoute(builder: (_) => const ManageDrivingLicense());
+        case managePassport:
+        return MaterialPageRoute(builder: (_) => const ManagePassport());
+      case myCartPage:
+        return MaterialPageRoute(builder: (_) => const MyCartScreen());
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(

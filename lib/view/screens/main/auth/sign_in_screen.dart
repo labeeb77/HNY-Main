@@ -1,3 +1,4 @@
+import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hny_main/core/utils/validators.dart';
@@ -119,29 +120,36 @@ class _SignInScreenState extends State<SignInScreen> {
     );
   }
 
-  Widget _buildPhoneNumberInput(
-    String? Function(String?)? validator,
-  ) {
-    return Row(
+ Widget _buildPhoneNumberInput(
+  String? Function(String?)? validator,
+) {
+  return Consumer<AuthProvider>(
+    builder: (context, provider, child) => Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // Country Code Selector
         Container(
           height: 50,
           decoration: BoxDecoration(
             border: Border.all(color: Colors.grey.shade300),
             borderRadius: BorderRadius.circular(4),
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text('971', style: TextStyle(fontSize: 16)),
-              const SizedBox(width: 8),
-              Icon(Icons.arrow_drop_down, color: Colors.grey[600]),
-            ],
+          child: CountryCodePicker(
+            onChanged: (CountryCode countryCode) {
+              // Add this method to your provider
+              provider.setCountryCode(countryCode.dialCode ?? '971');
+            },
+            initialSelection: 'AE',
+            favorite: const ['AE'],
+            showCountryOnly: false,
+            showOnlyCountryWhenClosed: false,
+            alignLeft: false,
+            padding: EdgeInsets.zero,
+            dialogSize: Size(MediaQuery.of(context).size.width * 0.9, MediaQuery.of(context).size.height * 0.6),
           ),
         ),
         const SizedBox(width: 12),
+        // Your existing phone number input
         Expanded(
           child: CustomTextFormField(
             validator: validator,
@@ -152,8 +160,9 @@ class _SignInScreenState extends State<SignInScreen> {
           ),
         ),
       ],
-    );
-  }
+    ),
+  );
+}
 
   Future<void> _handleLogin(
       BuildContext context, AuthProvider authProvider) async {

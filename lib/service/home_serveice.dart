@@ -12,30 +12,39 @@ class HomeService {
 
   HomeService(BuildContext context) : _apiService = ApiService(context);
 
-  Future<CarListModel?> fetchCarDataList({start, end, search}) async {
-    try {
-      ApiResponseModel<dynamic> apiResponse = await _apiService.apiCall(
-          endpoint: ApiConstants.getCartDataListUrl,
-          method: 'POST',
-          sendToken: true,
-          data: {
-            'strSearch': search
-          },
-          queryParams: {
-            'strStartDate': start,
-            'strEndDate': end,
-          });
-
-      if (apiResponse.success && apiResponse.data != null) {
-        log('Car Data: ${apiResponse.data}');
+ Future<CarListModel?> fetchCarDataList({start, end, search}) async {
+  log('fetchCarDataList : start - $start, end - $end, search - $search');
+  try {
+    // Convert DateTime objects to strings safely
+    final String? startDate = start is DateTime ? start.toIso8601String() : start?.toString();
+    final String? endDate = end is DateTime ? end.toIso8601String() : end?.toString();
+    
+    ApiResponseModel<dynamic> apiResponse = await _apiService.apiCall(
+      endpoint: ApiConstants.getCartDataListUrl,
+      method: 'POST',
+      sendToken: true,
+      data: {
+        'strSearch': search ?? '',
+        'strStartDate': startDate ?? '',
+        'strEndDate': endDate ?? '',
+      },
+    );
+    
+    if (apiResponse.success && apiResponse.data != null) {
+      log('Car Data: ${apiResponse.data}');
+      try {
         return CarListModel.fromJson(apiResponse.data);
+      } catch (parseError) {
+        debugPrint('Error parsing car data: $parseError');
+        return null;
       }
-      return null;
-    } catch (e) {
-      debugPrint('Error fetching car data: $e');
-      return null;
     }
+    return null;
+  } catch (e) {
+    debugPrint('Error fetching car data: $e');
+    return null;
   }
+}
 
   // New method to fetch car type list
   Future<CarTypeList?> fetchCarTypeList() async {

@@ -26,4 +26,6 @@ class ApiConstants {
   static const String getCart = 'get_cart';
   static const String createReservation = 'create_reservation';
   static const String updateBookingLocation = 'update_booking_item';
+    static const String saveInvoice = 'create_inovice';
+
 }

@@ -134,6 +134,7 @@ class ApiService {
             options: sendToken ? options : null,
             onSendProgress: (int sent, int total) {
           debugPrint('sent: $sent, total: $total');
+           debugPrint('data: $data');
         });
       case 'POSTFILE':
         options.contentType = 'multipart/form-data';

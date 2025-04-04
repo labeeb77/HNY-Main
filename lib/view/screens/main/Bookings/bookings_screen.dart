@@ -36,6 +36,8 @@ class _BookingScreenState extends State<BookingScreen> {
           }
         },
       );
+       Provider.of<BookingProvider>(context, listen: false).updateActiveTab("All");  // Set "All" as default tab
+    _handleTabChange("All");
     });
     super.initState();
   }
@@ -49,7 +51,7 @@ class _BookingScreenState extends State<BookingScreen> {
     // Set appropriate filters based on tab
     Map<String, dynamic> filters = {
       "filters": {
-        "strStatus": tabName == "Upcoming"
+        "strStatus": tabName == "Completed"
             ? ["SETTLED", "COMPLETED"]
             : (tabName == "In rental"
                 ? ["ISSUE", "IN RENTAL"]
@@ -150,15 +152,15 @@ class _BookingScreenState extends State<BookingScreen> {
                         // Upcoming Tab
                         Expanded(
                           child: GestureDetector(
-                            onTap: () => _handleTabChange('Upcoming'),
+                            onTap: () => _handleTabChange('Completed'),
                             child: Container(
                               padding: const EdgeInsets.symmetric(vertical: 12),
                               decoration: BoxDecoration(
-                                color: provider.activeTab == 'Upcoming'
+                                color: provider.activeTab == 'Completed'
                                     ? Colors.white
                                     : Colors.transparent,
                                 borderRadius: BorderRadius.circular(25),
-                                boxShadow: provider.activeTab == 'Upcoming'
+                                boxShadow: provider.activeTab == 'Completed'
                                     ? [
                                         BoxShadow(
                                           color: Colors.grey.withOpacity(0.1),
@@ -169,10 +171,10 @@ class _BookingScreenState extends State<BookingScreen> {
                                     : [],
                               ),
                               child: Text(
-                                'Upcoming',
+                                'Completed',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                  color: provider.activeTab == 'Upcoming'
+                                  color: provider.activeTab == 'Completed'
                                       ? Colors.black
                                       : Colors.white,
                                   fontWeight: FontWeight.w500,

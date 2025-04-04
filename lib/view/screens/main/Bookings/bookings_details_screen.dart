@@ -3,11 +3,13 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hny_main/data/models/booking/get_booking_list_model.dart';
+import 'package:hny_main/data/providers/booking_provider.dart';
 import 'package:hny_main/view/screens/main/Bookings/widgets/complain_sheet.dart';
 import 'package:hny_main/view/screens/main/Bookings/widgets/complete_payment_sheet.dart';
 import 'package:hny_main/view/screens/main/bookings/payment_bottom_sheet.dart';
 
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class MyBookingDetailsScreen extends StatelessWidget {
   final BookingArrList bookingData;
@@ -58,7 +60,7 @@ class MyBookingDetailsScreen extends StatelessWidget {
                 children: [
                   // Car Items
                   ...carItems
-                      .map((item) => _buildVehicleCard(item, context ))
+                      .map((item) => _buildVehicleCard(item, context))
                       .toList(),
 
                   // Add-on Items
@@ -188,7 +190,9 @@ class MyBookingDetailsScreen extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => PaymentBottomSheet(carItem: carItem,),
+      builder: (context) => PaymentBottomSheet(
+        carItem: carItem,
+      ),
     );
   }
 
@@ -425,8 +429,16 @@ class MyBookingDetailsScreen extends StatelessWidget {
             borderRadius: BorderRadius.circular(8),
           ),
           child: TextButton.icon(
-            onPressed: () {
-              // Handle invoice download
+            onPressed: () async {
+              // Get the booking provider
+              final bookingProvider = Provider.of<BookingProvider>(context, listen: false);
+
+              // Get the car item ID
+              final carItemId = carItem?.id ??
+                  '0'; // Make sure you have access to the carItem
+
+              // Call the download invoice method
+              await bookingProvider.downloadInvoice(context, carItemId);
             },
             icon: const Icon(Icons.download,
                 color: Color.fromARGB(255, 59, 96, 60)),
@@ -438,7 +450,6 @@ class MyBookingDetailsScreen extends StatelessWidget {
             ),
           ),
         ),
-
         const SizedBox(height: 24),
 
         // Booking Details
@@ -576,7 +587,10 @@ class MyBookingDetailsScreen extends StatelessWidget {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                    showModalBottomSheet(context: context, builder:(context) => ComplainBottomSheet(),);
+                      showModalBottomSheet(
+                        context: context,
+                        builder: (context) => ComplainBottomSheet(),
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue,

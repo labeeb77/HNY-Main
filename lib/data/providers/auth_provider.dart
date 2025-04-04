@@ -24,11 +24,22 @@ class AuthProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get error => _error;
 
+
+  String _countryCode = '971'; // Default to UAE
+  
+  String get countryCode => _countryCode;
+  
+  void setCountryCode(String code) {
+    _countryCode = code;
+    notifyListeners();
+  }
+
   Future<String?> login(String phoneNumber) async {
     try {
       _setLoading(true);
       _clearError();
-      final response = await _authService.login(phoneNumber);
+      final fullPhoneNumber = '$_countryCode$phoneNumber';
+      final response = await _authService.login(fullPhoneNumber);
       if (response.success && response.data != null) {
         final loginData = LoginResModel.fromJson(response.data);
         return loginData.strOtpToken;

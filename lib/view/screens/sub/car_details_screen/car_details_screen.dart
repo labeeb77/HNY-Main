@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hny_main/data/models/response/car_list_model.dart';
 import 'package:hny_main/data/providers/booking_provider.dart';
+import 'package:hny_main/data/providers/home_controller.dart';
 import 'package:hny_main/view/screens/sub/car_details_screen/widgets/add_gadget_bottomsheet.dart';
 import 'package:hny_main/view/screens/sub/car_details_screen/widgets/booking_details.dart';
 import 'package:hny_main/view/screens/sub/car_details_screen/widgets/booking_price.dart';
@@ -17,6 +18,22 @@ class CarDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+        final homeController = Provider.of<HomeController>(context, listen: false);
+    final bookingProvider = Provider.of<BookingProvider>(context, listen: false);
+    
+    // Set the selected dates from HomeController to BookingProvider
+    // This should run only once when the screen builds
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (homeController.selecteStratdDate != null) {
+        bookingProvider.updateStartDate(homeController.selecteStratdDate ?? DateTime.now());
+      }
+      
+      if (homeController.selecteEnddDate != null) {
+        bookingProvider.updateEndDate(homeController.selecteEnddDate ?? DateTime.now());
+      }
+      
+      // You might also need to set times if you're storing them separately
+    });
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(

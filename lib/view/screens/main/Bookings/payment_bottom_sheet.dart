@@ -11,9 +11,7 @@ import 'package:provider/provider.dart';
 
 class PaymentBottomSheet extends StatefulWidget {
   final ArrBookingItem carItem;
-  const PaymentBottomSheet(
-      {Key? key, required this.carItem})
-      : super(key: key);
+  const PaymentBottomSheet({Key? key, required this.carItem}) : super(key: key);
 
   @override
   State<PaymentBottomSheet> createState() => _PaymentBottomSheetState();
@@ -58,12 +56,13 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
             children: [
               _buildDateSection(
                 'Start Date & Time',
-                'October 1, 2024',
+                _formatDate( widget.carItem.strStartDate)
+               
               ),
               const Gap(12),
               _buildDateSection(
                 'End Date & Time',
-                'October 4, 2024',
+                _formatDate( widget.carItem.strEndDate)
               ),
             ],
           ),
@@ -92,7 +91,8 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
                 locationAddress: updatedData['address'],
               );
               if (success) {
-                final provider = Provider.of<BookingProvider>(context, listen: false);
+                final provider =
+                    Provider.of<BookingProvider>(context, listen: false);
                 Provider.of<BookingProvider>(context, listen: false)
                     .getBookingList(context, filters: {
                   "filters": {
@@ -136,7 +136,8 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
                 locationAddress: updatedData['address'],
               );
               if (success) {
-                                final provider = Provider.of<BookingProvider>(context, listen: false);
+                final provider =
+                    Provider.of<BookingProvider>(context, listen: false);
 
                 Provider.of<BookingProvider>(context, listen: false)
                     .getBookingList(context, filters: {
@@ -259,7 +260,6 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
             const SizedBox(width: 8),
             const SizedBox(height: 4),
             Column(
@@ -284,6 +284,10 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
         ),
       ),
     );
+  }
+    String _formatDate(DateTime? date) {
+    if (date == null) return 'N/A';
+    return DateFormat('MMMM d, yyyy').format(date);
   }
 
   Widget _buildLocationSection(String title, String location) {

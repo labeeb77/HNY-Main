@@ -12,6 +12,7 @@ import 'package:hny_main/data/models/response/car_list_model.dart';
 import 'package:hny_main/service/booking_service.dart';
 import 'package:hny_main/view/screens/sub/car_details_screen/widgets/add_gadget_bottomsheet.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
 
 class BookingProvider extends ChangeNotifier {
@@ -70,6 +71,8 @@ class BookingProvider extends ChangeNotifier {
   String get formattedEndDate => _endDate != null
       ? DateFormat('MMMM d, yyyy').format(_endDate!)
       : 'mm/dd/yyyy';
+
+
 
   String get formattedEndTime =>
       _endTime != null ? _formatTimeOfDay(_endTime!) : '00:00 AM';
@@ -394,6 +397,40 @@ Future<bool> createCart(BuildContext context, ArrCar arrCar) async {
   } catch (e) {
     _handleError(e.toString());
     return false;
+  } finally {
+    _setLoading(false);
+  }
+}
+
+
+Future<void> downloadInvoice(BuildContext context, String bookingId) async {
+  _setLoading(true);
+  _setError(null);
+  
+  try {
+    final response = await _bookingService.createInvoice(bookingId);
+    
+    if (response.success && response.data != null) {
+      final invoiceUrl = response.data['invoice'];
+      
+      if (invoiceUrl != null) {
+        // Launch URL to download PDF
+        final result = await launchUrl(
+          Uri.parse(invoiceUrl),
+          mode: LaunchMode.externalApplication,
+        );
+        
+        if (!result) {
+          _handleError("Could not launch invoice URL");
+        }
+      } else {
+        _handleError("Invoice URL not found in response");
+      }
+    } else {
+      _handleError("Failed to generate invoice");
+    }
+  } catch (e) {
+    _handleError("An error occurred while downloading the invoice");
   } finally {
     _setLoading(false);
   }

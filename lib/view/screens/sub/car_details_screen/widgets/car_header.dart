@@ -60,7 +60,7 @@ class CarHeader extends StatelessWidget {
             borderRadius: BorderRadius.circular(15),
           ),
           child: Text(
-            arrCar.strCarCategory ?? 'N/A',
+            arrCar.strCarCategory?.name ?? 'N/A',
             style: const TextStyle(
               color: Colors.white,
               fontSize: 11,
