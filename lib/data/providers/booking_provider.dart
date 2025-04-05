@@ -236,10 +236,10 @@ void updateGadgetQuantity(String id, int quantity) async {
     return;
   }
 
-  if (_pickupAddress == 'Select Location' || _dropoffAddress == 'Select Location') {
-    _handleError("Please select pickup and dropoff locations");
-    return;
-  }
+  // if (_pickupAddress == 'Select Location' || _dropoffAddress == 'Select Location') {
+  //   _handleError("Please select pickup and dropoff locations");
+  //   return;
+  // }
 
   final pickupCoords = _pickupCoordinates ?? [25.28071250637328, 55.41023254394531];
   final dropoffCoords = _dropoffCoordinates ?? [25.252777, 55.364445];
@@ -351,12 +351,12 @@ Future<bool> createCart(BuildContext context, ArrCar arrCar) async {
       return false;
     }
     
-    if (_pickupAddress == 'Select Location' ||
-        _dropoffAddress == 'Select Location') {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Please select pickup and dropoff locations')));
-      return false;
-    }
+    // if (_pickupAddress == 'Select Location' ||
+    //     _dropoffAddress == 'Select Location') {
+    //   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+    //     content: Text('Please select pickup and dropoff locations')));
+    //   return false;
+    // }
     
     // Use stored coordinates or default ones
     final pickupCoords =

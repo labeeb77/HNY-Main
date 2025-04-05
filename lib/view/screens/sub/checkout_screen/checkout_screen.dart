@@ -20,6 +20,8 @@ class CartScreen extends StatefulWidget {
 
 class _CartScreenState extends State<CartScreen> {
   var totalFinalAmount = 0.0;
+  var totolVehicleAmount = 0.0;
+  var totalAddonAmount = 0.0;
   @override
   Widget build(BuildContext context) {
     return Consumer<BookingProvider>(
@@ -190,7 +192,7 @@ class _CartScreenState extends State<CartScreen> {
                       ],
                     ),
                     Text(
-                      "AED $price",
+                      "AED ${totolVehicleAmount.toStringAsFixed(2)}",
                       style: const TextStyle(
                         fontSize: 18,
                         color: AppColors.orange,
@@ -257,7 +259,7 @@ class _CartScreenState extends State<CartScreen> {
                     ),
                   ),
                   Text(
-                    'AED $price',
+                      "AED ${price.toStringAsFixed(2)}",
                     style: const TextStyle(
                       fontSize: 16,
                       color: AppColors.orange,
@@ -374,7 +376,10 @@ Widget buildOrderSummary({
   final totalVehiclePrice = vehiclePriceCalculation.totalPrice;
   final totalGadgetPrice = gadgetPriceCalculation.totalPrice;
   final totalPrice = totalVehiclePrice + totalGadgetPrice;
+  totolVehicleAmount = totalVehiclePrice;
+  totalAddonAmount = totalGadgetPrice;
   totalFinalAmount = totalPrice;
+
 
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
