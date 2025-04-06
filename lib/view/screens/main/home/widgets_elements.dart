@@ -93,6 +93,7 @@ Widget buildFeature(IconData icon, dynamic label) {
 Widget buildCarCard(
   ArrCar arrCar,
   String name,
+  String model,
   String rating,
   String category,
   String transmission,
@@ -285,7 +286,7 @@ Widget buildCarCard(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      name,
+                     " $name $model",
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,

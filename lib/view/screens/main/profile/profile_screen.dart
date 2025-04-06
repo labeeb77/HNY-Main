@@ -99,20 +99,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
               const Gap(25),
-              const Row(
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   DocumentElement(
                     docIcon: Icons.document_scanner_outlined,
                     docName: "License",
+                    imageUrl: globalUser?.strLicenceUrl,
+                    isEnabled: globalUser?.strLicenceUrl?.isNotEmpty ?? false,
                   ),
                   DocumentElement(
                     docIcon: Icons.file_copy_outlined,
                     docName: "Passport",
+                    imageUrl: globalUser?.strPassportUrl,
+                    isEnabled: globalUser?.strPassportUrl?.isNotEmpty ?? false,
                   ),
                   DocumentElement(
                     docIcon: Icons.folder_copy_outlined,
                     docName: "GCC ID",
+                    imageUrl: globalUser?.strGccIdUrl,
+                    isEnabled: globalUser?.strGccIdUrl?.isNotEmpty ?? false,
                   ),
                 ],
               ),

@@ -385,6 +385,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 itemBuilder: (context, index) {
                   return buildCarCard(
                     data[index],
+                    data[index].strBrand ?? "Unknown",
                     data[index].strModel ?? "Unknown",
                     data[index].intRating.toString() ?? '4.0',
                     data[index].strCarCategory?.name ?? "Unknown",
