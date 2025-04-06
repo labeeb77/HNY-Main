@@ -150,7 +150,7 @@ class _GadgetBottomSheetState extends State<GadgetBottomSheet> {
                 ),
               BookingPrice(
                 title: "${bookingProvider.totalGadgetItems} Add-On",
-                value: bookingProvider.totalGadgetPrice.toString(),
+                value: bookingProvider.totalGadgetPrice.toStringAsFixed(1),
                 onTap: () {
                   Navigator.push(
                     context,

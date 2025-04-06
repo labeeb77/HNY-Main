@@ -90,7 +90,7 @@ class ProfileProvider with ChangeNotifier {
       }
 
       final AddProfileModel data = AddProfileModel(
-        id: currentUserId ?? "",
+      
         strDateOfBirth: dobController.text,
         strEmail: emailController.text,
         strEmiratesIdUrl: globalUser?.strEmiratesIdUrl ?? "",

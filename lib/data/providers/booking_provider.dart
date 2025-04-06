@@ -9,6 +9,7 @@ import 'package:hny_main/data/models/booking/gadgets_model.dart';
 import 'package:hny_main/data/models/booking/get_booking_list_model.dart';
 import 'package:hny_main/data/models/response/api_response_model.dart';
 import 'package:hny_main/data/models/response/car_list_model.dart';
+import 'package:hny_main/data/models/price_calculation.dart';
 import 'package:hny_main/service/booking_service.dart';
 import 'package:hny_main/view/screens/sub/car_details_screen/widgets/add_gadget_bottomsheet.dart';
 import 'package:intl/intl.dart';
@@ -114,8 +115,20 @@ class BookingProvider extends ChangeNotifier {
   }
 
   // Calculate total amount based on price per day
-  int calculateTotalAmount(int pricePerDay) {
-    return pricePerDay * totalDays;
+  int  calculateTotalAmount(int pricePerDay ,int pricePerWeek, int pricePerMonth) {
+    if (totalDays >= 30) {
+      // Monthly pricing
+      final monthlyPrice = (pricePerMonth / 30) * totalDays;
+      return monthlyPrice.toInt();
+    } else if (totalDays >= 8) {
+      // Weekly pricing
+      final weeklyPrice = (pricePerWeek / 7) * totalDays;
+      return weeklyPrice.toInt();
+    } else {
+      // Daily pricing
+      final dailyPrice = pricePerDay * totalDays;
+      return dailyPrice.toInt();
+    }
   }
 
   
@@ -216,8 +229,10 @@ class BookingProvider extends ChangeNotifier {
         id: addOn.id ?? '',
         name: addOn.strName ?? '',
         price: addOn.intPricePerDay?.toDouble() ?? 0.0,
+        weeklyPrice: addOn.intPricePerWeek?.toDouble() ?? 0.0,
+        monthlyPrice: addOn.intPricePerMonth?.toDouble() ?? 0.0,
         image: addOn.strImageUrl ?? '',
-        isQuantityItem: true, // Assuming all gadgets are quantity items
+        isQuantityItem: true,
       );
     }).toList();
     notifyListeners();
@@ -313,8 +328,41 @@ void updateGadgetQuantity(String id, int quantity) async {
   double get totalGadgetPrice {
     return _gadgets.fold(
       0,
-      (sum, gadget) => sum + (gadget.quantity * gadget.price),
+      (sum, gadget) {
+        if (gadget.quantity > 0) {
+          if (totalDays >= 30) {
+            // Monthly pricing
+            final monthlyPrice = (gadget.monthlyPrice / 30) * totalDays * gadget.quantity;
+            return sum + monthlyPrice;
+          } else if (totalDays >= 8) {
+            // Weekly pricing
+            final weeklyPrice = (gadget.weeklyPrice / 7) * totalDays * gadget.quantity;
+            return sum + weeklyPrice;
+          } else {
+            // Daily pricing
+            final dailyPrice = gadget.price * totalDays * gadget.quantity;
+            return sum + dailyPrice;
+          }
+        }
+        return sum;
+      },
     );
+  }
+
+  // Add a method to calculate individual gadget price
+  double calculateGadgetPrice(GadgetModel gadget) {
+    if (gadget.quantity <= 0) return 0;
+    
+    if (totalDays >= 30) {
+      // Monthly pricing
+      return (gadget.monthlyPrice / 30) * totalDays * gadget.quantity;
+    } else if (totalDays >= 8) {
+      // Weekly pricing
+      return (gadget.weeklyPrice / 7) * totalDays * gadget.quantity;
+    } else {
+      // Daily pricing
+      return gadget.price * totalDays * gadget.quantity;
+    }
   }
 
   // Calculate total number of selected gadgets
@@ -351,8 +399,7 @@ Future<bool> createCart(BuildContext context, ArrCar arrCar) async {
       return false;
     }
     
-    // if (_pickupAddress == 'Select Location' ||
-    //     _dropoffAddress == 'Select Location') {
+    // if (_pickupAddress == 'Select Location' || _dropoffAddress == 'Select Location') {
     //   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
     //     content: Text('Please select pickup and dropoff locations')));
     //   return false;
@@ -448,23 +495,43 @@ Future<void> downloadInvoice(BuildContext context, String bookingId) async {
     }
   }
 
+  // Calculate final total amount including vehicle and gadgets
+  double calculateFinalTotalAmount({
+    required int vehicleDailyRate,
+    required int vehicleWeeklyRate,
+    required int vehicleMonthlyRate,
+  }) {
+    // Calculate vehicle price
+    final vehiclePrice = calculateTotalAmount(
+      vehicleDailyRate,
+      vehicleWeeklyRate,
+      vehicleMonthlyRate,
+    ).toDouble();
+
+    // Add gadget prices
+    return vehiclePrice + totalGadgetPrice;
+  }
+
   Future<bool> createBooking(
     BuildContext context, {
     required String email,
     required String phoneNumber,
-    required double amount,
+    required double totalVehicleAmount,
+    required double totalGadgetsAmount,
+    required double payedAmount,
+    required double totalFinalAmount,
     required ArrCar carDetails, // Add car details parameter
   }) async {
     _setLoading(true);
     _setError(null);
 
     try {
-
-
       if (_startDate == null || _endDate == null) {
         _handleError('Please select booking dates');
         return false;
       }
+
+    
 
       // Create car item
       final carItem = {
@@ -476,7 +543,7 @@ Future<void> downloadInvoice(BuildContext context, String bookingId) async {
         "EndDate": _endDate?.toIso8601String(),
         "intPricePerWeek": carDetails.intPricePerWeek ?? 0,
         "intPricePerMonth": carDetails.intPricePerMonth ?? 0,
-        "intTotalAmount": calculateTotalAmount(carDetails.intPricePerDay?.toInt() ?? 0),
+        "intTotalAmount": totalVehicleAmount,
         "intTotalDays": totalDays,
         "intUnitPrice": carDetails.intPricePerDay ?? 0,
         "strCarId": carDetails.id ?? "",
@@ -503,14 +570,14 @@ Future<void> downloadInvoice(BuildContext context, String bookingId) async {
                 "strName": gadget.name,
                 "_id": gadget.id,
                 "type": "ADD_ON",
-                "intPricePerDay": gadget.price,
-                "intPricePerMonth": gadget.price * 30, // Assuming monthly price
-                "intPricePerWeek": gadget.price * 7, // Assuming weekly price
+                "intPricePerDay": gadget.pricePerDay,
+                "intPricePerMonth": gadget.pricePerMonth, // Assuming monthly price
+                "intPricePerWeek": gadget.pricePerWeek, // Assuming weekly price
                 "intQty": gadget.quantity,
                 "intTotalDays": totalDays,
                 "intUnitPrice": gadget.price,
-                "intTotalAmount": gadget.price * gadget.quantity * totalDays,
-                "intAvlQty": 10, // You might want to get this from the API
+                "intTotalAmount": totalGadgetsAmount,
+                "intAvlQty": gadget.quantity, // You might want to get this from the API
                 "strDescription": "", // Add description if available
                 "StartDate": _startDate?.toIso8601String(),
                 "EndDate": _endDate?.toIso8601String(),
@@ -540,11 +607,11 @@ Future<void> downloadInvoice(BuildContext context, String bookingId) async {
         "strEndDate": _endDate?.toIso8601String(),
         "intTotalDays": totalDays,
         "intTotalDiscount": 0,
-        "intTotalAmount": amount,
-        "intPayedAmount": amount,
+        "intTotalAmount": totalFinalAmount,
+        "intPayedAmount": payedAmount,
         "intCheckoutAmount": 0,
         "intBalanceAmt": 0,
-        "arrCarItems": arrCarItems, // Add the combined items array
+        "arrCarItems": arrCarItems,
       };
 
       // Call booking API
@@ -645,7 +712,62 @@ Future<void> downloadInvoice(BuildContext context, String bookingId) async {
     notifyListeners();
   }
 
+  // Add price calculation method
+  PriceCalculation calculateTotalPrice({
+    required num dailyRate,
+    required num weeklyRate,
+    required num monthlyRate,
+  }) {
+    if (totalDays >= 30) {
+      // Monthly pricing
+      final monthlyPrice = (monthlyRate / 30) * totalDays;
+      return PriceCalculation(
+        totalPrice: monthlyPrice.toDouble(),
+        priceType: 'Monthly Rate',
+      );
+    } else if (totalDays >= 8) {
+      // Weekly pricing
+      final weeklyPrice = (weeklyRate / 7) * totalDays;
+      return PriceCalculation(
+        totalPrice: weeklyPrice.toDouble(),
+        priceType: 'Weekly Rate',
+      );
+    } else {
+      // Daily pricing
+      final dailyPrice = dailyRate * totalDays;
+      return PriceCalculation(
+        totalPrice: dailyPrice.toDouble(),
+        priceType: 'Daily Rate',
+      );
+    }
+  }
 
-// Then in your createCart function, replace the SnackBar with:
-
+  // Add price calculation for add-ons
+  PriceCalculation calculateAddOnPrice({
+    required num price,
+    required int quantity,
+  }) {
+    if (totalDays >= 30) {
+      // Monthly pricing for add-ons
+      final monthlyPrice = (price * 30 / 30) * totalDays * quantity;
+      return PriceCalculation(
+        totalPrice: monthlyPrice.toDouble(),
+        priceType: 'Monthly Rate',
+      );
+    } else if (totalDays >= 8) {
+      // Weekly pricing for add-ons
+      final weeklyPrice = (price * 7 / 7) * totalDays * quantity;
+      return PriceCalculation(
+        totalPrice: weeklyPrice.toDouble(),
+        priceType: 'Weekly Rate',
+      );
+    } else {
+      // Daily pricing for add-ons
+      final dailyPrice = price * totalDays * quantity;
+      return PriceCalculation(
+        totalPrice: dailyPrice.toDouble(),
+        priceType: 'Daily Rate',
+      );
+    }
+  }
 }

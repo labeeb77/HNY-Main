@@ -57,7 +57,7 @@ class CarDetailsScreen extends StatelessWidget {
       bottomNavigationBar: Consumer<BookingProvider>(
         builder: (context, bookingProvider, child) {
           final totalAmount =
-              bookingProvider.calculateTotalAmount(arrCar.intPricePerDay?.toInt() ?? 0);
+              bookingProvider.calculateTotalAmount(arrCar.intPricePerDay?.toInt() ?? 0,arrCar.intPricePerWeek?.toInt() ?? 0, arrCar.intPricePerMonth?.toInt() ?? 0);
           return SizedBox(
             height: 100,
             child: BookingPrice(

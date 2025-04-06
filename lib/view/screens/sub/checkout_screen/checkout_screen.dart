@@ -19,9 +19,6 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
-  var totalFinalAmount = 0.0;
-  var totolVehicleAmount = 0.0;
-  var totalAddonAmount = 0.0;
   @override
   Widget build(BuildContext context) {
     return Consumer<BookingProvider>(
@@ -30,8 +27,6 @@ class _CartScreenState extends State<CartScreen> {
         final selectedGadgets = bookingProvider.gadgets
             .where((gadget) => gadget.quantity > 0)
             .toList();
-
-     
 
         return Scaffold(
           backgroundColor: AppColors.background,
@@ -49,7 +44,9 @@ class _CartScreenState extends State<CartScreen> {
                       _buildVehicleCard(
                         widget.arrCar.strModel ?? 'Ford Escape',
                         bookingProvider.calculateTotalAmount(
-                            widget.arrCar.intPricePerDay?.toInt() ?? 00),
+                            widget.arrCar.intPricePerDay?.toInt() ?? 0,
+                            widget.arrCar.intPricePerWeek?.toInt() ?? 0,
+                            widget.arrCar.intPricePerMonth?.toInt() ?? 0),
                         widget.arrCar.strImgUrl ??
                             'https://cdn.pixabay.com/photo/2012/05/29/00/43/car-49278_640.jpg',
                         bookingProvider.formattedStartDate,
@@ -64,6 +61,7 @@ class _CartScreenState extends State<CartScreen> {
                         return Column(
                           children: [
                             buildAddonCard(
+                              bookingProvider,
                               gadget.name,
                               gadget.price.toInt(),
                               gadget.image,
@@ -96,8 +94,13 @@ class _CartScreenState extends State<CartScreen> {
                   child: Column(
                     children: [
                       buildOrderSummary(
-                        vehiclePrice:  bookingProvider.calculateTotalAmount(
-                            widget.arrCar.intPricePerDay?.toInt() ?? 00), // Replace with actual vehicle price
+                        arrCar: widget.arrCar,
+                        provider: bookingProvider,
+                        vehiclePrice: bookingProvider.calculateTotalAmount(
+                            widget.arrCar.intPricePerDay?.toInt() ?? 0,
+                            widget.arrCar.intPricePerWeek?.toInt() ?? 0,
+                            widget.arrCar.intPricePerMonth?.toInt() ??
+                                0), // Replace with actual vehicle price
                         gadgetPrice: bookingProvider.totalGadgetPrice.toInt(),
                       ),
                       const SizedBox(height: 24),
@@ -109,8 +112,14 @@ class _CartScreenState extends State<CartScreen> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) =>
-                                        CheckoutPaymentScreen(totalAmount: totalFinalAmount.toInt(),carDetails: widget.arrCar,),
+                                    builder: (context) => CheckoutPaymentScreen(
+                                      totalAmount: bookingProvider.calculateFinalTotalAmount(
+                                        vehicleDailyRate: widget.arrCar.intPricePerDay?.toInt() ?? 0,
+                                        vehicleWeeklyRate: widget.arrCar.intPricePerWeek?.toInt() ?? 0,
+                                        vehicleMonthlyRate: widget.arrCar.intPricePerMonth?.toInt() ?? 0,
+                                      ).toInt(),
+                                      carDetails: widget.arrCar,
+                                    ),
                                   ));
                             },
                             buttonName: "Proceed to checkout",
@@ -192,7 +201,7 @@ class _CartScreenState extends State<CartScreen> {
                       ],
                     ),
                     Text(
-                      "AED ${totolVehicleAmount.toStringAsFixed(2)}",
+                      "AED ${price.toStringAsFixed(1)}",
                       style: const TextStyle(
                         fontSize: 18,
                         color: AppColors.orange,
@@ -210,7 +219,8 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   // Updated addon card to include quantity and callback
-  Widget buildAddonCard(String name, int price, String imagePath,
+  Widget buildAddonCard(
+      BookingProvider bookingProvider, String name, int price, String imagePath,
       {int quantity = 1, Function(int)? onQuantityChanged}) {
     return Container(
       decoration: BoxDecoration(
@@ -259,7 +269,7 @@ class _CartScreenState extends State<CartScreen> {
                     ),
                   ),
                   Text(
-                      "AED ${price.toStringAsFixed(2)}",
+                    "AED ${bookingProvider.totalGadgetPrice.toStringAsFixed(1)}",
                     style: const TextStyle(
                       fontSize: 16,
                       color: AppColors.orange,
@@ -291,187 +301,153 @@ class _CartScreenState extends State<CartScreen> {
     );
   }
 
-  PriceCalculation _calculatePricing(
-  num dailyRate, 
-  num weeklyRate, 
-  num monthlyRate,
-) {
-  // Get total days from BookingProvider
-  final totalDays = Provider.of<BookingProvider>(context, listen: false).totalDays;
+//   PriceCalculation _calculatePricing(
+//   num dailyRate,
+//   num weeklyRate,
+//   num monthlyRate,
+// ) {
+//   // Get total days from BookingProvider
+//   final totalDays = Provider.of<BookingProvider>(context, listen: false).totalDays;
 
-  if (totalDays >= 30) {
-    // Monthly pricing
-    final monthlyPrice = (monthlyRate / 30) * totalDays;
-    return PriceCalculation(
-      totalPrice: monthlyPrice.toDouble(),
-      priceType: 'Monthly Rate',
-    );
-  } else if (totalDays >= 8) {
-    // Weekly pricing
-    final weeklyPrice = (weeklyRate / 7) * totalDays;
-    return PriceCalculation(
-      totalPrice: weeklyPrice.toDouble(),
-      priceType: 'Weekly Rate',
-    );
-  } else {
-    // Daily pricing
-    final dailyPrice = dailyRate * totalDays;
-    return PriceCalculation(
-      totalPrice: dailyPrice.toDouble(),
-      priceType: 'Daily Rate',
-    );
-  }
-}
+//   if (totalDays >= 30) {
+//     // Monthly pricing
+//     final monthlyPrice = (monthlyRate / 30) * totalDays;
+//     return PriceCalculation(
+//       totalPrice: monthlyPrice.toDouble(),
+//       priceType: 'Monthly Rate',
+//     );
+//   } else if (totalDays >= 8) {
+//     // Weekly pricing
+//     final weeklyPrice = (weeklyRate / 7) * totalDays;
+//     return PriceCalculation(
+//       totalPrice: weeklyPrice.toDouble(),
+//       priceType: 'Weekly Rate',
+//     );
+//   } else {
+//     // Daily pricing
+//     final dailyPrice = dailyRate * totalDays;
+//     return PriceCalculation(
+//       totalPrice: dailyPrice.toDouble(),
+//       priceType: 'Daily Rate',
+//     );
+//   }
+// }
 
   PriceCalculation _calculateGadgetPricing() {
-  final bookingProvider = Provider.of<BookingProvider>(context, listen: false);
-  final totalDays = bookingProvider.totalDays;
+    final bookingProvider =
+        Provider.of<BookingProvider>(context, listen: false);
+    final totalDays = bookingProvider.totalDays;
 
-  double totalGadgetPrice = 0;
-  String? priceType;
+    double totalGadgetPrice = 0;
+    String? priceType;
 
-  for (var gadget in bookingProvider.gadgets) {
-    if (gadget.quantity > 0) {
-      if (totalDays >= 30) {
-        // Monthly pricing for gadgets
-        final monthlyPrice = (gadget.price * 30 / 30) * totalDays * gadget.quantity;
-        totalGadgetPrice += monthlyPrice;
-        priceType = 'Monthly Rate';
-      } else if (totalDays >= 8) {
-        // Weekly pricing for gadgets
-        final weeklyPrice = (gadget.price * 7 / 7) * totalDays * gadget.quantity;
-        totalGadgetPrice += weeklyPrice;
-        priceType = 'Weekly Rate';
-      } else {
-        // Daily pricing for gadgets
-        final dailyPrice = gadget.price * totalDays * gadget.quantity;
-        totalGadgetPrice += dailyPrice;
-        priceType = 'Daily Rate';
+    for (var gadget in bookingProvider.gadgets) {
+      if (gadget.quantity > 0) {
+        if (totalDays >= 30) {
+          // Monthly pricing for gadgets
+          final monthlyPrice =
+              (gadget.price * 30 / 30) * totalDays * gadget.quantity;
+          totalGadgetPrice += monthlyPrice;
+          priceType = 'Monthly Rate';
+        } else if (totalDays >= 8) {
+          // Weekly pricing for gadgets
+          final weeklyPrice =
+              (gadget.price * 7 / 7) * totalDays * gadget.quantity;
+          totalGadgetPrice += weeklyPrice;
+          priceType = 'Weekly Rate';
+        } else {
+          // Daily pricing for gadgets
+          final dailyPrice = gadget.price * totalDays * gadget.quantity;
+          totalGadgetPrice += dailyPrice;
+          priceType = 'Daily Rate';
+        }
       }
     }
+
+    return PriceCalculation(
+      totalPrice: totalGadgetPrice,
+      priceType: priceType,
+    );
   }
-
-  return PriceCalculation(
-    totalPrice: totalGadgetPrice,
-    priceType: priceType,
-  );
-}
-
 
   // Updated order summary to include gadget price
-Widget buildOrderSummary({
-  required int vehiclePrice,
-  required int gadgetPrice,
-}) {
-  // Calculate vehicle pricing
-  final vehiclePriceCalculation = _calculatePricing(
-    widget.arrCar.intPricePerDay ?? 0,
-    widget.arrCar.intPricePerWeek ?? 0,
-    widget.arrCar.intPricePerMonth ?? 0,
-  );
+  Widget buildOrderSummary({
+    required ArrCar arrCar,
+    required BookingProvider provider,
+    required int vehiclePrice,
+    required int gadgetPrice,
+  }) {
+    // Calculate final total amount
+    final finalAmount = provider.calculateFinalTotalAmount(
+      vehicleDailyRate: arrCar.intPricePerDay?.toInt() ?? 0,
+      vehicleWeeklyRate: arrCar.intPricePerWeek?.toInt() ?? 0,
+      vehicleMonthlyRate: arrCar.intPricePerMonth?.toInt() ?? 0,
+    );
 
-  // Calculate gadget pricing (assuming there's a similar method for gadgets)
-  final gadgetPriceCalculation = _calculateGadgetPricing();
-
-  final totalVehiclePrice = vehiclePriceCalculation.totalPrice;
-  final totalGadgetPrice = gadgetPriceCalculation.totalPrice;
-  final totalPrice = totalVehiclePrice + totalGadgetPrice;
-  totolVehicleAmount = totalVehiclePrice;
-  totalAddonAmount = totalGadgetPrice;
-  totalFinalAmount = totalPrice;
-
-
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      const Text(
-        'Order Summary',
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Order Summary',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+          ),
         ),
-      ),
-      const SizedBox(height: 16),
-      buildSummaryRow(
-        'Vehicle Rental',
-        'AED ${totalVehiclePrice.toStringAsFixed(2)}',
-        subRows: [
-          if (vehiclePriceCalculation.priceType != null)
-            Text(
-              '(${vehiclePriceCalculation.priceType})',
-              style: const TextStyle(
-                fontSize: 12,
-                color: Colors.grey,
-              ),
-            ),
-        ],
-      ),
-      if (totalGadgetPrice > 0)
+        const SizedBox(height: 16),
         buildSummaryRow(
-          'Add-ons',
-          'AED ${totalGadgetPrice.toStringAsFixed(2)}',
-          subRows: [
-            if (gadgetPriceCalculation.priceType != null)
+          'Vehicle Rental',
+          'AED ${vehiclePrice.toStringAsFixed(1)}',
+        ),
+        if (provider.totalGadgetPrice > 0.0)
+          buildSummaryRow(
+            'Add-ons',
+            'AED ${provider.totalGadgetPrice.toStringAsFixed(1)}',
+          ),
+        const Divider(height: 24),
+        buildSummaryRow(
+          'Total',
+          'AED ${finalAmount.toStringAsFixed(1)}',
+          isTotal: true,
+        ),
+      ],
+    );
+  }
+
+  Widget buildSummaryRow(
+    String label,
+    String value, {
+    bool isTotal = false,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
               Text(
-                '(${gadgetPriceCalculation.priceType})',
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey,
+                label,
+                style: TextStyle(
+                  fontSize: isTotal ? 16 : 14,
+                  fontWeight: isTotal ? FontWeight.w600 : FontWeight.normal,
                 ),
               ),
-          ],
-        ),
-      const Divider(height: 24),
-      buildSummaryRow(
-        'Total',
-        'AED ${totalPrice.toStringAsFixed(2)}',
-        isTotal: true,
+              Text(
+                value,
+                style: TextStyle(
+                  fontSize: isTotal ? 16 : 14,
+                  fontWeight: isTotal ? FontWeight.w600 : FontWeight.normal,
+                  color: isTotal ? AppColors.orange : null,
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
-    ],
-  );
-}
-
- Widget buildSummaryRow(
-  String label, 
-  String value, 
-  {
-    bool isTotal = false, 
-    List<Widget>? subRows,
+    );
   }
-) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 4),
-    child: Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: isTotal ? 16 : 14,
-                fontWeight: isTotal ? FontWeight.w600 : FontWeight.normal,
-              ),
-            ),
-            Text(
-              value,
-              style: TextStyle(
-                fontSize: isTotal ? 16 : 14,
-                fontWeight: isTotal ? FontWeight.w600 : FontWeight.normal,
-                color: isTotal ? AppColors.orange : null,
-              ),
-            ),
-          ],
-        ),
-        if (subRows != null)
-          ...subRows.map((subRow) => Padding(
-            padding: const EdgeInsets.only(top: 4),
-            child: subRow,
-          )),
-      ],
-    ),
-  );
-}
+
   // Placeholder methods for the other widgets
   Widget buildDateRow(String startDate, String endDate) {
     return Row(
@@ -514,17 +490,17 @@ Widget buildOrderSummary({
         color: AppColors.white,
         borderRadius: BorderRadius.circular(8),
       ),
-      child: Row(
+      child: const Row(
         children: [
-          const Icon(Icons.discount, color: AppColors.orange),
-          const SizedBox(width: 8),
-          const Expanded(
+          Icon(Icons.discount, color: AppColors.orange),
+          SizedBox(width: 8),
+          Expanded(
             child: Text(
               'Apply Promo Code',
               style: TextStyle(fontWeight: FontWeight.w500),
             ),
           ),
-          const Icon(Icons.arrow_forward_ios, size: 16),
+          Icon(Icons.arrow_forward_ios, size: 16),
         ],
       ),
     );

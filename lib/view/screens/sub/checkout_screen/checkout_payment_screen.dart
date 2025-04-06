@@ -16,11 +16,11 @@ import 'package:provider/provider.dart';
 class CheckoutPaymentScreen extends StatefulWidget {
   final int totalAmount;
   final ArrCar carDetails;
-  
+
   const CheckoutPaymentScreen({
     super.key,
     required this.totalAmount,
-    required this.carDetails, 
+    required this.carDetails,
   });
 
   @override
@@ -33,7 +33,7 @@ class _CheckoutPaymentScreenState extends State<CheckoutPaymentScreen> {
   final TextEditingController _customAmountController = TextEditingController();
 
   String _selectedPaymentAmountOption = 'Full Amount';
-  
+
   // Calculate minimum amount (30% of total)
   double get _minimumAmount => widget.totalAmount * 0.3;
 
@@ -70,62 +70,62 @@ class _CheckoutPaymentScreenState extends State<CheckoutPaymentScreen> {
                   const Gap(20),
                   Container(
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      color: AppColors.paymentScreenBackgroundColor,
-                      boxShadow: const [
-                        BoxShadow(
-                          offset: Offset(1, 1),
-                          spreadRadius: 1,
-                          color: Color.fromARGB(255, 231, 231, 231),
-                          blurRadius: 6
-                        )
-                      ]
-                    ),
+                        borderRadius: BorderRadius.circular(8),
+                        color: AppColors.paymentScreenBackgroundColor,
+                        boxShadow: const [
+                          BoxShadow(
+                              offset: Offset(1, 1),
+                              spreadRadius: 1,
+                              color: Color.fromARGB(255, 231, 231, 231),
+                              blurRadius: 6)
+                        ]),
                     width: double.infinity,
                     child: Column(
                       children: [
                         RadioBoxElement(
-                          status: bookingProvider.selectedPaymentMethod == "TAP_LINK",
+                          status: bookingProvider.selectedPaymentMethod ==
+                              "TAP_LINK",
                           title: "Payment with link",
                           padding: const EdgeInsets.only(right: 16, left: 16),
-                          onChanged: (_) => bookingProvider.updatePaymentMethod("TAP_LINK"),
+                          onChanged: (_) =>
+                              bookingProvider.updatePaymentMethod("TAP_LINK"),
                         ),
-                        const SizedBox(width: double.infinity, child: Divider()),
+                        const SizedBox(
+                            width: double.infinity, child: Divider()),
                         RadioBoxElement(
-                          status: bookingProvider.selectedPaymentMethod == "CASH",
+                          status:
+                              bookingProvider.selectedPaymentMethod == "CASH",
                           title: "Payment on pickup",
                           padding: const EdgeInsets.only(right: 16, left: 16),
-                          onChanged: (_) => bookingProvider.updatePaymentMethod("CASH"),
+                          onChanged: (_) =>
+                              bookingProvider.updatePaymentMethod("CASH"),
                         ),
                       ],
                     ),
                   ),
 
-                     const Gap(15),
+                  const Gap(15),
                   const AppText(
                     "Enter Email Id",
                     style: AppTextStyles.subText,
                   ),
                   const Gap(6),
                   Container(
-                    decoration: const BoxDecoration(
-                      color: AppColors.paymentScreenBackgroundColor,
-                      boxShadow: [
-                        BoxShadow(
-                          offset: Offset(1, 1),
-                          spreadRadius: 0.1,
-                          color: Color.fromARGB(255, 240, 240, 240),
-                          blurRadius: 15
-                        )
-                      ]
-                    ),
-                    child: CustomTextFormField(
-                      controller: _emailController,
-                      label: "",
-                      hint: "Enter your email",
-                      borderColor: AppColors.textFormFieldBorderColor,
-                    )
-                  ),
+                      decoration: const BoxDecoration(
+                          color: AppColors.paymentScreenBackgroundColor,
+                          boxShadow: [
+                            BoxShadow(
+                                offset: Offset(1, 1),
+                                spreadRadius: 0.1,
+                                color: Color.fromARGB(255, 240, 240, 240),
+                                blurRadius: 15)
+                          ]),
+                      child: CustomTextFormField(
+                        controller: _emailController,
+                        label: "",
+                        hint: "Enter your email",
+                        borderColor: AppColors.textFormFieldBorderColor,
+                      )),
 
                   // Phone Number Input
                   const Gap(15),
@@ -135,26 +135,23 @@ class _CheckoutPaymentScreenState extends State<CheckoutPaymentScreen> {
                   ),
                   const Gap(6),
                   Container(
-                    decoration: const BoxDecoration(
-                      color: AppColors.paymentScreenBackgroundColor,
-                      boxShadow: [
-                        BoxShadow(
-                          offset: Offset(1, 1),
-                          spreadRadius: 0.1,
-                          color: Color.fromARGB(255, 240, 240, 240),
-                          blurRadius: 15
-                        )
-                      ]
-                    ),
-                    child: CustomTextFormField(
-                      controller: _phoneController,
-                      label: "",
-                      hint: "Enter your mobile number",
-                      keyboardType: TextInputType.phone,
-                      borderColor: AppColors.textFormFieldBorderColor,
-                    )
-                  ),
-                  
+                      decoration: const BoxDecoration(
+                          color: AppColors.paymentScreenBackgroundColor,
+                          boxShadow: [
+                            BoxShadow(
+                                offset: Offset(1, 1),
+                                spreadRadius: 0.1,
+                                color: Color.fromARGB(255, 240, 240, 240),
+                                blurRadius: 15)
+                          ]),
+                      child: CustomTextFormField(
+                        controller: _phoneController,
+                        label: "",
+                        hint: "Enter your mobile number",
+                        keyboardType: TextInputType.phone,
+                        borderColor: AppColors.textFormFieldBorderColor,
+                      )),
+
                   // Payment Amount Options
                   const Gap(15),
                   const AppText(
@@ -164,27 +161,25 @@ class _CheckoutPaymentScreenState extends State<CheckoutPaymentScreen> {
                   ),
                   const Gap(10),
                   _buildPaymentAmountOptions(),
-                  
+
                   // Custom amount field (conditionally rendered)
                   if (_selectedPaymentAmountOption == 'Custom Amount')
                     _buildCustomAmountField(),
 
                   // Email Input
-               
                 ],
               ),
             ),
           ),
           bottomNavigationBar: SizedBox(
-            height: 100,
-            child: BookingPrice(
-              title: "Total Amount",
-              value: "${widget.totalAmount}",
-              buttonName: "Pay now",
-              isLoading: bookingProvider.isLoading,
-              onTap: () => _handlePayNow(context, bookingProvider),
-            )
-          ),
+              height: 100,
+              child: BookingPrice(
+                title: "Total Amount",
+                value: "${widget.totalAmount}",
+                buttonName: "Pay now",
+                isLoading: bookingProvider.isLoading,
+                onTap: () => _handlePayNow(context, bookingProvider),
+              )),
         );
       },
     );
@@ -192,20 +187,18 @@ class _CheckoutPaymentScreenState extends State<CheckoutPaymentScreen> {
 
   Widget _buildPaymentAmountOptions() {
     final paymentOptions = ['Full Amount', 'Minimum Amount', 'Custom Amount'];
-    
+
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        color: AppColors.paymentScreenBackgroundColor,
-        boxShadow: const [
-          BoxShadow(
-            offset: Offset(1, 1),
-            spreadRadius: 1,
-            color: Color.fromARGB(255, 231, 231, 231),
-            blurRadius: 6
-          )
-        ]
-      ),
+          borderRadius: BorderRadius.circular(8),
+          color: AppColors.paymentScreenBackgroundColor,
+          boxShadow: const [
+            BoxShadow(
+                offset: Offset(1, 1),
+                spreadRadius: 1,
+                color: Color.fromARGB(255, 231, 231, 231),
+                blurRadius: 6)
+          ]),
       child: Column(
         children: paymentOptions.map((option) {
           return Column(
@@ -220,7 +213,7 @@ class _CheckoutPaymentScreenState extends State<CheckoutPaymentScreen> {
                   });
                 },
               ),
-              if (option != paymentOptions.last) 
+              if (option != paymentOptions.last)
                 const SizedBox(width: double.infinity, child: Divider()),
             ],
           );
@@ -240,45 +233,42 @@ class _CheckoutPaymentScreenState extends State<CheckoutPaymentScreen> {
         ),
         const Gap(6),
         Container(
-          decoration: const BoxDecoration(
-            color: AppColors.paymentScreenBackgroundColor,
-            boxShadow: [
-              BoxShadow(
-                offset: Offset(1, 1),
-                spreadRadius: 0.1,
-                color: Color.fromARGB(255, 240, 240, 240),
-                blurRadius: 15
-              )
-            ]
-          ),
-          child: CustomTextFormField(
-            controller: _customAmountController,
-            label: "",
-            hint: "Enter custom amount",
-            keyboardType: TextInputType.number,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter an amount';
-              }
-              final amount = double.tryParse(value);
-              if (amount == null || amount < _minimumAmount) {
-                return 'Amount must be at least ${_minimumAmount.toStringAsFixed(2)} AED';
-              }
-              return null;
-            },
-          )
-        ),
+            decoration: const BoxDecoration(
+                color: AppColors.paymentScreenBackgroundColor,
+                boxShadow: [
+                  BoxShadow(
+                      offset: Offset(1, 1),
+                      spreadRadius: 0.1,
+                      color: Color.fromARGB(255, 240, 240, 240),
+                      blurRadius: 15)
+                ]),
+            child: CustomTextFormField(
+              controller: _customAmountController,
+              label: "",
+              hint: "Enter custom amount",
+              keyboardType: TextInputType.number,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter an amount';
+                }
+                final amount = double.tryParse(value);
+                if (amount == null || amount < _minimumAmount) {
+                  return 'Amount must be at least ${_minimumAmount.toStringAsFixed(2)} AED';
+                }
+                return null;
+              },
+            )),
       ],
     );
   }
 
-  Future<void> _handlePayNow(BuildContext context, BookingProvider provider) async {
+  Future<void> _handlePayNow(
+      BuildContext context, BookingProvider provider) async {
     // Validate inputs
     if (provider.selectedPaymentMethod == "TAP_LINK") {
       if (_emailController.text.isEmpty || _phoneController.text.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please fill in all required fields'))
-        );
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('Please fill in all required fields')));
         return;
       }
     }
@@ -295,9 +285,9 @@ class _CheckoutPaymentScreenState extends State<CheckoutPaymentScreen> {
       case 'Custom Amount':
         final customAmount = double.tryParse(_customAmountController.text);
         if (customAmount == null || customAmount < _minimumAmount) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Minimum is ${_minimumAmount.toStringAsFixed(2)} AED'))
-          );
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content:
+                  Text('Minimum is ${_minimumAmount.toStringAsFixed(2)} AED')));
           return;
         }
         paymentAmount = customAmount;
@@ -307,13 +297,19 @@ class _CheckoutPaymentScreenState extends State<CheckoutPaymentScreen> {
     }
 
     // Create booking
-    final success = await provider.createBooking(
-      context,
-      email: _emailController.text,
-      phoneNumber: _phoneController.text,
-      amount: paymentAmount,
-      carDetails: widget.carDetails
-    );
+    final success = await provider.createBooking(context,
+        email: _emailController.text,
+        phoneNumber: _phoneController.text,
+        totalFinalAmount: widget.totalAmount.toDouble(),
+        payedAmount: paymentAmount,
+        totalVehicleAmount: provider
+            .calculateTotalAmount(
+                widget.carDetails.intPricePerDay?.toInt() ?? 0,
+                widget.carDetails.intPricePerWeek?.toInt() ?? 0,
+                widget.carDetails.intPricePerMonth?.toInt() ?? 0)
+            .toDouble(),
+        totalGadgetsAmount: provider.totalGadgetPrice,
+        carDetails: widget.carDetails);
 
     if (success) {
       // Navigate back to home or success screen
