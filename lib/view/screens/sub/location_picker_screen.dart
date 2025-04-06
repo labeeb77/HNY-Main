@@ -1,7 +1,9 @@
+import 'dart:developer';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_google_maps_webservices/places.dart';
 import 'package:gap/gap.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -25,6 +27,11 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
   bool isMarkerSetisLoading = true;
   List<Placemark> placemarks = [];
   String selectedAddress = "";
+  TextEditingController _searchController = TextEditingController();
+  List<Prediction> _placePredictions = [];
+
+  final places =
+      GoogleMapsPlaces(apiKey: "AIzaSyCK4qZ_Nbz1xqiVgI7lkc8LZSiJuZf6rPU");
 
   @override
   void initState() {
@@ -44,6 +51,23 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
     }
   }
 
+  void _onSearchChanged(String query) async {
+    if (query.isNotEmpty) {
+      final response = await places.autocomplete(query);
+      log(response.predictions.toString());
+
+      if (response.isOkay) {
+        setState(() {
+          _placePredictions = response.predictions;
+        });
+      }
+    } else {
+      setState(() {
+        _placePredictions = [];
+      });
+    }
+  }
+
   Future<BitmapDescriptor> getBitmapDescriptorFromAsset(
       String path, int width) async {
     final ByteData data = await rootBundle.load(path);
@@ -60,6 +84,7 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Column(
         children: [
           // Search bar
@@ -82,7 +107,7 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
 
                     // placemarks = await placemarkFromCoordinates(
                     //     argument.latitude, argument.longitude);
-
+                    FocusManager.instance.primaryFocus?.unfocus();
                     final response = await getAddressFromLatLng(
                         argument.latitude, argument.longitude);
                     if (response.isNotEmpty) {
@@ -132,19 +157,76 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
                   child: Container(
                     alignment: Alignment.topCenter,
                     padding: const EdgeInsets.all(16),
-                    child: TextField(
-                      decoration: InputDecoration(
-                        hintText: 'Search Location',
-                        prefixIcon: const Icon(Icons.search),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          borderSide: BorderSide.none,
+                    child: Column(
+                      children: [
+                        TextField(
+                          onChanged: _onSearchChanged,
+                          controller: _searchController,
+                          decoration: InputDecoration(
+                            suffixIcon: _searchController.text.isNotEmpty
+                                ? IconButton(
+                                    icon: const Icon(Icons.clear),
+                                    onPressed: () {
+                                      _searchController.clear();
+                                      // FocusManager.instance.primaryFocus?.unfocus();
+                                      setState(() {
+                                        _placePredictions = [];
+                                      });
+                                    },
+                                  )
+                                : SizedBox(),
+                            hintText: 'Search Location',
+                            prefixIcon: const Icon(Icons.search),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30),
+                              borderSide: BorderSide.none,
+                            ),
+                            filled: true,
+                            fillColor: Colors.white,
+                            contentPadding:
+                                const EdgeInsets.symmetric(horizontal: 20),
+                          ),
                         ),
-                        filled: true,
-                        fillColor: Colors.white,
-                        contentPadding:
-                            const EdgeInsets.symmetric(horizontal: 20),
-                      ),
+                        Gap(12),
+                        if (_placePredictions.isNotEmpty)
+                          Wrap(
+                            children: _placePredictions.map((prediction) {
+                              return Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: ListTile(
+                                  dense: true,
+                                  title: Text(prediction.description ?? ""),
+                                  onTap: () async {
+                                    PlacesDetailsResponse details =
+                                        await places.getDetailsByPlaceId(
+                                            prediction.placeId ?? "");
+                                    double lat =
+                                        details.result.geometry!.location.lat;
+                                    double lng =
+                                        details.result.geometry!.location.lng;
+                                    _center = LatLng(lat, lng);
+                                    selectedAddress =
+                                        prediction.description ?? "";
+                                    FocusManager.instance.primaryFocus
+                                        ?.unfocus();
+                                    mapController?.animateCamera(
+                                      CameraUpdate.newCameraPosition(
+                                        CameraPosition(
+                                            target: _center, zoom: 15.0),
+                                      ),
+                                    );
+                                    setState(() {
+                                      _placePredictions = [];
+                                    });
+                                  },
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                      ],
                     ),
                   ),
                 ),
