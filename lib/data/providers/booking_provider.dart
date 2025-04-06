@@ -681,7 +681,7 @@ Future<void> downloadInvoice(BuildContext context, String bookingId) async {
     }
   }
 
-  String _activeTab = 'Upcoming'; // Default active tab
+  String _activeTab = 'All'; // Default active tab
   String get activeTab => _activeTab;
 
   Future<void> getBookingList(BuildContext context,

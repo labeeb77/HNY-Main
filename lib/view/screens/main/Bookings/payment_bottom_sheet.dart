@@ -13,6 +13,7 @@ class PaymentBottomSheet extends StatefulWidget {
   final ArrBookingItem carItem;
   const PaymentBottomSheet({Key? key, required this.carItem}) : super(key: key);
 
+
   @override
   State<PaymentBottomSheet> createState() => _PaymentBottomSheetState();
 }
@@ -33,6 +34,11 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
     dropOffLocation = widget.carItem.strDeliveryLocationAddress;
 
     super.initState();
+  }
+
+  String _formatDate(DateTime? date) {
+    if (date == null) return 'N/A';
+    return DateFormat('MMMM d, yyyy').format(date);
   }
 
   @override
@@ -59,10 +65,13 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
                 _formatDate( widget.carItem.strStartDate)
                
               ),
+              _buildDateSection('Start Date & Time',
+                  _formatDate(widget.carItem.strStartDate)),
               const Gap(12),
               _buildDateSection(
                 'End Date & Time',
                 _formatDate( widget.carItem.strEndDate)
+           
               ),
             ],
           ),
@@ -91,6 +100,8 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
                 locationAddress: updatedData['address'],
               );
               if (success) {
+            
+                 
                 final provider =
                     Provider.of<BookingProvider>(context, listen: false);
                 Provider.of<BookingProvider>(context, listen: false)
@@ -136,6 +147,7 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
                 locationAddress: updatedData['address'],
               );
               if (success) {
+             
                 final provider =
                     Provider.of<BookingProvider>(context, listen: false);
 
@@ -284,10 +296,6 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
         ),
       ),
     );
-  }
-    String _formatDate(DateTime? date) {
-    if (date == null) return 'N/A';
-    return DateFormat('MMMM d, yyyy').format(date);
   }
 
   Widget _buildLocationSection(String title, String location) {
