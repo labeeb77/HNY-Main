@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:hny_main/core/routes/app_routes.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
 import 'package:hny_main/core/utils/app_text_styles.dart';
 import 'package:hny_main/data/models/response/car_list_model.dart';
@@ -305,8 +306,11 @@ class _CheckoutPaymentScreenState extends State<CheckoutPaymentScreen> {
         carDetails: widget.carDetails);
 
     if (success) {
-      // Navigate back to home or success screen
-      Navigator.of(context).popUntil((route) => route.isFirst);
+      // Navigate to Home screen and reset the navigation stack
+      Navigator.of(context).pushNamedAndRemoveUntil(
+        AppRoutes.bottomNav,
+        (route) => false,
+      );
     }
   }
 
