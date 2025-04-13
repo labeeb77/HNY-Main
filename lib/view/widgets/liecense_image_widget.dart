@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hny_main/core/global/profile.dart';
 import 'package:hny_main/data/providers/profile_provider.dart';
@@ -41,7 +42,11 @@ class DrivingLicenseImageWidget extends StatelessWidget {
   Widget _buildLicenseImage(ProfileProvider profileProvider) {
     // Case 1: Selected image exists (highest priority)
     if (profileProvider.selectedDrivingLicenseImagePath != null) {
-      return Image.file(
+      return kIsWeb? Image.network(
+        profileProvider.selectedDrivingLicenseImagePath!.path,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) => _buildDefaultImage(),
+      ):Image.file(
         profileProvider.selectedDrivingLicenseImagePath!,
         fit: BoxFit.cover,
         errorBuilder: (context, error, stackTrace) => _buildDefaultImage(),

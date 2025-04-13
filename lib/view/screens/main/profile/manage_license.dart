@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hny_main/core/global/profile.dart';
 import 'package:hny_main/core/utils/app_alerts.dart';
@@ -70,7 +71,8 @@ class _ManageDrivingLicenseState extends State<ManageDrivingLicense> {
                 // Upload Container
                 InkWell(
                   onTap: () async {
-                    File? selectedImage = await AppImagePicker().pickImageFromGallery();
+                    File? selectedImage =
+                        await AppImagePicker().pickImageFromGallery();
                     if (selectedImage != null) {
                       profileProvider.setDrivingLicenseImagePath(selectedImage);
                     }
@@ -99,19 +101,25 @@ class _ManageDrivingLicenseState extends State<ManageDrivingLicense> {
                       ),
                       const SizedBox(height: 12),
                       // License Image Display
-                      if (profileProvider.selectedDrivingLicenseImagePath != null)
+                      if (profileProvider.selectedDrivingLicenseImagePath !=
+                          null)
                         Container(
                           height: 220,
                           width: double.infinity,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
                             image: DecorationImage(
-                              image: FileImage(profileProvider.selectedDrivingLicenseImagePath!),
+                              image: kIsWeb
+                                  ? NetworkImage(profileProvider
+                                      .selectedDrivingLicenseImagePath!.path)
+                                  : FileImage(profileProvider
+                                      .selectedDrivingLicenseImagePath!),
                               fit: BoxFit.cover,
                             ),
                           ),
                         )
-                      else if (globalUser?.strLicenceUrl != null && globalUser!.strLicenceUrl!.isNotEmpty)
+                      else if (globalUser?.strLicenceUrl != null &&
+                          globalUser!.strLicenceUrl!.isNotEmpty)
                         Container(
                           height: 220,
                           width: double.infinity,
@@ -126,7 +134,8 @@ class _ManageDrivingLicenseState extends State<ManageDrivingLicense> {
                       else
                         const DrivingLicenseImageWidget(
                           height: 220,
-                          defaultImagePath: 'assets/images/custom_placeholder.webp',
+                          defaultImagePath:
+                              'assets/images/custom_placeholder.webp',
                         ),
                     ],
                   ),
@@ -134,16 +143,15 @@ class _ManageDrivingLicenseState extends State<ManageDrivingLicense> {
               ],
             ),
           ),
-          floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerDocked,
           floatingActionButton: Padding(
             padding: const EdgeInsets.all(16.0),
             child: SizedBox(
               width: double.infinity,
               height: 50,
               child: ElevatedButton(
-               
-
-                       onPressed: profileProvider.isLoading
+                onPressed: profileProvider.isLoading
                     ? null
                     : () async {
                         if (profileProvider.selectedDrivingLicenseImagePath !=
@@ -157,12 +165,13 @@ class _ManageDrivingLicenseState extends State<ManageDrivingLicense> {
                           );
                           (context);
                           if (success) {
-                              AppAlerts.showCustomSnackBar("Driving License updated successfully", isSuccess: true);
+                            AppAlerts.showCustomSnackBar(
+                                "Driving License updated successfully",
+                                isSuccess: true);
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) =>
-                                    const ManagePassport(),
+                                builder: (context) => const ManagePassport(),
                               ),
                             );
                           }
@@ -171,8 +180,7 @@ class _ManageDrivingLicenseState extends State<ManageDrivingLicense> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  const ManagePassport(),
+                              builder: (context) => const ManagePassport(),
                             ),
                           );
                         }

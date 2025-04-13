@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hny_main/core/global/profile.dart';
 import 'package:hny_main/core/utils/app_alerts.dart';
@@ -85,8 +86,11 @@ class _ManageGCCIdState extends State<ManageGCCId> {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
                       image: DecorationImage(
-                        image:
-                            FileImage(profileProvider.selectedGCCIdCardImagePath!),
+                        image: kIsWeb
+                            ? NetworkImage(profileProvider
+                                .selectedGCCIdCardImagePath!.path)
+                            : FileImage(
+                                profileProvider.selectedGCCIdCardImagePath!),
                         fit: BoxFit.cover,
                       ),
                     ),

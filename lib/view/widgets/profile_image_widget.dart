@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hny_main/core/global/profile.dart';
 import 'package:hny_main/data/providers/profile_provider.dart';
@@ -38,7 +39,11 @@ class ProfileImageWidget extends StatelessWidget {
   Widget _buildProfileImage(ProfileProvider profileProvider) {
     // Case 1: Selected image exists (highest priority)
     if (profileProvider.selectedProfileImage != null) {
-      return Image.file(
+      return kIsWeb? Image.network(
+        profileProvider.selectedProfileImage!.path,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) => _buildDefaultImage(),
+      ):Image.file(
         profileProvider.selectedProfileImage!,
         fit: BoxFit.cover,
         errorBuilder: (context, error, stackTrace) => _buildDefaultImage(),

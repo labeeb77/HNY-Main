@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:hny_main/core/constants/api_constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:hny_main/core/utils/upload/file_upload_stub.dart'; 
 
 class CommonProvider with ChangeNotifier {
   final Dio dio = Dio();
@@ -18,15 +19,10 @@ class CommonProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<String?> commonFileUploadApi(
-      BuildContext context, String imagePath) async {
+  Future<String?> commonFileUploadApi(BuildContext context, String imagePath) async {
     changeLoadingState();
     try {
-      const String uploadUrl =
-          "${ApiConstants.baseUrl2}${ApiConstants.fileUploadApiUrl}";
-      final formData = FormData.fromMap({
-        "arrFiles": await MultipartFile.fromFile(imagePath),
-      });
+      const String uploadUrl = "${ApiConstants.baseUrl2}${ApiConstants.fileUploadApiUrl}";
 
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('access_token');
@@ -36,10 +32,11 @@ class CommonProvider with ChangeNotifier {
         return null;
       }
 
-      final options = Options(headers: {'Authorization': token});
+      final formData = await createFormData(imagePath); // platform-safe
 
-      final response =
-          await dio.post(uploadUrl, data: formData, options: options);
+      final options = Options(headers: {'Authorization': token});
+      final response = await dio.post(uploadUrl, data: formData, options: options);
+
       log(response.data.toString(), name: "Upload Response");
 
       if (response.statusCode == 200) {

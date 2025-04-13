@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hny_main/core/global/profile.dart';
 import 'package:hny_main/core/utils/app_alerts.dart';
@@ -103,7 +104,10 @@ class _ManagePassportState extends State<ManagePassport> {
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
                             image: DecorationImage(
-                              image: FileImage(profileProvider.selectedPassportImagePath!),
+                              image:kIsWeb
+                                  ? NetworkImage(profileProvider
+                                      .selectedPassportImagePath!.path)
+                                  : FileImage(profileProvider.selectedPassportImagePath!),
                               fit: BoxFit.cover,
                             ),
                           ),
