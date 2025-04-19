@@ -187,7 +187,7 @@ class ArrBookingItem {
     ArrBookingItemType? type;
     int? intPricePerDay;
     String? strImgUrl;
-    StrModel? strModel;
+    String? strModel;
     int? intPricePerMonth;
     int? intPricePerWeek;
     String? arrBookingItemStrBookingId;
@@ -264,7 +264,7 @@ class ArrBookingItem {
     type: json["type"] != null ? arrBookingItemTypeValues.map[json["type"]] : null,
     intPricePerDay: json["intPricePerDay"],
     strImgUrl: json["strImgUrl"],
-    strModel: json["strModel"] != null ? strModelValues.map[json["strModel"]] : null,
+    strModel: json["strModel"] ,
     intPricePerMonth: json["intPricePerMonth"],
     intPricePerWeek: json["intPricePerWeek"],
     arrBookingItemStrBookingId: json["strBooking_Id"],
@@ -303,7 +303,7 @@ class ArrBookingItem {
         "type": arrBookingItemTypeValues.reverse[type],
         "intPricePerDay": intPricePerDay,
         "strImgUrl": strImgUrl,
-        "strModel": strModelValues.reverse[strModel],
+        "strModel": strModel,
         "intPricePerMonth": intPricePerMonth,
         "intPricePerWeek": intPricePerWeek,
         "strBooking_Id": arrBookingItemStrBookingId,

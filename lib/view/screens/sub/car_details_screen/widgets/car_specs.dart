@@ -19,7 +19,7 @@ class CarSpecs extends StatelessWidget {
           ),
           SpecItem(
             icon: Icons.local_gas_station_outlined,
-            label: arrCar.strFuelType?.toString() ?? 'N/A',
+            label: arrCar.strFuelType?.name ?? 'N/A',
           ),
           SpecItem(
             icon: Icons.people_outlined,
