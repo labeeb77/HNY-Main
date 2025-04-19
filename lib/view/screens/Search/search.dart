@@ -190,7 +190,8 @@ class _SearchPageState extends State<SearchPage> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           AppText(
-                                            data.strModel ?? 'No name',
+                                            "${data.strBrand} ${data.strModel}",
+                                            
                                             fontWeight: FontWeight.bold,
                                             fontSize: 15,
                                             maxLines: 1,

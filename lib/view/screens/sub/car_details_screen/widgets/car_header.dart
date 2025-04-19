@@ -2,13 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
 import 'package:hny_main/data/models/response/car_list_model.dart';
-import 'package:hny_main/data/providers/home_controller.dart';
 import 'package:hny_main/view/screens/main/home/widgets_elements.dart';
-import 'package:provider/provider.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 
-class CarHeader extends StatelessWidget {
+class CarHeader extends StatefulWidget {
   final ArrCar arrCar;
   const CarHeader({super.key, required this.arrCar});
+
+  @override
+  State<CarHeader> createState() => _CarHeaderState();
+}
+
+class _CarHeaderState extends State<CarHeader> {
+  int _currentIndex = 0;
+  final CarouselSliderController _controller = CarouselSliderController();
 
   @override
   Widget build(BuildContext context) {
@@ -17,19 +24,69 @@ class CarHeader extends StatelessWidget {
       children: [
         Stack(
           children: [
-          arrCar.strImgUrl != null && arrCar.strImgUrl!.isNotEmpty
-    ? Image.network(
-        arrCar.strImgUrl!,
-        height: 250,
-        width: double.infinity,
-        fit: BoxFit.cover,
-      )
-    : Image.asset(
-        'assets/images/placeholder_image.webp',
-        height: 250,
-        width: double.infinity,
-        fit: BoxFit.cover,
-      ),
+            if (widget.arrCar.arrImgUrl != null && widget.arrCar.arrImgUrl!.isNotEmpty)
+              Column(
+                children: [
+                  CarouselSlider.builder(
+                    carouselController: _controller,
+                    itemCount: widget.arrCar.arrImgUrl!.length,
+                    options: CarouselOptions(
+                      height: 250,
+                      viewportFraction: 1.0,
+                      enlargeCenterPage: false,
+                      autoPlay: true,
+                      autoPlayInterval: const Duration(seconds: 3),
+                      onPageChanged: (index, reason) {
+                        setState(() {
+                          _currentIndex = index;
+                        });
+                      },
+                    ),
+                    itemBuilder: (context, index, realIndex) {
+                      return Image.network(
+                        widget.arrCar.arrImgUrl![index],
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Image.asset(
+                            'assets/images/placeholder_image.webp',
+                            height: 250,
+                            width: double.infinity,
+                            fit: BoxFit.cover,
+                          );
+                        },
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: widget.arrCar.arrImgUrl!.asMap().entries.map((entry) {
+                      return GestureDetector(
+                        onTap: () => _controller.jumpToPage(entry.key),
+                        child: Container(
+                          width: 8.0,
+                          height: 8.0,
+                          margin: const EdgeInsets.symmetric(horizontal: 4.0),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: _currentIndex == entry.key
+                                ? AppColors.primary
+                                : Colors.grey.withOpacity(0.4),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ],
+              )
+            else
+              Image.asset(
+                'assets/images/placeholder_image.webp',
+                height: 250,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              ),
             _buildHeaderIcons(context),
           ],
         ),
@@ -43,6 +100,7 @@ class CarHeader extends StatelessWidget {
               _buildCarTitle(),
               const SizedBox(height: 8),
               _buildCarDescription(),
+             
             ],
           ),
         ),
@@ -60,7 +118,7 @@ class CarHeader extends StatelessWidget {
             borderRadius: BorderRadius.circular(15),
           ),
           child: Text(
-            arrCar.strCarCategory?.name ?? 'N/A',
+            widget.arrCar.strCarCategory?.name ?? 'N/A',
             style: const TextStyle(
               color: Colors.white,
               fontSize: 11,
@@ -78,7 +136,7 @@ class CarHeader extends StatelessWidget {
       children: [
         Expanded(
           child: Text(
-            '${arrCar.strBrand} ${arrCar.strModel}',
+            '${widget.arrCar.strBrand} ${widget.arrCar.strModel}',
             style: const TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
@@ -98,7 +156,7 @@ class CarHeader extends StatelessWidget {
             children: [
               const Icon(Icons.star, color: Colors.amber, size: 20),
               Text(
-                ' ${arrCar.intRating?.toStringAsFixed(1) ?? 'N/A'}',
+                ' ${widget.arrCar.intRating?.toStringAsFixed(1) ?? 'N/A'}',
                 style: const TextStyle(
                   fontWeight: FontWeight.w700,
                   fontSize: 16,
@@ -113,7 +171,7 @@ class CarHeader extends StatelessWidget {
 
   Widget _buildCarDescription() {
     return Text(
-      arrCar.strDescription ?? 'No description available',
+      widget.arrCar.strDescription ?? 'No description available',
       style: const TextStyle(color: Colors.grey),
     );
   }

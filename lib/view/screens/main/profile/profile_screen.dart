@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -30,6 +32,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    log("global user: ${globalUser?.strGccIdUrl}");
+    log("global user: ${globalUser?.strLicenceUrl}");
+    log("global user: ${globalUser?.strPassportUrl}");
+
+    
     return Scaffold(
       backgroundColor: const Color(0xFFF2F3F6),
       appBar: const CommonAppBar(
@@ -75,18 +82,40 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   as ImageProvider,
                         ),
                         const Gap(16),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            AppText(globalUser?.strFullName ?? "Unknown"),
-                            const Gap(4),
-                            AppText(
-                              globalUser?.strEmail ?? "No email",
-                              style: const TextStyle(
-                                  fontSize: 12, color: AppColors.textSecondary),
-                            ),
-                          ],
-                        ),
+                        (globalUser?.strFullName == null || globalUser!.strFullName!.isEmpty)
+                            ? const Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  AppText(
+                                    "Complete your profile",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColors.primary,
+                                    ),
+                                  ),
+                                  Gap(4),
+                                  AppText(
+                                    "Add your information",
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: AppColors.textSecondary,
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  AppText(globalUser?.strFullName ?? "Unknown"),
+                                  const Gap(4),
+                                  AppText(
+                                    globalUser?.strEmail ?? "No email",
+                                    style: const TextStyle(
+                                        fontSize: 12, color: AppColors.textSecondary),
+                                  ),
+                                ],
+                              ),
                         const Spacer(),
                         const Icon(
                           Icons.arrow_forward_ios,
@@ -102,23 +131,86 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  DocumentElement(
-                    docIcon: Icons.document_scanner_outlined,
-                    docName: "License",
-                    imageUrl: globalUser?.strLicenceUrl,
-                    isEnabled: globalUser?.strLicenceUrl?.isNotEmpty ?? false,
+                  Stack(
+                    children: [
+                      DocumentElement(
+                        docIcon: Icons.document_scanner_outlined,
+                        docName: "License",
+                        imageUrl: globalUser?.strLicenceUrl,
+                        isEnabled: globalUser?.strLicenceUrl?.isNotEmpty ?? false,
+                      ),
+                      if (globalUser?.strLicenceUrl?.isEmpty ?? true)
+                        Positioned(
+                          right: 0,
+                          top: 0,
+                          child: Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: const BoxDecoration(
+                              color: AppColors.primary,
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.add,
+                              color: AppColors.white,
+                              size: 16,
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
-                  DocumentElement(
-                    docIcon: Icons.file_copy_outlined,
-                    docName: "Passport",
-                    imageUrl: globalUser?.strPassportUrl,
-                    isEnabled: globalUser?.strPassportUrl?.isNotEmpty ?? false,
+                  Stack(
+                    children: [
+                      DocumentElement(
+                        docIcon: Icons.file_copy_outlined,
+                        docName: "Passport",
+                        imageUrl: globalUser?.strPassportUrl,
+                        isEnabled: globalUser?.strPassportUrl?.isNotEmpty ?? false,
+                      ),
+                      if (globalUser?.strPassportUrl?.isEmpty ?? true)
+                        Positioned(
+                          right: 0,
+                          top: 0,
+                          child: Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: const BoxDecoration(
+                              color: AppColors.primary,
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.add,
+                              color: AppColors.white,
+                              size: 16,
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
-                  DocumentElement(
-                    docIcon: Icons.folder_copy_outlined,
-                    docName: "GCC ID",
-                    imageUrl: globalUser?.strGccIdUrl,
-                    isEnabled: globalUser?.strGccIdUrl?.isNotEmpty ?? false,
+                  Stack(
+                    children: [
+                      DocumentElement(
+                        docIcon: Icons.folder_copy_outlined,
+                        docName: "GCC ID",
+                        imageUrl: globalUser?.strGccIdUrl,
+                        isEnabled: globalUser?.strGccIdUrl?.isNotEmpty ?? false,
+                      ),
+                      if (globalUser?.strGccIdUrl?.isEmpty ?? true)
+                        Positioned(
+                          right: 0,
+                          top: 0,
+                          child: Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: const BoxDecoration(
+                              color: AppColors.primary,
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.add,
+                              color: AppColors.white,
+                              size: 16,
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
                 ],
               ),

@@ -78,41 +78,39 @@ class BookingProvider extends ChangeNotifier {
   String get formattedEndTime =>
       _endTime != null ? _formatTimeOfDay(_endTime!) : '00:00 AM';
 
-  // Calculate total days
-  int get totalDays {
-    if (_startDate == null || _endDate == null) {
-      return 1; // Default to 1 day if dates not selected
-    }
-
-    // Create DateTime objects with times if available
-    final start = DateTime(
-      _startDate!.year,
-      _startDate!.month,
-      _startDate!.day,
-      _startTime?.hour ?? 0,
-      _startTime?.minute ?? 0,
-    );
-
-    final end = DateTime(
-      _endDate!.year,
-      _endDate!.month,
-      _endDate!.day,
-      _endTime?.hour ?? 0,
-      _endTime?.minute ?? 0,
-    );
-
-    // Calculate difference in days
-    final difference = end.difference(start);
-    int days = difference.inDays;
-
-    // If there's a partial day, round up
-    if (difference.inHours % 24 > 0) {
-      days += 1;
-    }
-
-    // Ensure minimum of 1 day
-    return days > 0 ? days : 1;
+int get totalDays {
+  if (_startDate == null || _endDate == null) {
+    return 1; // Default to 1 day if dates not selected
   }
+  
+  // Create DateTime objects with times if available
+  final start = DateTime(
+    _startDate!.year,
+    _startDate!.month,
+    _startDate!.day,
+    _startTime?.hour ?? 0,
+    _startTime?.minute ?? 0,
+  );
+  final end = DateTime(
+    _endDate!.year,
+    _endDate!.month,
+    _endDate!.day,
+    _endTime?.hour ?? 0,
+    _endTime?.minute ?? 0,
+  );
+  
+  // Calculate difference in days (add 1 to include both start and end date)
+  final difference = end.difference(start);
+  int days = difference.inDays + 1;
+  
+  // If there's a partial day with hours but not a full day, ensure it counts
+  if (difference.inDays == 0 && difference.inHours > 0) {
+    days = 1;
+  }
+  
+  // Ensure minimum of 1 day
+  return days > 0 ? days : 1;
+}
 
   // Calculate total amount based on price per day
   int  calculateTotalAmount(int pricePerDay ,int pricePerWeek, int pricePerMonth) {
@@ -619,8 +617,7 @@ Future<void> downloadInvoice(BuildContext context, String bookingId) async {
       final response = await _bookingService.createBooking(bookingData);
 
       if (response.success) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Booking created successfully!')));
+      
         return true;
       } else {
         _handleError('Failed to create booking');
