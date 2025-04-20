@@ -19,37 +19,201 @@ class ManageProfileScreen extends StatefulWidget {
 
 class _ManageProfileScreenState extends State<ManageProfileScreen> {
   final List<String> _countries = [
-    'Afghanistan', 'Albania', 'Algeria', 'Andorra', 'Angola', 'Antigua and Barbuda',
-    'Argentina', 'Armenia', 'Australia', 'Austria', 'Azerbaijan', 'Bahamas', 'Bahrain',
-    'Bangladesh', 'Barbados', 'Belarus', 'Belgium', 'Belize', 'Benin', 'Bhutan',
-    'Bolivia', 'Bosnia and Herzegovina', 'Botswana', 'Brazil', 'Brunei', 'Bulgaria',
-    'Burkina Faso', 'Burundi', 'Cabo Verde', 'Cambodia', 'Cameroon', 'Canada',
-    'Central African Republic', 'Chad', 'Chile', 'China', 'Colombia', 'Comoros',
-    'Congo', 'Costa Rica', 'Croatia', 'Cuba', 'Cyprus', 'Czech Republic', 'Denmark',
-    'Djibouti', 'Dominica', 'Dominican Republic', 'Ecuador', 'Egypt', 'El Salvador',
-    'Equatorial Guinea', 'Eritrea', 'Estonia', 'Eswatini', 'Ethiopia', 'Fiji',
-    'Finland', 'France', 'Gabon', 'Gambia', 'Georgia', 'Germany', 'Ghana', 'Greece',
-    'Grenada', 'Guatemala', 'Guinea', 'Guinea-Bissau', 'Guyana', 'Haiti', 'Honduras',
-    'Hungary', 'Iceland', 'India', 'Indonesia', 'Iran', 'Iraq', 'Ireland', 'Israel',
-    'Italy', 'Jamaica', 'Japan', 'Jordan', 'Kazakhstan', 'Kenya', 'Kiribati',
-    'Korea, North', 'Korea, South', 'Kosovo', 'Kuwait', 'Kyrgyzstan', 'Laos',
-    'Latvia', 'Lebanon', 'Lesotho', 'Liberia', 'Libya', 'Liechtenstein', 'Lithuania',
-    'Luxembourg', 'Madagascar', 'Malawi', 'Malaysia', 'Maldives', 'Mali', 'Malta',
-    'Marshall Islands', 'Mauritania', 'Mauritius', 'Mexico', 'Micronesia', 'Moldova',
-    'Monaco', 'Mongolia', 'Montenegro', 'Morocco', 'Mozambique', 'Myanmar', 'Namibia',
-    'Nauru', 'Nepal', 'Netherlands', 'New Zealand', 'Nicaragua', 'Niger', 'Nigeria',
-    'North Macedonia', 'Norway', 'Oman', 'Pakistan', 'Palau', 'Palestine', 'Panama',
-    'Papua New Guinea', 'Paraguay', 'Peru', 'Philippines', 'Poland', 'Portugal',
-    'Qatar', 'Romania', 'Russia', 'Rwanda', 'Saint Kitts and Nevis', 'Saint Lucia',
-    'Saint Vincent and the Grenadines', 'Samoa', 'San Marino', 'Sao Tome and Principe',
-    'Saudi Arabia', 'Senegal', 'Serbia', 'Seychelles', 'Sierra Leone', 'Singapore',
-    'Slovakia', 'Slovenia', 'Solomon Islands', 'Somalia', 'South Africa', 'South Sudan',
-    'Spain', 'Sri Lanka', 'Sudan', 'Suriname', 'Sweden', 'Switzerland', 'Syria',
-    'Taiwan', 'Tajikistan', 'Tanzania', 'Thailand', 'Timor-Leste', 'Togo', 'Tonga',
-    'Trinidad and Tobago', 'Tunisia', 'Turkey', 'Turkmenistan', 'Tuvalu', 'Uganda',
-    'Ukraine', 'United Arab Emirates', 'United Kingdom', 'United States', 'Uruguay',
-    'Uzbekistan', 'Vanuatu', 'Vatican City', 'Venezuela', 'Vietnam', 'Yemen',
-    'Zambia', 'Zimbabwe'
+    'Afghanistan',
+    'Albania',
+    'Algeria',
+    'Andorra',
+    'Angola',
+    'Antigua and Barbuda',
+    'Argentina',
+    'Armenia',
+    'Australia',
+    'Austria',
+    'Azerbaijan',
+    'Bahamas',
+    'Bahrain',
+    'Bangladesh',
+    'Barbados',
+    'Belarus',
+    'Belgium',
+    'Belize',
+    'Benin',
+    'Bhutan',
+    'Bolivia',
+    'Bosnia and Herzegovina',
+    'Botswana',
+    'Brazil',
+    'Brunei',
+    'Bulgaria',
+    'Burkina Faso',
+    'Burundi',
+    'Cabo Verde',
+    'Cambodia',
+    'Cameroon',
+    'Canada',
+    'Central African Republic',
+    'Chad',
+    'Chile',
+    'China',
+    'Colombia',
+    'Comoros',
+    'Congo',
+    'Costa Rica',
+    'Croatia',
+    'Cuba',
+    'Cyprus',
+    'Czech Republic',
+    'Denmark',
+    'Djibouti',
+    'Dominica',
+    'Dominican Republic',
+    'Ecuador',
+    'Egypt',
+    'El Salvador',
+    'Equatorial Guinea',
+    'Eritrea',
+    'Estonia',
+    'Eswatini',
+    'Ethiopia',
+    'Fiji',
+    'Finland',
+    'France',
+    'Gabon',
+    'Gambia',
+    'Georgia',
+    'Germany',
+    'Ghana',
+    'Greece',
+    'Grenada',
+    'Guatemala',
+    'Guinea',
+    'Guinea-Bissau',
+    'Guyana',
+    'Haiti',
+    'Honduras',
+    'Hungary',
+    'Iceland',
+    'India',
+    'Indonesia',
+    'Iran',
+    'Iraq',
+    'Ireland',
+    'Israel',
+    'Italy',
+    'Jamaica',
+    'Japan',
+    'Jordan',
+    'Kazakhstan',
+    'Kenya',
+    'Kiribati',
+    'Korea, North',
+    'Korea, South',
+    'Kosovo',
+    'Kuwait',
+    'Kyrgyzstan',
+    'Laos',
+    'Latvia',
+    'Lebanon',
+    'Lesotho',
+    'Liberia',
+    'Libya',
+    'Liechtenstein',
+    'Lithuania',
+    'Luxembourg',
+    'Madagascar',
+    'Malawi',
+    'Malaysia',
+    'Maldives',
+    'Mali',
+    'Malta',
+    'Marshall Islands',
+    'Mauritania',
+    'Mauritius',
+    'Mexico',
+    'Micronesia',
+    'Moldova',
+    'Monaco',
+    'Mongolia',
+    'Montenegro',
+    'Morocco',
+    'Mozambique',
+    'Myanmar',
+    'Namibia',
+    'Nauru',
+    'Nepal',
+    'Netherlands',
+    'New Zealand',
+    'Nicaragua',
+    'Niger',
+    'Nigeria',
+    'North Macedonia',
+    'Norway',
+    'Oman',
+    'Pakistan',
+    'Palau',
+    'Palestine',
+    'Panama',
+    'Papua New Guinea',
+    'Paraguay',
+    'Peru',
+    'Philippines',
+    'Poland',
+    'Portugal',
+    'Qatar',
+    'Romania',
+    'Russia',
+    'Rwanda',
+    'Saint Kitts and Nevis',
+    'Saint Lucia',
+    'Saint Vincent and the Grenadines',
+    'Samoa',
+    'San Marino',
+    'Sao Tome and Principe',
+    'Saudi Arabia',
+    'Senegal',
+    'Serbia',
+    'Seychelles',
+    'Sierra Leone',
+    'Singapore',
+    'Slovakia',
+    'Slovenia',
+    'Solomon Islands',
+    'Somalia',
+    'South Africa',
+    'South Sudan',
+    'Spain',
+    'Sri Lanka',
+    'Sudan',
+    'Suriname',
+    'Sweden',
+    'Switzerland',
+    'Syria',
+    'Taiwan',
+    'Tajikistan',
+    'Tanzania',
+    'Thailand',
+    'Timor-Leste',
+    'Togo',
+    'Tonga',
+    'Trinidad and Tobago',
+    'Tunisia',
+    'Turkey',
+    'Turkmenistan',
+    'Tuvalu',
+    'Uganda',
+    'Ukraine',
+    'United Arab Emirates',
+    'United Kingdom',
+    'United States',
+    'Uruguay',
+    'Uzbekistan',
+    'Vanuatu',
+    'Vatican City',
+    'Venezuela',
+    'Vietnam',
+    'Yemen',
+    'Zambia',
+    'Zimbabwe'
   ];
   bool _isLoading = false;
 
@@ -100,7 +264,7 @@ class _ManageProfileScreenState extends State<ManageProfileScreen> {
     );
   }
 
-  Future<void> _handleSave(BuildContext context) async {
+  Future<void> _handleSave(BuildContext context, from) async {
     if (!_validateForm()) {
       return;
     }
@@ -110,12 +274,17 @@ class _ManageProfileScreenState extends State<ManageProfileScreen> {
     });
 
     try {
-      final profileProvider = Provider.of<ProfileProvider>(context, listen: false);
+      final profileProvider =
+          Provider.of<ProfileProvider>(context, listen: false);
       final result = await profileProvider.addProfileData(context);
 
       if (result == true) {
         // Only navigate on success
-        Navigator.of(context).pushNamed(AppRoutes.manageGccId);
+        if (from == "Add") {
+          Navigator.of(context).pushNamed(AppRoutes.manageGccId);
+        } else {
+          Navigator.pop(context);
+        }
       } else {
         // Show an error message if not successful
         if (mounted) {
@@ -146,7 +315,8 @@ class _ManageProfileScreenState extends State<ManageProfileScreen> {
   }
 
   bool _validateForm() {
-    final profileProvider = Provider.of<ProfileProvider>(context, listen: false);
+    final profileProvider =
+        Provider.of<ProfileProvider>(context, listen: false);
 
     // Basic validation
     if (profileProvider.firstNameController.text.trim().isEmpty) {
@@ -196,6 +366,25 @@ class _ManageProfileScreenState extends State<ManageProfileScreen> {
     return Scaffold(
         backgroundColor: AppColors.background,
         appBar: AppBar(
+          actions: [
+            Visibility(
+              visible: widget.screenName == "Add",
+              child: TextButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, AppRoutes.manageGccId,
+                      arguments:
+                          widget.screenName == "Add" ? "register" : "profile");
+                },
+                child: const Text(
+                  'Skip',
+                  style: TextStyle(
+                    color: AppColors.primary,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+            ),
+          ],
           backgroundColor: AppColors.background,
           elevation: 0,
           title: Text(
@@ -284,7 +473,8 @@ class _ManageProfileScreenState extends State<ManageProfileScreen> {
                           // Store the ISO format internally if needed
                           final isoFormat = formatDateToISO(date);
                           // Display the user-friendly format
-                          profileProvider.dobController.text = formatDateForDisplay(date);
+                          profileProvider.dobController.text =
+                              formatDateForDisplay(date);
                         }
                       },
                       keyboardType: TextInputType.none,
@@ -301,7 +491,8 @@ class _ManageProfileScreenState extends State<ManageProfileScreen> {
                             // Store the ISO format internally if needed
                             final isoFormat = formatDateToISO(date);
                             // Display the user-friendly format
-                            profileProvider.dobController.text = formatDateForDisplay(date);
+                            profileProvider.dobController.text =
+                                formatDateForDisplay(date);
                           }
                         },
                       ),
@@ -309,7 +500,8 @@ class _ManageProfileScreenState extends State<ManageProfileScreen> {
                     _buildInputField(
                         'Mobile Number', profileProvider.mobileController,
                         keyboardType: TextInputType.phone, readOnly: true),
-                    _buildInputField('Email ID', profileProvider.emailController,
+                    _buildInputField(
+                        'Email ID', profileProvider.emailController,
                         keyboardType: TextInputType.emailAddress),
                     _buildCountryDropdown(
                         'Nationality',
@@ -337,7 +529,9 @@ class _ManageProfileScreenState extends State<ManageProfileScreen> {
                   width: double.infinity,
                   height: 50,
                   child: ElevatedButton(
-                    onPressed: _isLoading ? null : () => _handleSave(context),
+                    onPressed: _isLoading
+                        ? null
+                        : () => _handleSave(context, widget.screenName),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,
                       shape: RoundedRectangleBorder(
@@ -361,7 +555,9 @@ class _ManageProfileScreenState extends State<ManageProfileScreen> {
                       width: double.infinity,
                       height: 60,
                       child: ElevatedButton(
-                        onPressed: _isLoading ? null : () {
+                        onPressed: _isLoading
+                            ? null
+                            : () {
                                 Navigator.of(context).pop();
                               },
                         style: ElevatedButton.styleFrom(
@@ -383,7 +579,9 @@ class _ManageProfileScreenState extends State<ManageProfileScreen> {
                       width: double.infinity,
                       height: 60,
                       child: ElevatedButton(
-                        onPressed: _isLoading ? null : () => _handleSave(context),
+                        onPressed: _isLoading
+                            ? null
+                            : () => _handleSave(context, widget.screenName),
                         style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primary,
                             shape: ContinuousRectangleBorder(
@@ -441,9 +639,7 @@ class _ManageProfileScreenState extends State<ManageProfileScreen> {
             readOnly: readOnly || (ontap != null),
             enabled: !readOnly,
             decoration: InputDecoration(
-              fillColor: readOnly
-                  ? Colors.grey[200]
-                  : AppColors.white,
+              fillColor: readOnly ? Colors.grey[200] : AppColors.white,
               filled: true,
               suffixIcon: suffix,
               contentPadding: const EdgeInsets.symmetric(
@@ -474,7 +670,13 @@ class _ManageProfileScreenState extends State<ManageProfileScreen> {
             value: value,
             groupValue: provider.selectedGender,
             onChanged: (String? newValue) {
-              if (!isEdit) {
+              log(provider.selectedGender.toString());
+              log(isEdit.toString());
+              if (isEdit) {
+                if (provider.selectedGender == null) {
+                  provider.setGender(newValue!);
+                }
+              } else {
                 provider.setGender(newValue!);
               }
             },

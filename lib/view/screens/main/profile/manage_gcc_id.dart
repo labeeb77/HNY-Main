@@ -3,19 +3,21 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hny_main/core/global/profile.dart';
+import 'package:hny_main/core/routes/app_routes.dart';
 import 'package:hny_main/core/utils/app_alerts.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
 import 'package:hny_main/core/utils/app_image_picker.dart';
 import 'package:hny_main/data/providers/profile_provider.dart';
 import 'package:hny_main/view/screens/main/Bookings/widgets/file_upload_ui_widget.dart';
 import 'package:hny_main/view/screens/main/profile/manage_license.dart';
+import 'package:hny_main/view/screens/main/profile/manage_passport.dart';
 import 'package:hny_main/view/widgets/back_button.dart';
 import 'package:hny_main/view/widgets/id_card_section.dart';
 import 'package:provider/provider.dart';
 
 class ManageGCCId extends StatefulWidget {
-  const ManageGCCId({super.key});
-
+  const ManageGCCId({super.key, required this.from});
+  final from;
   @override
   State<ManageGCCId> createState() => _ManageGCCIdState();
 }
@@ -29,20 +31,19 @@ class _ManageGCCIdState extends State<ManageGCCId> {
           backgroundColor: Colors.white,
           appBar: AppBar(
             actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const ManageDrivingLicense(),
+              Visibility(
+                visible: widget.from == "register",
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, AppRoutes.managePassport,
+                        arguments: widget.from);
+                  },
+                  child: const Text(
+                    'Skip',
+                    style: TextStyle(
+                      color: AppColors.primary,
+                      fontSize: 16,
                     ),
-                  );
-                },
-                child: const Text(
-                  'Skip',
-                  style: TextStyle(
-                    color: AppColors.primary,
-                    fontSize: 16,
                   ),
                 ),
               ),
@@ -144,20 +145,26 @@ class _ManageGCCIdState extends State<ManageGCCId> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) =>
-                                    const ManageDrivingLicense(),
+                                builder: (context) => ManagePassport(
+                                  from: widget.from,
+                                ),
                               ),
                             );
                           }
                         } else {
                           // If no image is selected, just navigate to next screen
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  const ManageDrivingLicense(),
-                            ),
-                          );
+                          if (widget.from == "register") {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ManagePassport(
+                                  from: widget.from,
+                                ),
+                              ),
+                            );
+                          } else {
+                            Navigator.pop(context);
+                          }
                         }
                       },
                 style: ElevatedButton.styleFrom(

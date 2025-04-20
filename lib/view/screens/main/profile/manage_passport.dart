@@ -3,18 +3,20 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hny_main/core/global/profile.dart';
+import 'package:hny_main/core/routes/app_routes.dart';
 import 'package:hny_main/core/utils/app_alerts.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
 import 'package:hny_main/core/utils/app_image_picker.dart';
 import 'package:hny_main/data/providers/profile_provider.dart';
 import 'package:hny_main/view/common/bottom_nav.dart';
 import 'package:hny_main/view/screens/main/Bookings/widgets/file_upload_ui_widget.dart';
+import 'package:hny_main/view/screens/main/profile/manage_license.dart';
 import 'package:hny_main/view/widgets/back_button.dart';
 import 'package:provider/provider.dart';
 
 class ManagePassport extends StatefulWidget {
-  const ManagePassport({super.key});
-
+  const ManagePassport({super.key, required this.from});
+  final from;
   @override
   State<ManagePassport> createState() => _ManagePassportState();
 }
@@ -28,20 +30,19 @@ class _ManagePassportState extends State<ManagePassport> {
           backgroundColor: Colors.white,
           appBar: AppBar(
             actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const BottomNav(),
+              Visibility(
+                visible: widget.from == "register",
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, AppRoutes.manageLicense,
+                        arguments: widget.from);
+                  },
+                  child: const Text(
+                    'Skip',
+                    style: TextStyle(
+                      color: AppColors.primary,
+                      fontSize: 16,
                     ),
-                  );
-                },
-                child: const Text(
-                  'Skip',
-                  style: TextStyle(
-                    color: AppColors.primary,
-                    fontSize: 16,
                   ),
                 ),
               ),
@@ -68,7 +69,8 @@ class _ManagePassportState extends State<ManagePassport> {
                 // Upload Container
                 InkWell(
                   onTap: () async {
-                    File? selectedImage = await AppImagePicker().pickImageFromGallery();
+                    File? selectedImage =
+                        await AppImagePicker().pickImageFromGallery();
                     if (selectedImage != null) {
                       profileProvider.setPassportImagePath(selectedImage);
                     }
@@ -104,15 +106,17 @@ class _ManagePassportState extends State<ManagePassport> {
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
                             image: DecorationImage(
-                              image:kIsWeb
+                              image: kIsWeb
                                   ? NetworkImage(profileProvider
                                       .selectedPassportImagePath!.path)
-                                  : FileImage(profileProvider.selectedPassportImagePath!),
+                                  : FileImage(profileProvider
+                                      .selectedPassportImagePath!),
                               fit: BoxFit.cover,
                             ),
                           ),
                         )
-                      else if (globalUser?.strPassportUrl != null && globalUser!.strPassportUrl!.isNotEmpty)
+                      else if (globalUser?.strPassportUrl != null &&
+                          globalUser!.strPassportUrl!.isNotEmpty)
                         Container(
                           height: 220,
                           width: double.infinity,
@@ -133,7 +137,8 @@ class _ManagePassportState extends State<ManagePassport> {
                             borderRadius: BorderRadius.circular(8),
                             color: Colors.grey[200],
                             image: const DecorationImage(
-                              image: AssetImage('assets/images/custom_placeholder.webp'),
+                              image: AssetImage(
+                                  'assets/images/custom_placeholder.webp'),
                               fit: BoxFit.contain,
                             ),
                           ),
@@ -144,46 +149,53 @@ class _ManagePassportState extends State<ManagePassport> {
               ],
             ),
           ),
-          floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerDocked,
           floatingActionButton: Padding(
             padding: const EdgeInsets.all(16.0),
             child: SizedBox(
               width: double.infinity,
               height: 50,
               child: ElevatedButton(
-                
-                         onPressed: profileProvider.isLoading
+                onPressed: profileProvider.isLoading
                     ? null
                     : () async {
-                        if (profileProvider.selectedPassportImagePath !=
-                            null) {
+                        if (profileProvider.selectedPassportImagePath != null) {
                           final success =
                               await profileProvider.updateDocumentUrl(
                             context,
                             documentFile:
-                                profileProvider.selectedGCCIdCardImagePath,
+                                profileProvider.selectedPassportImagePath,
                             documentType: 'Passport',
                           );
                           (context);
                           if (success) {
-                              AppAlerts.showCustomSnackBar("Passport updated successfully", isSuccess: true);
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    const BottomNav(),
-                              ),
-                            );
+                            if (widget.from == "register") {
+                              AppAlerts.showCustomSnackBar(
+                                  "Passport updated successfully",
+                                  isSuccess: true);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>  ManageDrivingLicense(from: widget.from,),
+                                ),
+                              );
+                            } else {
+                              Navigator.pop(context);
+                            }
                           }
                         } else {
                           // If no image is selected, just navigate to next screen
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  const BottomNav(),
-                            ),
-                          );
+                          if (widget.from == "register") {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ManageDrivingLicense(from: widget.from,),
+                              ),
+                            );
+                          } else {
+                            Navigator.pop(context);
+                          }
                         }
                       },
                 style: ElevatedButton.styleFrom(

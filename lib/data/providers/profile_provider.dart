@@ -90,7 +90,6 @@ class ProfileProvider with ChangeNotifier {
       }
 
       final AddProfileModel data = AddProfileModel(
-      
         strDateOfBirth: dobController.text,
         strEmail: emailController.text,
         strEmiratesIdUrl: globalUser?.strEmiratesIdUrl ?? "",
@@ -123,7 +122,8 @@ class ProfileProvider with ChangeNotifier {
           await ApiService(context).apiCall(
         endpoint: ApiConstants.updateCustomerUrl,
         method: 'POST',
-        data: data,      );
+        data: data,
+      );
 
       if (apiResponse.success && apiResponse.data != null) {
         log('api response: ${apiResponse.data}');
@@ -159,6 +159,7 @@ class ProfileProvider with ChangeNotifier {
 
       // Upload document image
       if (documentFile != null) {
+        log("Reach");
         documentUrl = await _uploadFile(context, documentFile);
         if (documentUrl == null) {
           throw Exception("Failed to upload $documentType");
@@ -175,7 +176,7 @@ class ProfileProvider with ChangeNotifier {
 
       // Create a payload with just the ID and the specific document URL field
       final Map<String, dynamic> data = {
-        '_id': currentUserId ?? "",
+        '_id': currentUserId,
       };
       log("updateDocumentRequest Body : $data");
 

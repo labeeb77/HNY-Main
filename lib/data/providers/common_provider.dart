@@ -5,7 +5,6 @@ import 'package:hny_main/core/constants/api_constants.dart';
 import 'package:hny_main/core/utils/upload/file_upload_stub.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 class CommonProvider with ChangeNotifier {
   final Dio dio = Dio();
 
@@ -20,10 +19,12 @@ class CommonProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<String?> commonFileUploadApi(BuildContext context, String imagePath) async {
+  Future<String?> commonFileUploadApi(
+      BuildContext context, String imagePath) async {
     changeLoadingState();
     try {
-      const String uploadUrl = "${ApiConstants.baseUrl2}${ApiConstants.fileUploadApiUrl}";
+      const String uploadUrl =
+          "${ApiConstants.baseUrl2}${ApiConstants.fileUploadApiUrl}";
 
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('access_token');
@@ -32,12 +33,13 @@ class CommonProvider with ChangeNotifier {
         debugPrint("Error: Missing access token.");
         return null;
       }
-      
 
+      log(imagePath.toString(), name: "Image Path");
       final formData = createFormData(imagePath);
 
       final options = Options(headers: {'Authorization': token});
-      final response = await dio.post(uploadUrl, data: formData, options: options);
+      final response =
+          await dio.post(uploadUrl, data: formData, options: options);
 
       log("file upload response: ${response.data}");
 

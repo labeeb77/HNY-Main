@@ -36,7 +36,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     log("global user: ${globalUser?.strLicenceUrl}");
     log("global user: ${globalUser?.strPassportUrl}");
 
-    
     return Scaffold(
       backgroundColor: const Color(0xFFF2F3F6),
       appBar: const CommonAppBar(
@@ -82,7 +81,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   as ImageProvider,
                         ),
                         const Gap(16),
-                        (globalUser?.strFullName == null || globalUser!.strFullName!.isEmpty)
+                        (globalUser?.strFullName == null ||
+                                globalUser!.strFullName!.isEmpty)
                             ? const Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -112,7 +112,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   AppText(
                                     globalUser?.strEmail ?? "No email",
                                     style: const TextStyle(
-                                        fontSize: 12, color: AppColors.textSecondary),
+                                        fontSize: 12,
+                                        color: AppColors.textSecondary),
                                   ),
                                 ],
                               ),
@@ -134,10 +135,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Stack(
                     children: [
                       DocumentElement(
+                        argument: "profile",
+                        routeName: AppRoutes.manageLicense,
                         docIcon: Icons.document_scanner_outlined,
                         docName: "License",
                         imageUrl: globalUser?.strLicenceUrl,
-                        isEnabled: globalUser?.strLicenceUrl?.isNotEmpty ?? false,
+                        isEnabled:
+                            globalUser?.strLicenceUrl?.isNotEmpty ?? false,
                       ),
                       if (globalUser?.strLicenceUrl?.isEmpty ?? true)
                         Positioned(
@@ -161,10 +165,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Stack(
                     children: [
                       DocumentElement(
+                        argument: "profile",
+                        routeName: AppRoutes.managePassport,
                         docIcon: Icons.file_copy_outlined,
                         docName: "Passport",
                         imageUrl: globalUser?.strPassportUrl,
-                        isEnabled: globalUser?.strPassportUrl?.isNotEmpty ?? false,
+                        isEnabled:
+                            globalUser?.strPassportUrl?.isNotEmpty ?? false,
                       ),
                       if (globalUser?.strPassportUrl?.isEmpty ?? true)
                         Positioned(
@@ -188,6 +195,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Stack(
                     children: [
                       DocumentElement(
+                        argument: "profile",
+                        routeName: AppRoutes.manageGccId,
                         docIcon: Icons.folder_copy_outlined,
                         docName: "GCC ID",
                         imageUrl: globalUser?.strGccIdUrl,

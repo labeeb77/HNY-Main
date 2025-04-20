@@ -42,11 +42,23 @@ class AppRoutes {
       case bottomNav:
         return MaterialPageRoute(builder: (_) => const BottomNav());
       case manageGccId:
-        return MaterialPageRoute(builder: (_) => const ManageGCCId());
+        final data = settings.arguments;
+        return MaterialPageRoute(
+            builder: (_) => ManageGCCId(
+                  from: data,
+                ));
       case manageLicense:
-        return MaterialPageRoute(builder: (_) => const ManageDrivingLicense());
-        case managePassport:
-        return MaterialPageRoute(builder: (_) => const ManagePassport());
+        final data = settings.arguments;
+        return MaterialPageRoute(
+            builder: (_) => ManageDrivingLicense(
+                  from: data,
+                ));
+      case managePassport:
+        final data = settings.arguments;
+        return MaterialPageRoute(
+            builder: (_) => ManagePassport(
+                  from: data,
+                ));
       case myCartPage:
         return MaterialPageRoute(builder: (_) => const MyCartScreen());
       default:

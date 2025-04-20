@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hny_main/core/global/profile.dart';
+import 'package:hny_main/core/routes/app_routes.dart';
 import 'package:hny_main/core/utils/app_alerts.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
 import 'package:hny_main/core/utils/app_image_picker.dart';
@@ -16,8 +17,8 @@ import 'package:hny_main/view/widgets/liecense_image_widget.dart';
 import 'package:provider/provider.dart';
 
 class ManageDrivingLicense extends StatefulWidget {
-  const ManageDrivingLicense({super.key});
-
+  const ManageDrivingLicense({super.key, required this.from});
+  final from;
   @override
   State<ManageDrivingLicense> createState() => _ManageDrivingLicenseState();
 }
@@ -31,20 +32,19 @@ class _ManageDrivingLicenseState extends State<ManageDrivingLicense> {
           backgroundColor: Colors.white,
           appBar: AppBar(
             actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const BottomNav(),
+              Visibility(
+                visible: widget.from == "register",
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, AppRoutes.bottomNav,
+                        arguments: widget.from);
+                  },
+                  child: const Text(
+                    'Skip',
+                    style: TextStyle(
+                      color: AppColors.primary,
+                      fontSize: 16,
                     ),
-                  );
-                },
-                child: const Text(
-                  'Skip',
-                  style: TextStyle(
-                    color: AppColors.primary,
-                    fontSize: 16,
                   ),
                 ),
               ),
@@ -160,7 +160,7 @@ class _ManageDrivingLicenseState extends State<ManageDrivingLicense> {
                               await profileProvider.updateDocumentUrl(
                             context,
                             documentFile:
-                                profileProvider.selectedGCCIdCardImagePath,
+                                profileProvider.selectedDrivingLicenseImagePath,
                             documentType: 'License',
                           );
                           (context);
@@ -168,21 +168,27 @@ class _ManageDrivingLicenseState extends State<ManageDrivingLicense> {
                             AppAlerts.showCustomSnackBar(
                                 "Driving License updated successfully",
                                 isSuccess: true);
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const ManagePassport(),
-                              ),
-                            );
+                            if (widget.from == "register") {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => BottomNav()),
+                              );
+                            } else {
+                              Navigator.pop(context);
+                            }
                           }
                         } else {
                           // If no image is selected, just navigate to next screen
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const ManagePassport(),
-                            ),
-                          );
+                          if (widget.from == "register") {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => BottomNav()),
+                            );
+                          } else {
+                            Navigator.pop(context);
+                          }
                         }
                       },
                 style: ElevatedButton.styleFrom(
