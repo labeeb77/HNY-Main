@@ -104,15 +104,15 @@ class _ManageProfileScreenState extends State<ManageProfileScreen> {
     if (!_validateForm()) {
       return;
     }
-    
+
     setState(() {
       _isLoading = true;
     });
-    
+
     try {
       final profileProvider = Provider.of<ProfileProvider>(context, listen: false);
       final result = await profileProvider.addProfileData(context);
-      
+
       if (result == true) {
         // Only navigate on success
         Navigator.of(context).pushNamed(AppRoutes.manageGccId);
@@ -144,10 +144,10 @@ class _ManageProfileScreenState extends State<ManageProfileScreen> {
       }
     }
   }
-  
+
   bool _validateForm() {
     final profileProvider = Provider.of<ProfileProvider>(context, listen: false);
-    
+
     // Basic validation
     if (profileProvider.firstNameController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -155,35 +155,35 @@ class _ManageProfileScreenState extends State<ManageProfileScreen> {
       );
       return false;
     }
-    
+
     if (profileProvider.lastNameController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Last name is required')),
       );
       return false;
     }
-    
+
     if (profileProvider.selectedGender == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please select your gender')),
       );
       return false;
     }
-    
+
     if (profileProvider.dobController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Date of birth is required')),
       );
       return false;
     }
-    
+
     if (profileProvider.selectedNationality == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please select your nationality')),
       );
       return false;
     }
-    
+
     return true;
   }
 
@@ -262,9 +262,11 @@ class _ManageProfileScreenState extends State<ManageProfileScreen> {
                     Consumer<ProfileProvider>(
                       builder: (context, value, child) => Row(
                         children: [
-                          _buildRadioButton('Male', value),
+                          _buildRadioButton(
+                              'Male', value, widget.screenName == "Edit"),
                           const SizedBox(width: 32),
-                          _buildRadioButton('Female', value),
+                          _buildRadioButton(
+                              'Female', value, widget.screenName == "Edit"),
                         ],
                       ),
                     ),
@@ -281,7 +283,7 @@ class _ManageProfileScreenState extends State<ManageProfileScreen> {
                         if (date != null) {
                           // Store the ISO format internally if needed
                           final isoFormat = formatDateToISO(date);
-                          // Display the user-friendly format 
+                          // Display the user-friendly format
                           profileProvider.dobController.text = formatDateForDisplay(date);
                         }
                       },
@@ -360,8 +362,8 @@ class _ManageProfileScreenState extends State<ManageProfileScreen> {
                       height: 60,
                       child: ElevatedButton(
                         onPressed: _isLoading ? null : () {
-                          Navigator.of(context).pop();
-                        },
+                                Navigator.of(context).pop();
+                              },
                         style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.greenShadeBackground,
                             shape: ContinuousRectangleBorder(
@@ -436,7 +438,7 @@ class _ManageProfileScreenState extends State<ManageProfileScreen> {
             onTap: ontap,
             controller: controller,
             keyboardType: keyboardType,
-            readOnly: readOnly || (ontap != null), 
+            readOnly: readOnly || (ontap != null),
             enabled: !readOnly,
             decoration: InputDecoration(
               fillColor: readOnly
@@ -463,7 +465,7 @@ class _ManageProfileScreenState extends State<ManageProfileScreen> {
     );
   }
 
-  Widget _buildRadioButton(String value, ProfileProvider provider) {
+  Widget _buildRadioButton(String value, ProfileProvider provider, isEdit) {
     return Row(
       children: [
         Padding(
@@ -472,7 +474,9 @@ class _ManageProfileScreenState extends State<ManageProfileScreen> {
             value: value,
             groupValue: provider.selectedGender,
             onChanged: (String? newValue) {
-              provider.setGender(newValue!);
+              if (!isEdit) {
+                provider.setGender(newValue!);
+              }
             },
           ),
         ),

@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
@@ -110,7 +111,7 @@ Widget buildCarCard(
 }) {
   log('isFromFave :$isFromFav');
   return GestureDetector(
-    onTap: datesSelected 
+    onTap: datesSelected
         ? () {
             Navigator.push(
                 context,
@@ -172,12 +173,26 @@ Widget buildCarCard(
                       child: image.isNotEmpty
                           ? Image(
                               image: CachedNetworkImageProvider(image),
+                              errorBuilder: (context, error, stackTrace) =>kIsWeb
+                              ? Image.network(
+                                  "assets/images/placeholder_image.webp",
+                                  fit: BoxFit.cover,
+                                )
+                              : Image.asset(
+                                  'assets/images/placeholder_image.webp',
+                                  fit: BoxFit.cover,
+                                ) ,
                               fit: BoxFit.cover,
                             )
-                          : Image.asset(
-                              'assets/images/placeholder_image.webp',
-                              fit: BoxFit.cover,
-                            ),
+                          : kIsWeb
+                              ? Image.network(
+                                  "assets/images/placeholder_image.webp",
+                                  fit: BoxFit.cover,
+                                )
+                              : Image.asset(
+                                  'assets/images/placeholder_image.webp',
+                                  fit: BoxFit.cover,
+                                ),
                     ),
                     Container(
                       width: double.infinity,
@@ -286,7 +301,7 @@ Widget buildCarCard(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                     " $name $model",
+                      " $name $model",
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
