@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: ProviderSetup.getProviders(),
       child: MaterialApp(
-        title: 'HNY-Customer',
+        title: 'HNY CUSTOMER',
         theme: AppTheme.lightTheme,
         darkTheme: AppTheme.darkTheme,
         themeMode: ThemeMode.light,

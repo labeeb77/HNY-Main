@@ -2,8 +2,9 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:hny_main/core/constants/api_constants.dart';
+import 'package:hny_main/core/utils/upload/file_upload_stub.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:hny_main/core/utils/upload/file_upload_stub.dart'; 
+
 
 class CommonProvider with ChangeNotifier {
   final Dio dio = Dio();
@@ -31,13 +32,14 @@ class CommonProvider with ChangeNotifier {
         debugPrint("Error: Missing access token.");
         return null;
       }
+      
 
-      final formData = await createFormData(imagePath); // platform-safe
+      final formData = createFormData(imagePath);
 
       final options = Options(headers: {'Authorization': token});
       final response = await dio.post(uploadUrl, data: formData, options: options);
 
-      log(response.data.toString(), name: "Upload Response");
+      log("file upload response: ${response.data}");
 
       if (response.statusCode == 200) {
         final data = response.data;

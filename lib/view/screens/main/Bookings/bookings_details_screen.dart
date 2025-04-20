@@ -132,7 +132,7 @@ class MyBookingDetailsScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        _getCarModel(carItem.strModel),
+                      carItem.strModel.toString(),
                         style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w700,
@@ -619,18 +619,7 @@ class MyBookingDetailsScreen extends StatelessWidget {
     return DateFormat('MMMM d, yyyy').format(date);
   }
 
-  String _getCarModel(StrModel? model) {
-    if (model == null) return 'Unknown Model';
-
-    switch (model) {
-      case StrModel.JAGUAR_100:
-        return 'Jaguar 100';
-      case StrModel.V8:
-        return 'V8';
-      default:
-        return 'Unknown Model';
-    }
-  }
+  
 
   String _getLocationText(String? location) {
     return location ?? 'Location not specified';
