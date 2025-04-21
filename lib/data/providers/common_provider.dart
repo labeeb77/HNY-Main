@@ -35,7 +35,7 @@ class CommonProvider with ChangeNotifier {
       }
 
       log(imagePath.toString(), name: "Image Path");
-      final formData = createFormData(imagePath);
+      final formData = await createFormData(imagePath);
 
       final options = Options(headers: {'Authorization': token});
       final response =
