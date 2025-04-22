@@ -29,5 +29,21 @@ class MyCartService {
     }
   }
 
- 
+  Future<ApiResponseModel> deleteCartItem(String cartItemId) async {
+    return await _apiService.apiCall(
+      endpoint: ApiConstants.deleteCart,
+      method: 'POST',
+      data: {'_id': cartItemId},
+      sendToken: true,
+    );
+  }
+
+  Future<ApiResponseModel> updateCartItem(Map<String, dynamic> data) async {
+    return await _apiService.apiCall(
+      endpoint: ApiConstants.updateCart,
+      method: 'POST',
+      data: data,
+      sendToken: true,
+    );
+  }
 }

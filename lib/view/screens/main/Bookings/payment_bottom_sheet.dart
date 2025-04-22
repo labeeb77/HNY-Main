@@ -65,8 +65,7 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
                 _formatDate( widget.carItem.strStartDate)
                
               ),
-              _buildDateSection('Start Date & Time',
-                  _formatDate(widget.carItem.strStartDate)),
+             
               const Gap(12),
               _buildDateSection(
                 'End Date & Time',

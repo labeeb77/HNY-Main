@@ -5,6 +5,7 @@ import 'package:gap/gap.dart';
 import 'package:hny_main/core/routes/app_routes.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
 import 'package:hny_main/core/utils/app_text_styles.dart';
+import 'package:hny_main/data/models/cart/cartlist_model.dart';
 import 'package:hny_main/data/models/response/car_list_model.dart';
 import 'package:hny_main/data/providers/booking_provider.dart';
 import 'package:hny_main/view/screens/sub/car_details_screen/widgets/booking_price.dart';
@@ -15,13 +16,18 @@ import 'package:hny_main/view/widgets/back_button.dart';
 import 'package:provider/provider.dart';
 
 class CheckoutPaymentScreen extends StatefulWidget {
+  final bool? isCartPage;
   final int totalAmount;
-  final ArrCar carDetails;
+  final ArrCar? carDetails;
+  final ArrList? cartdata;
+  
 
   const CheckoutPaymentScreen({
     super.key,
     required this.totalAmount,
-    required this.carDetails,
+     this.carDetails,
+     this.isCartPage = false,
+     this.cartdata,
   });
 
   @override
@@ -421,7 +427,7 @@ class _CheckoutPaymentScreenState extends State<CheckoutPaymentScreen> {
 
   Future<void> _handlePayNow(
       BuildContext context, BookingProvider provider) async {
-  
+  log("pay now >>>>>....");
 
     // Determine the payment amount
     double paymentAmount;
@@ -447,6 +453,8 @@ class _CheckoutPaymentScreenState extends State<CheckoutPaymentScreen> {
     }
 
     // Create booking
+      log("pay now 2 >>>>>....");
+
     final success = await provider.createBooking(context,
         email: _emailController.text,
         phoneNumber: _phoneController.text,
@@ -454,12 +462,12 @@ class _CheckoutPaymentScreenState extends State<CheckoutPaymentScreen> {
         payedAmount: paymentAmount,
         totalVehicleAmount: provider
             .calculateTotalAmount(
-                widget.carDetails.intPricePerDay?.toInt() ?? 0,
-                widget.carDetails.intPricePerWeek?.toInt() ?? 0,
-                widget.carDetails.intPricePerMonth?.toInt() ?? 0)
+               widget.isCartPage == true ? widget.cartdata?.itemDetails?.intPricePerDay?.toInt() ?? 0 : widget.carDetails?.intPricePerDay?.toInt() ?? 0,
+                widget.isCartPage == true ? widget.cartdata?.itemDetails?.intPricePerWeek?.toInt() ?? 0 : widget.carDetails?.intPricePerWeek?.toInt() ?? 0,
+                widget.isCartPage == true ? widget.cartdata?.itemDetails?.intPricePerMonth?.toInt() ?? 0 : widget.carDetails?.intPricePerMonth?.toInt() ?? 0)
             .toDouble(),
         totalGadgetsAmount: provider.totalGadgetPrice,
-        carDetails: widget.carDetails);
+        carDetails: widget.isCartPage == true ? widget.cartdata?.itemDetails as ArrCar : widget.carDetails ?? ArrCar());
 
     if (success) {
       await _showSuccessDialog(context);
