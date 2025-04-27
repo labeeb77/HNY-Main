@@ -33,65 +33,71 @@ class _CartScreenState extends State<CartScreen> {
           appBar: const CommonAppBar(
             title: 'My Cart',
           ),
-          body: SingleChildScrollView(
+          body: SafeArea(
             child: Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildVehicleCard(
-                        widget.arrCar.strModel ?? 'Ford Escape',
-                        bookingProvider.calculateTotalAmount(
-                            widget.arrCar.intPricePerDay?.toInt() ?? 0,
-                            widget.arrCar.intPricePerWeek?.toInt() ?? 0,
-                            widget.arrCar.intPricePerMonth?.toInt() ?? 0),
-                        widget.arrCar.strImgUrl ??
-                            'https://cdn.pixabay.com/photo/2012/05/29/00/43/car-49278_640.jpg',
-                        bookingProvider.formattedStartDate,
-                        bookingProvider.formattedEndDate,
-                        bookingProvider.pickupAddress,
-                        bookingProvider.dropoffAddress,
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildVehicleCard(
+                            widget.arrCar.strModel ?? 'Ford Escape',
+                            bookingProvider.calculateTotalAmount(
+                                widget.arrCar.intPricePerDay?.toInt() ?? 0,
+                                widget.arrCar.intPricePerWeek?.toInt() ?? 0,
+                                widget.arrCar.intPricePerMonth?.toInt() ?? 0),
+                           
+                                'assets/images/placeholder_image.webp',
+                            bookingProvider.formattedStartDate,
+                            bookingProvider.formattedEndDate,
+                            bookingProvider.pickupAddress,
+                            bookingProvider.dropoffAddress,
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Display selected gadgets
+                          ...selectedGadgets.map((gadget) {
+                            return Column(
+                              children: [
+                                buildAddonCard(
+                                  bookingProvider,
+                                  gadget.name,
+                                  gadget.price.toInt(),
+                                  gadget.image,
+                                  quantity: gadget.quantity,
+                                  onQuantityChanged: (newQuantity) {
+                                    bookingProvider.updateGadgetQuantity(
+                                        gadget.id, newQuantity);
+                                  },
+                                ),
+                                const SizedBox(height: 16),
+                              ],
+                            );
+                          }).toList(),
+
+                          buildPromoCodeSection(),
+                          const SizedBox(height: 24),
+                          buildSuperCoinsSection(context),
+                          const SizedBox(height: 24),
+                        ],
                       ),
-                      const SizedBox(height: 16),
-
-                      // Display selected gadgets
-                      ...selectedGadgets.map((gadget) {
-                        return Column(
-                          children: [
-                            buildAddonCard(
-                              bookingProvider,
-                              gadget.name,
-                              gadget.price.toInt(),
-                              gadget.image,
-                              quantity: gadget.quantity,
-                              onQuantityChanged: (newQuantity) {
-                                bookingProvider.updateGadgetQuantity(
-                                    gadget.id, newQuantity);
-                              },
-                            ),
-                            const SizedBox(height: 16),
-                          ],
-                        );
-                      }).toList(),
-
-                      buildPromoCodeSection(),
-                      const SizedBox(height: 24),
-                      buildSuperCoinsSection(context),
-                      const SizedBox(height: 24),
-                    ],
+                    ),
                   ),
                 ),
+                // Bottom section
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 32),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                   decoration: const BoxDecoration(
-                      color: AppColors.white,
-                      border: Border(
-                          top: BorderSide(
-                              color: AppColors.containerBorderColor))),
+                    color: AppColors.white,
+                    border: Border(
+                      top: BorderSide(color: AppColors.containerBorderColor),
+                    ),
+                  ),
                   child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       buildOrderSummary(
                         arrCar: widget.arrCar,
@@ -99,34 +105,35 @@ class _CartScreenState extends State<CartScreen> {
                         vehiclePrice: bookingProvider.calculateTotalAmount(
                             widget.arrCar.intPricePerDay?.toInt() ?? 0,
                             widget.arrCar.intPricePerWeek?.toInt() ?? 0,
-                            widget.arrCar.intPricePerMonth?.toInt() ??
-                                0), // Replace with actual vehicle price
+                            widget.arrCar.intPricePerMonth?.toInt() ?? 0),
                         gadgetPrice: bookingProvider.totalGadgetPrice.toInt(),
                       ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 16),
                       SizedBox(
-                          height: 40,
-                          width: double.infinity,
-                          child: PrimaryElevateButton(
-                            ontap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => CheckoutPaymentScreen(
-                                      totalAmount: bookingProvider.calculateFinalTotalAmount(
-                                        vehicleDailyRate: widget.arrCar.intPricePerDay?.toInt() ?? 0,
-                                        vehicleWeeklyRate: widget.arrCar.intPricePerWeek?.toInt() ?? 0,
-                                        vehicleMonthlyRate: widget.arrCar.intPricePerMonth?.toInt() ?? 0,
-                                      ).toInt(),
-                                      carDetails: widget.arrCar,
-                                    ),
-                                  ));
-                            },
-                            buttonName: "Proceed to checkout",
-                          )),
+                        height: 40,
+                        width: double.infinity,
+                        child: PrimaryElevateButton(
+                          ontap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => CheckoutPaymentScreen(
+                                  totalAmount: bookingProvider.calculateFinalTotalAmount(
+                                    vehicleDailyRate: widget.arrCar.intPricePerDay?.toInt() ?? 0,
+                                    vehicleWeeklyRate: widget.arrCar.intPricePerWeek?.toInt() ?? 0,
+                                    vehicleMonthlyRate: widget.arrCar.intPricePerMonth?.toInt() ?? 0,
+                                  ).toInt(),
+                                  carDetails: widget.arrCar,
+                                ),
+                              ),
+                            );
+                          },
+                          buttonName: "Proceed to checkout",
+                        ),
+                      ),
                     ],
                   ),
-                )
+                ),
               ],
             ),
           ),

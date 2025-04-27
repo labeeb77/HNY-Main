@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
@@ -43,6 +45,7 @@ class _CarHeaderState extends State<CarHeader> {
                       },
                     ),
                     itemBuilder: (context, index, realIndex) {
+                      log("images : ${widget.arrCar.arrImgUrl![index]} count : ${widget.arrCar.arrImgUrl!.length} index : $index");
                       return Image.network(
                         widget.arrCar.arrImgUrl![index],
                         fit: BoxFit.cover,

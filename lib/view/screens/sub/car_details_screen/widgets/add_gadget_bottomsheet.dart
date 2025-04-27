@@ -50,12 +50,61 @@ class _GadgetBottomSheetState extends State<GadgetBottomSheet> {
                 ),
               ),
               if (bookingProvider.isLoading)
-                const Center(child: CircularProgressIndicator())
+                const Expanded(
+                  child: Center(child: CircularProgressIndicator())
+                )
               else if (bookingProvider.error != null)
-                Center(child: Text(bookingProvider.error!))
+                const Expanded(
+                  child: Center(child: Text('Error loading gadgets'))
+                )
+              else if (bookingProvider.gadgets.isEmpty)
+                Expanded(
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 80,
+                          height: 80,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[100],
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.shopping_bag_outlined,
+                            size: 40,
+                            color: Colors.grey,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        const Text(
+                          'No Add-ons Available',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.grey,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        const Padding(
+                          padding: EdgeInsets.all(10),
+                          child: Text(
+                            'There are currently no add-ons available for this vehicle.',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
               else
                 Expanded(
                   child: ListView.builder(
+                    padding: const EdgeInsets.only(bottom: 80),
                     itemCount: bookingProvider.gadgets.length,
                     itemBuilder: (context, index) {
                       final gadget = bookingProvider.gadgets[index];
@@ -106,7 +155,6 @@ class _GadgetBottomSheetState extends State<GadgetBottomSheet> {
                               ),
                             ),
                             if (gadget.quantity > 0)
-                              // Show add/remove buttons when quantity > 0
                               Row(
                                 children: [
                                   IconButton(
@@ -131,8 +179,6 @@ class _GadgetBottomSheetState extends State<GadgetBottomSheet> {
                                 ],
                               )
                             else
-                              // Show add button when quantity is 0
-
                               SecondaryButton(
                                 text: 'Add',
                                 onTap: () {
@@ -148,20 +194,33 @@ class _GadgetBottomSheetState extends State<GadgetBottomSheet> {
                     },
                   ),
                 ),
-              BookingPrice(
-                title: "${bookingProvider.totalGadgetItems} Add-On",
-                value: bookingProvider.totalGadgetPrice.toStringAsFixed(1),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => CartScreen(
-                              arrCar: widget.arrCar,
-                            )),
-                  );
-                },
-                buttonName: "Continue",
-              )
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 10,
+                      offset: const Offset(0, -5),
+                    ),
+                  ],
+                ),
+                child: BookingPrice(
+                  title: "${bookingProvider.totalGadgetItems} Add-On",
+                  value: bookingProvider.totalGadgetPrice.toStringAsFixed(1),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => CartScreen(
+                                arrCar: widget.arrCar,
+                              )),
+                    );
+                  },
+                  buttonName: "Continue",
+                ),
+              ),
             ],
           ),
         );

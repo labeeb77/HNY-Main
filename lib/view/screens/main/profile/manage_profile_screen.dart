@@ -281,7 +281,7 @@ class _ManageProfileScreenState extends State<ManageProfileScreen> {
       if (result == true) {
         // Only navigate on success
         if (from == "Add") {
-          Navigator.of(context).pushNamed(AppRoutes.manageGccId);
+          Navigator.of(context).pushNamed(AppRoutes.manageGccId,arguments: from);
         } else {
           Navigator.pop(context);
         }

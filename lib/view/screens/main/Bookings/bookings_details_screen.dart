@@ -406,6 +406,7 @@ class MyBookingDetailsScreen extends StatelessWidget {
       (item) => item.type == ArrBookingItemType.CAR,
       orElse: () => ArrBookingItem(),
     );
+    final bookingId = bookingData.id;
     final startDate = carItem?.strStartDate;
     final endDate = carItem?.strEndDate;
 
@@ -434,11 +435,9 @@ class MyBookingDetailsScreen extends StatelessWidget {
               final bookingProvider = Provider.of<BookingProvider>(context, listen: false);
 
               // Get the car item ID
-              final carItemId = carItem?.id ??
-                  '0'; // Make sure you have access to the carItem
-
+       
               // Call the download invoice method
-              await bookingProvider.downloadInvoice(context, carItemId);
+              await bookingProvider.downloadInvoice(context, bookingId ?? "0");
             },
             icon: const Icon(Icons.download,
                 color: Color.fromARGB(255, 59, 96, 60)),
