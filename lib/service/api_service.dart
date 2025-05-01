@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:hny_main/core/constants/api_constants.dart';
 import 'package:hny_main/core/global/profile.dart';
 import 'package:hny_main/core/helpers/route_arguments.dart';
+import 'package:hny_main/core/routes/app_routes.dart';
 import 'package:hny_main/core/utils/dio_exception_handler.dart';
 import 'package:hny_main/data/models/response/api_response_model.dart';
 import 'package:hny_main/view/widgets/no_internet_view.dart';
@@ -14,8 +15,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
   Dio dio = Dio();
+  final BuildContext context;
 
-  ApiService(BuildContext context) {
+  ApiService(this.context) {
     dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) async {
         var connectivityResult = await (Connectivity().checkConnectivity());
@@ -46,8 +48,21 @@ class ApiService {
     ));
   }
 
-  void _handleError(Object error) {
+  void _handleError(Object error) async {
     if (error is DioException) {
+      if (error.response?.statusCode == 401) {
+        // Clear user data and redirect to login
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.clear();
+        currentUserId = "";
+        globalUser = null;
+        if (context.mounted) {
+          Navigator.of(context).pushNamedAndRemoveUntil(
+            AppRoutes.loginPage,
+            (route) => false,
+          );
+        }
+      }
       DioExceptionHandler.handleDioError(error);
       if (kDebugMode) {
         debugPrint('DioException occurred: ${error.message}');
@@ -80,6 +95,21 @@ class ApiService {
 
       return _handleResponse(response);
     } on DioException catch (e) {
+      if (e.response?.statusCode == 401) {
+        // Clear user data and redirect to login
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.clear();
+        currentUserId = "";
+        globalUser = null;
+        
+        if (context.mounted) {
+          Navigator.of(context).pushNamedAndRemoveUntil(
+            AppRoutes.loginPage,
+            (route) => false,
+          );
+        }
+      }
+      
       if (onCustomErrorHandling != null) {
         onCustomErrorHandling(e);
       } else {

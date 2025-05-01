@@ -78,8 +78,8 @@ class _CartScreenState extends State<CartScreen> {
                             );
                           }).toList(),
 
-                          buildPromoCodeSection(),
-                          const SizedBox(height: 24),
+                          // buildPromoCodeSection(),
+                          // const SizedBox(height: 24),
                           buildSuperCoinsSection(context),
                           const SizedBox(height: 24),
                         ],
@@ -173,6 +173,10 @@ class _CartScreenState extends State<CartScreen> {
                 width: 100,
                 height: 134,
                 child: Image.network(
+                  errorBuilder: (context, error, stackTrace) => Image.network(
+                    'assets/images/placeholder_image.webp',
+                    fit: BoxFit.cover,
+                  ),
                   imagePath,
                   fit: BoxFit.cover,
                 ),

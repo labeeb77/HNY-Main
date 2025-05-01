@@ -36,22 +36,26 @@ class ArrTypeList {
     String? id;
     String? strType;
     String? strName;
+    String? strImgUrl;    
 
     ArrTypeList({
         this.id,
         this.strType,
         this.strName,
+        this.strImgUrl,
     });
 
     factory ArrTypeList.fromJson(Map<String, dynamic> json) => ArrTypeList(
         id: json["_id"],
         strType: json["strType"],
         strName: json["strName"],
+        strImgUrl: json["strImgUrl"],
     );
 
     Map<String, dynamic> toJson() => {
         "_id": id,
         "strType": strType,
         "strName": strName,
+        "strImgUrl": strImgUrl,
     };
 }

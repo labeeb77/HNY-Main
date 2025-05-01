@@ -44,16 +44,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
   }
 
-  String getImageUrlForType(String type) {
-    switch (type.toLowerCase()) {
-      case 'sedan':
-        return 'https://cdn.pixabay.com/photo/2012/05/29/00/43/car-49278_640.jpg';
-      case 'suv':
-        return 'https://static.vecteezy.com/system/resources/thumbnails/031/196/761/small_2x/beautiful-modern-concept-supercar-light-sky-blue-with-maroon-details-photo.jpg';
-      default:
-        return 'https://cdn.pixabay.com/photo/2012/05/29/00/43/car-49278_640.jpg';
-    }
-  }
+ 
 
   @override
   Widget build(BuildContext context) {
@@ -222,7 +213,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 DateTime initialDate =
                                     value.selecteStratdDate != null
                                         ? value.selecteStratdDate!
-                                            .add(Duration(days: 1))
+                                            .add(const Duration(days: 1))
                                         : DateTime.now();
 
                                 final DateTime? picked = await showDatePicker(
@@ -252,14 +243,32 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       )),
 
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16),
-                    child: Text(
-                      'Ride options',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
+                   Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Ride options',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            Provider.of<HomeController>(context, listen: false)
+                                .getCarDataList(context: context);
+                          },
+                          child: const Text(
+                            'Clear',
+                            style: TextStyle(
+                              color: AppColors.primary,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -301,7 +310,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     );
                                   },
                                   child: buildRideOption(
-                                    getImageUrlForType(carType.strType ?? ''),
+                                    carType.strImgUrl ?? 'assets/images/placeholder_image.webp',
                                     carType.strName ?? 'Unknown',
                                   ),
                                 ),

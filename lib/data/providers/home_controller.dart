@@ -167,6 +167,7 @@ class HomeController extends ChangeNotifier {
     try {
       final data = await _homeService.fetchCarTypeList();
       if (data != null && data.arrList != null) {
+        log(data.arrList?.first.strImgUrl ?? 'assets/images/placeholder_image.webp',name: 'car type list');
         _updateCarTypeList(data.arrList!);
         selectedCarTypeIds.clear();
         notifyListeners();

@@ -280,8 +280,8 @@ class _ManageProfileScreenState extends State<ManageProfileScreen> {
 
       if (result == true) {
         // Only navigate on success
-        if (from == "Add") {
-          Navigator.of(context).pushNamed(AppRoutes.manageGccId,arguments: from);
+        if (from == "register") {
+          Navigator.of(context).pushNamed(AppRoutes.manageGccId,arguments:from);
         } else {
           Navigator.pop(context);
         }
@@ -531,7 +531,7 @@ class _ManageProfileScreenState extends State<ManageProfileScreen> {
                   child: ElevatedButton(
                     onPressed: _isLoading
                         ? null
-                        : () => _handleSave(context, widget.screenName),
+                        : () => _handleSave(context, widget.screenName == "Add" ? "register" : "profile"),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,
                       shape: RoundedRectangleBorder(
@@ -581,7 +581,7 @@ class _ManageProfileScreenState extends State<ManageProfileScreen> {
                       child: ElevatedButton(
                         onPressed: _isLoading
                             ? null
-                            : () => _handleSave(context, widget.screenName),
+                            : () => _handleSave(context, widget.screenName == "Add" ? "register" : "profile"),
                         style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primary,
                             shape: ContinuousRectangleBorder(

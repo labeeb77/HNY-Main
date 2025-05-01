@@ -596,6 +596,10 @@ Widget buildRideOption(String image, String label) {
                 size: 16,
               )
             : CachedNetworkImage(
+              errorWidget: (context, url, error) => Icon(
+                  Icons.image_outlined,
+                  color: Colors.grey.withOpacity(0.5),
+                ),
                 placeholder: (context, url) => Icon(
                   Icons.image_outlined,
                   color: Colors.grey.withOpacity(0.5),

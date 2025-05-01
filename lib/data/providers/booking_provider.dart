@@ -610,6 +610,7 @@ Future<void> downloadInvoice(BuildContext context, String bookingId) async {
         "intCheckoutAmount": 0,
         "intBalanceAmt": 0,
         "arrCarItems": arrCarItems,
+        "isVatIncluded": true,
       };
 
       // Call booking API
