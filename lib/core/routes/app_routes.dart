@@ -3,6 +3,7 @@ import 'package:hny_main/view/common/bottom_nav.dart';
 import 'package:hny_main/view/screens/main/auth/sign_in_screen.dart';
 import 'package:hny_main/view/screens/main/cart/my_cart_screen.dart';
 import 'package:hny_main/view/screens/main/home/home_screen.dart';
+import 'package:hny_main/view/screens/main/onboarding/onboarding_screen.dart';
 import 'package:hny_main/view/screens/main/profile/manage_license.dart';
 import 'package:hny_main/view/screens/main/profile/manage_gcc_id.dart';
 import 'package:hny_main/view/screens/main/profile/manage_passport.dart';
@@ -19,6 +20,7 @@ class AppRoutes {
   static const String manageGccId = '/manageGccId';
   static const String manageLicense = '/manageLicense';
   static const String managePassport = '/managePassport';
+  static const String onboardingScreen = '/onboardingScreen';
 
   static const String myCartPage = '/myCartPage';
 
@@ -59,8 +61,10 @@ class AppRoutes {
             builder: (_) => ManagePassport(
                   from: data,
                 ));
-      case myCartPage:
-        return MaterialPageRoute(builder: (_) => const MyCartScreen());
+        case myCartPage:
+          return MaterialPageRoute(builder: (_) => const MyCartScreen());
+      case onboardingScreen:
+        return MaterialPageRoute(builder: (_) => const OnboardingScreen());
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(

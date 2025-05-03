@@ -38,7 +38,7 @@ class _SplashScreenState extends State<SplashScreen> {
     if (accessToken != null) {
       Navigator.pushReplacementNamed(context, AppRoutes.bottomNav);
     } else {
-      Navigator.pushReplacementNamed(context, AppRoutes.loginPage);
+      Navigator.pushReplacementNamed(context, AppRoutes.onboardingScreen);
     }
   }
 
