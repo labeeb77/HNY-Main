@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hny_main/core/constants/api_constants.dart';
 import 'package:hny_main/data/models/booking/add_on_list_model.dart';
 import 'package:hny_main/data/models/booking/get_booking_list_model.dart';
+import 'package:hny_main/data/models/booking/reservation_item_details_model.dart';
 import 'package:hny_main/data/models/response/api_response_model.dart';
 import 'package:hny_main/service/api_service.dart';
 
@@ -65,7 +66,7 @@ class BookingService {
         sendToken: true);
   }
 
-   Future<ApiResponseModel> updateCart(Map<String, dynamic> cartData) async {
+  Future<ApiResponseModel> updateCart(Map<String, dynamic> cartData) async {
     return await _apiService.apiCall(
         endpoint: ApiConstants.updateCart,
         method: 'POST',
@@ -73,20 +74,13 @@ class BookingService {
         sendToken: true);
   }
 
-
-
-  Future<ApiResponseModel> createInvoice(
-      String bookingId) async {
+  Future<ApiResponseModel> createInvoice(String bookingId) async {
     return await _apiService.apiCall(
         endpoint: ApiConstants.saveInvoice,
         method: 'POST',
-       data: {
-        "_id": bookingId
-      },
+        data: {"_id": bookingId},
         sendToken: true);
   }
-
-  
 
   Future<ApiResponseModel> createBooking(
       Map<String, dynamic> bookingData) async {
@@ -103,6 +97,14 @@ class BookingService {
         endpoint: ApiConstants.updateBookingLocation,
         method: 'POST',
         data: bookingData,
+        sendToken: true);
+  }
+
+  Future<ApiResponseModel> getReservationItemDetails(reservationData) async {
+    return await _apiService.apiCall(
+        endpoint: ApiConstants.getReservationItemDetails,
+        method: 'POST',
+        data: reservationData,
         sendToken: true);
   }
 }

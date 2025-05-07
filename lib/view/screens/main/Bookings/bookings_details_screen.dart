@@ -3,36 +3,41 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hny_main/data/models/booking/get_booking_list_model.dart';
+import 'package:hny_main/data/models/booking/reservation_item_details_model.dart';
 import 'package:hny_main/data/providers/booking_provider.dart';
+import 'package:hny_main/view/screens/main/Bookings/payment_bottom_sheet.dart';
 import 'package:hny_main/view/screens/main/Bookings/widgets/complain_sheet.dart';
 import 'package:hny_main/view/screens/main/Bookings/widgets/complete_payment_sheet.dart';
-import 'package:hny_main/view/screens/main/bookings/payment_bottom_sheet.dart';
 
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-class MyBookingDetailsScreen extends StatelessWidget {
-  final BookingArrList bookingData;
-
+class MyBookingDetailsScreen extends StatefulWidget {
+  final String bookingId;
   const MyBookingDetailsScreen({
     super.key,
-    required this.bookingData,
+    required this.bookingId,
   });
 
   @override
-  Widget build(BuildContext context) {
-    // Get car and add-ons from the booking items
-    final carItems = bookingData.arrBookingItems
-            ?.where((item) => item.type == ArrBookingItemType.CAR)
-            .toList() ??
-        [];
-    final addOnItems = bookingData.arrBookingItems
-            ?.where((item) => item.type == ArrBookingItemType.ADD_ON)
-            .toList() ??
-        [];
+  State<MyBookingDetailsScreen> createState() => _MyBookingDetailsScreenState();
+}
 
+class _MyBookingDetailsScreenState extends State<MyBookingDetailsScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Call getReservationDetails in initState
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final bookingProvider = Provider.of<BookingProvider>(context, listen: false);
+      bookingProvider.getReservationDetails(context, bookingId: widget.bookingId);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50], // AppColors.background equivalent
+      backgroundColor: Colors.grey[50],
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -50,45 +55,115 @@ class MyBookingDetailsScreen extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
+      body: Consumer<BookingProvider>(
+        builder: (context, bookingProvider, child) {
+          if (bookingProvider.isLoading) {
+            return const Center(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Car Items
-                  ...carItems
-                      .map((item) => _buildVehicleCard(item, context))
-                      .toList(),
+                  CircularProgressIndicator(),
+                  SizedBox(height: 16),
+                  Text('Loading booking details...'),
+                ],
+              ),
+            );
+          }
 
-                  // Add-on Items
-                  ...addOnItems.map((item) => _buildAddonCard(item)).toList(),
-                ],
+          if (bookingProvider.error != null) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.error_outline, size: 48, color: Colors.red),
+                    const SizedBox(height: 16),
+                    Text(
+                      bookingProvider.error!,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(color: Colors.red),
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () {
+                        bookingProvider.getReservationDetails(
+                          context,
+                          bookingId: widget.bookingId,
+                        );
+                      },
+                      child: const Text('Retry'),
+                    ),
+                  ],
+                ),
               ),
+            );
+          }
+
+          final bookingData = bookingProvider.reservationDetails;
+          if (bookingData == null) {
+            return const Center(
+              child: Text('No booking details found'),
+            );
+          }
+
+          // Get car and add-ons from the booking items
+          final carItems = bookingData.arrBookingItems
+                  ?.where((item) => item.type == "CAR")
+                  .toList() ??
+              [];
+          final addOnItems = bookingData.arrBookingItems
+                  ?.where((item) => item.type == "ADD_ON")
+                  .toList() ??
+              [];
+
+          if (carItems.isEmpty) {
+            return const Center(
+              child: Text('No car items found in this booking'),
+            );
+          }
+
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Car Items
+                      ...carItems
+                          .map((item) => _buildVehicleCard(item, context))
+                          .toList(),
+
+                      // Add-on Items
+                      ...addOnItems.map((item) => _buildAddonCard(item)).toList(),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Container(
+                  padding: const EdgeInsets.all(24),
+                  color: Colors.white,
+                  width: double.infinity,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildBookingSummary(bookingData, context),
+                      const SizedBox(height: 24),
+                      _buildSupportSection(context),
+                    ],
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 16),
-            Container(
-              padding: const EdgeInsets.all(24),
-              color: Colors.white,
-              width: double.infinity,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildBookingSummary(bookingData, context),
-                  const SizedBox(height: 24),
-                  _buildSupportSection(context),
-                ],
-              ),
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
 
-  Widget _buildVehicleCard(ArrBookingItem carItem, context) {
+  Widget _buildVehicleCard(ArrBookingItemTwo carItem, context) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
@@ -149,7 +224,7 @@ class MyBookingDetailsScreen extends StatelessWidget {
                               color: Colors.white,
                             ),
                             onPressed: () {
-                              showPaymentSheet(context, carItem);
+                              showPaymentSheet(context, carItem,widget.bookingId);
                             },
                             constraints: const BoxConstraints(),
                             padding: EdgeInsets.zero,
@@ -185,18 +260,16 @@ class MyBookingDetailsScreen extends StatelessWidget {
   }
 
   // Example of how to show this bottom sheet
-  void showPaymentSheet(BuildContext context, carItem) {
+  void showPaymentSheet(BuildContext context, carItem,bookingId) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => PaymentBottomSheet(
-        carItem: carItem,
-      ),
+      builder: (context) => PaymentBottomSheet(carItem: carItem, bookingId: bookingId)
     );
   }
 
-  Widget _buildAddonCard(ArrBookingItem addOnItem) {
+  Widget _buildAddonCard(ArrBookingItemTwo addOnItem) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
@@ -242,7 +315,7 @@ class MyBookingDetailsScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        addOnItem.strName ?? addOnItem.strAddOnName ?? 'Add-on',
+                        "addOnItem.strName" ?? "addOnItem.strAddOnName" ?? 'Add-on',
                         style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
@@ -282,7 +355,7 @@ class MyBookingDetailsScreen extends StatelessWidget {
                         style: TextStyle(fontSize: 14, color: Colors.grey),
                       ),
                       Text(
-                        '${addOnItem.intQty ?? 1}',
+                        '${"addOnItem.intQty" ?? 1}',
                         style: const TextStyle(
                             fontSize: 14, fontWeight: FontWeight.bold),
                       ),
@@ -394,7 +467,7 @@ class MyBookingDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildBookingSummary(BookingArrList bookingData, context) {
+  Widget _buildBookingSummary(ReservationItemDetailsModel bookingData, context) {
     // Calculate total amount
     double totalAmount = 0;
     bookingData.arrBookingItems?.forEach((item) {
@@ -404,7 +477,7 @@ class MyBookingDetailsScreen extends StatelessWidget {
     // Get start and end dates from the first car item (if exists)
     final carItem = bookingData.arrBookingItems?.firstWhere(
       (item) => item.type == ArrBookingItemType.CAR,
-      orElse: () => ArrBookingItem(),
+      orElse: () => ArrBookingItemTwo(),
     );
     final bookingId = bookingData.id;
     final startDate = carItem?.strStartDate;

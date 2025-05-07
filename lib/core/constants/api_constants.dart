@@ -28,5 +28,11 @@ class ApiConstants {
   static const String createReservation = 'create_reservation';
   static const String updateBookingLocation = 'update_booking_item';
     static const String saveInvoice = 'create_inovice';
+        static const String updateBookingItem = 'update_booking_item';
+        static const String dateChange = 'early_return';
+        static const String getReservationItemDetails = 'get_reservation_detail';
+
+
+    
 
 }

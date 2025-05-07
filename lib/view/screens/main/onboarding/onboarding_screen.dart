@@ -33,7 +33,7 @@ class OnboardingPage extends StatelessWidget {
           ),
         ),
         // Overlay content
-        Positioned.fill(
+        Positioned.fill( 
           child: Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(

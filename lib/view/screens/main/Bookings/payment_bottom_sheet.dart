@@ -4,15 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
 import 'package:hny_main/data/models/booking/get_booking_list_model.dart';
+import 'package:hny_main/data/models/booking/reservation_item_details_model.dart';
 import 'package:hny_main/data/providers/booking_provider.dart';
 import 'package:hny_main/view/screens/sub/location_picker_screen.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class PaymentBottomSheet extends StatefulWidget {
-  final ArrBookingItem carItem;
-  const PaymentBottomSheet({Key? key, required this.carItem}) : super(key: key);
-
+  final ArrBookingItemTwo carItem;
+  String bookingId;
+  PaymentBottomSheet({Key? key, required this.carItem, required this.bookingId})
+      : super(key: key);
 
   @override
   State<PaymentBottomSheet> createState() => _PaymentBottomSheetState();
@@ -22,23 +24,249 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
   int _selectedPaymentOption = 0;
   String? pickUpLocation;
   String? dropOffLocation;
+  DateTime? selectedStartDate;
+  TimeOfDay? selectedStartTime;
+  DateTime? selectedEndDate;
+  TimeOfDay? selectedEndTime;
+  List<double>? pickupCoordinates;
+  List<double>? dropoffCoordinates;
 
   final List<String> _paymentOptions = [
-    'Pay Minimum Amount',
     'Pay Full Amount',
     'Pay Custom Amount',
   ];
+
   @override
   void initState() {
     pickUpLocation = widget.carItem.strPickupLocationAddress;
     dropOffLocation = widget.carItem.strDeliveryLocationAddress;
-
+    selectedStartDate = widget.carItem.strStartDate;
+    selectedEndDate = widget.carItem.strEndDate;
     super.initState();
   }
 
   String _formatDate(DateTime? date) {
     if (date == null) return 'N/A';
     return DateFormat('MMMM d, yyyy').format(date);
+  }
+
+  String _formatTime(TimeOfDay? time) {
+    if (time == null) return 'N/A';
+    return time.format(context);
+  }
+
+  Future<void> _selectStartDate() async {
+    final DateTime now = DateTime.now();
+    final DateTime initialDate = selectedStartDate ?? now;
+
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: initialDate,
+      firstDate: selectedStartDate ?? now,
+      lastDate: selectedEndDate ?? now.add(const Duration(days: 365)),
+    );
+
+    if (picked != null) {
+      setState(() {
+        selectedStartDate = picked;
+      });
+      await _selectStartTime();
+    }
+  }
+
+  Future<void> _selectEndDate() async {
+    if (selectedStartDate == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select start date first')),
+      );
+      return;
+    }
+
+    final DateTime initialDate =
+        selectedEndDate ?? selectedStartDate!.add(const Duration(days: 1));
+
+    // Validate dates before showing picker
+    DateTime firstDate = selectedStartDate ?? DateTime.now();
+    DateTime lastDate =
+        selectedEndDate ?? DateTime.now().add(const Duration(days: 365));
+
+    // Ensure lastDate is not before firstDate
+    if (lastDate.isBefore(firstDate)) {
+      lastDate = firstDate.add(const Duration(days: 365));
+    }
+
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: initialDate,
+      firstDate: firstDate,
+      lastDate: lastDate,
+    );
+
+    if (picked != null) {
+      setState(() {
+        selectedEndDate = picked;
+      });
+      await _selectEndTime();
+    }
+  }
+
+  Future<void> _selectStartTime() async {
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: selectedStartTime ?? TimeOfDay.now(),
+    );
+
+    if (picked != null) {
+      setState(() {
+        selectedStartTime = picked;
+      });
+    }
+  }
+
+  Future<void> _selectEndTime() async {
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: selectedEndTime ?? TimeOfDay.now(),
+    );
+
+    if (picked != null) {
+      setState(() {
+        selectedEndTime = picked;
+      });
+    }
+  }
+
+  Future<void> _handleDateUpdate() async {
+    if (selectedStartDate == null ||
+        selectedEndDate == null ||
+        selectedStartTime == null ||
+        selectedEndTime == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select both date and time')),
+      );
+      return;
+    }
+
+    // Create DateTime objects with both date and time
+    final DateTime startDateTime = DateTime(
+      selectedStartDate!.year,
+      selectedStartDate!.month,
+      selectedStartDate!.day,
+      selectedStartTime!.hour,
+      selectedStartTime!.minute,
+    );
+
+    final DateTime endDateTime = DateTime(
+      selectedEndDate!.year,
+      selectedEndDate!.month,
+      selectedEndDate!.day,
+      selectedEndTime!.hour,
+      selectedEndTime!.minute,
+    );
+
+    // Validate dates
+    if (startDateTime.isAfter(endDateTime)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Start date must be before end date')),
+      );
+      return;
+    }
+
+    // Format dates for API
+    final String formattedStartDate =
+        DateFormat("yyyy-MM-dd HH:mm:ss").format(startDateTime);
+    final String formattedEndDate =
+        DateFormat("yyyy-MM-dd HH:mm:ss").format(endDateTime);
+
+    try {
+      final success = await Provider.of<BookingProvider>(context, listen: false)
+          .updateBookingDates(
+        context,
+        bookingId: widget.carItem.id!,
+        startDate: formattedStartDate,
+        endDate: formattedEndDate,
+      );
+
+      if (success) {
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error updating dates: $e')),
+      );
+    }
+  }
+
+  Future<void> _handleLocationUpdate() async {
+    try {
+      if (pickUpLocation != widget.carItem.strPickupLocationAddress &&
+          pickupCoordinates != null) {
+        final success =
+            await Provider.of<BookingProvider>(context, listen: false)
+                .updateBooking(
+          context,
+          bookingId: widget.bookingId,
+          coordinates: pickupCoordinates!,
+          locationAddress: pickUpLocation ?? '',
+        );
+        if (success) {
+          Provider.of<BookingProvider>(context, listen: false)
+              .getReservationDetails(context, bookingId: widget.bookingId);
+        }
+      }
+
+      if (dropOffLocation != widget.carItem.strDeliveryLocationAddress &&
+          dropoffCoordinates != null) {
+        final success =
+            await Provider.of<BookingProvider>(context, listen: false)
+                .updateBooking(
+          context,
+          bookingId: widget.bookingId,
+          coordinates: dropoffCoordinates!,
+          locationAddress: dropOffLocation ?? '',
+        );
+        if (success) {
+          Provider.of<BookingProvider>(context, listen: false)
+              .getReservationDetails(context, bookingId: widget.bookingId);
+        }
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error updating locations: $e')),
+      );
+    }
+  }
+
+  Future<void> _handleSubmit(String bookingID) async {
+    // Handle date updates
+    if (selectedStartDate != null &&
+        selectedEndDate != null &&
+        selectedStartTime != null &&
+        selectedEndTime != null) {
+      await _handleDateUpdate();
+    }
+
+    // Handle location updates
+    if (pickUpLocation != widget.carItem.strPickupLocationAddress ||
+        dropOffLocation != widget.carItem.strDeliveryLocationAddress) {
+      await _handleLocationUpdate();
+    }
+
+    // If no changes were made
+    if (selectedStartDate == null &&
+        selectedEndDate == null &&
+        selectedStartTime == null &&
+        selectedEndTime == null &&
+        pickUpLocation == widget.carItem.strPickupLocationAddress &&
+        dropOffLocation == widget.carItem.strDeliveryLocationAddress) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No changes to submit')),
+      );
+      return;
+    }
+
+
+    Navigator.pop(context);
   }
 
   @override
@@ -61,17 +289,16 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               _buildDateSection(
-                'Start Date & Time',
-                _formatDate( widget.carItem.strStartDate)
-               
-              ),
-             
+                  'Start Date & Time',
+                  _formatDate(selectedStartDate) +
+                      ' ' +
+                      _formatTime(selectedStartTime)),
               const Gap(12),
               _buildDateSection(
-                'End Date & Time',
-                _formatDate( widget.carItem.strEndDate)
-           
-              ),
+                  'End Date & Time',
+                  _formatDate(selectedEndDate) +
+                      ' ' +
+                      _formatTime(selectedEndTime)),
             ],
           ),
           const SizedBox(height: 24),
@@ -88,32 +315,8 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
               log(updatedData.toString());
               setState(() {
                 pickUpLocation = updatedData['address'];
+                pickupCoordinates = [updatedData['lat'], updatedData['long']];
               });
-              final success =
-                  await Provider.of<BookingProvider>(context, listen: false)
-                      .updateBooking(
-                context,
-                bookingId: widget.carItem.id!,
-                coordinates: [updatedData['lat'], updatedData['long']],
-                isPickup: true,
-                locationAddress: updatedData['address'],
-              );
-              if (success) {
-            
-                 
-                final provider =
-                    Provider.of<BookingProvider>(context, listen: false);
-                Provider.of<BookingProvider>(context, listen: false)
-                    .getBookingList(context, filters: {
-                  "filters": {
-                    "strStatus": provider.activeTab == "Upcoming"
-                        ? ["SETTLED", "COMPLETED"]
-                        : (provider.activeTab == "In rental"
-                            ? ["ISSUE", "IN RENTAL"]
-                            : [])
-                  }
-                });
-              }
             },
             child: _buildLocationSection(
               'Pickup location',
@@ -134,33 +337,8 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
               log(updatedData.toString());
               setState(() {
                 dropOffLocation = updatedData['address'];
-                ;
+                dropoffCoordinates = [updatedData['lat'], updatedData['long']];
               });
-              final success =
-                  await Provider.of<BookingProvider>(context, listen: false)
-                      .updateBooking(
-                context,
-                bookingId: widget.carItem.id!,
-                coordinates: [updatedData['lat'], updatedData['long']],
-                isPickup: false,
-                locationAddress: updatedData['address'],
-              );
-              if (success) {
-             
-                final provider =
-                    Provider.of<BookingProvider>(context, listen: false);
-
-                Provider.of<BookingProvider>(context, listen: false)
-                    .getBookingList(context, filters: {
-                  "filters": {
-                    "strStatus": provider.activeTab == "Upcoming"
-                        ? ["SETTLED", "COMPLETED"]
-                        : (provider.activeTab == "In rental"
-                            ? ["ISSUE", "IN RENTAL"]
-                            : [])
-                  }
-                });
-              }
             },
             child: _buildLocationSection(
               'Drop location',
@@ -170,92 +348,51 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
           const SizedBox(height: 24),
 
           // Additional Amount
-          Text(
-            'Additional amount AED 30',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.orange[400],
-            ),
-          ),
-          const SizedBox(height: 24),
-
-          // Payment Options
-          ...List.generate(
-            _paymentOptions.length,
-            (index) => _buildPaymentOption(index),
-          ),
-          const SizedBox(height: 16),
 
           // Amount Display
-          Container(
-            height: 45,
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            decoration: BoxDecoration(
-              color: Colors.grey[200],
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: const Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  '30 AED',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 24),
 
           // Action Buttons
           Row(
             children: [
-              const Expanded(child: SizedBox()),
               Expanded(
-                  child: Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.grey[200],
-                        foregroundColor: AppColors.primary,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(24),
-                        ),
-                      ),
-                      child: const Text(
-                        'Cancel',
-                        style: TextStyle(fontSize: 16),
-                      ),
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.grey[200],
+                    foregroundColor: AppColors.primary,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(24),
                     ),
                   ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(24),
-                        ),
-                      ),
-                      child: const Text(
-                        'Pay now',
-                        style: TextStyle(fontSize: 16),
-                      ),
+                  child: const Text(
+                    'Cancel',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () {
+                    _handleSubmit(widget.bookingId);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(24),
                     ),
                   ),
-                ],
-              ))
+                  child: const Text(
+                    'Submit Changes',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ),
+              ),
             ],
           ),
         ],
@@ -265,33 +402,46 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
 
   Widget _buildDateSection(String title, String date) {
     return Expanded(
-      child: Container(
-        decoration: BoxDecoration(border: Border.all(color: Colors.grey[300]!)),
-        padding: const EdgeInsets.all(12),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(width: 8),
-            const SizedBox(height: 4),
-            Column(
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[600],
-                  ),
+      child: InkWell(
+        onTap: title.contains('Start') ? _selectStartDate : _selectEndDate,
+        child: Container(
+          decoration:
+              BoxDecoration(border: Border.all(color: Colors.grey[300]!)),
+          padding: const EdgeInsets.all(12),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(width: 8),
+              const SizedBox(height: 4),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      date,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
                 ),
-                Text(
-                  date,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-          ],
+              ),
+              Icon(
+                Icons.calendar_today,
+                size: 20,
+                color: Colors.grey[600],
+              ),
+            ],
+          ),
         ),
       ),
     );

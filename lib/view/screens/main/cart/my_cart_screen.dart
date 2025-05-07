@@ -34,8 +34,8 @@ class _MyCartScreenState extends State<MyCartScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: const CommonAppBar(
-        title: 'My Cart',
-      ),
+            title: 'My Cart',
+          ),
       body: Consumer<MyCartProvider>(
         builder: (context, cartProvider, child) {
           if (cartProvider.isLoading) {
@@ -80,75 +80,75 @@ class _MyCartScreenState extends State<MyCartScreen> {
   }
 
   Widget _buildCartItem(BuildContext context, ArrList item, MyCartProvider cartProvider) {
-    log("image url: ${item.itemDetails?.strImgUrl}");
-    
-    final int totalDays = _calculateTotalDays(item.strStartDate, item.strEndDate);
-    final int totalAmount = _calculateTotalAmount(
-      item.itemDetails?.intPricePerDay?.toInt() ?? 0,
-      item.itemDetails?.intPricePerWeek?.toInt() ?? 0,
-      item.itemDetails?.intPricePerMonth?.toInt() ?? 0,
-      totalDays
-    );
-    
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 10,
-            offset: const Offset(0, 1),
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Item Image
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: Image.network(
-                    item.itemDetails?.strImgUrl ?? 'assets/images/placeholder_image.webp',
-                    width: 100,
-                    height: 100,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) =>
-                        Container(
-                          width: 100,
-                          height: 100,
-                          color: Colors.grey[300],
-                          child: const Icon(Icons.error),
-                        ),
-                  ),
+  log("image url: ${item.itemDetails?.strImgUrl}");
+  
+  final int totalDays = _calculateTotalDays(item.strStartDate, item.strEndDate);
+  final int totalAmount = _calculateTotalAmount(
+    item.itemDetails?.intPricePerDay?.toInt() ?? 0,
+    item.itemDetails?.intPricePerWeek?.toInt() ?? 0,
+    item.itemDetails?.intPricePerMonth?.toInt() ?? 0,
+    totalDays
+  );
+  
+  return Container(
+    margin: const EdgeInsets.only(bottom: 16),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(12),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.grey.withOpacity(0.1),
+          spreadRadius: 1,
+          blurRadius: 10,
+          offset: const Offset(0, 1),
+        ),
+      ],
+    ),
+    child: Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Item Image
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.network(
+                  item.itemDetails?.strImgUrl ?? 'assets/images/placeholder_image.webp',
+                  width: 100,
+                  height: 100,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) =>
+                      Container(
+                        width: 100,
+                        height: 100,
+                        color: Colors.grey[300],
+                        child: const Icon(Icons.error),
+                      ),
                 ),
+              ),
                 const SizedBox(width: 12),
-                // Item Details
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        item.itemDetails?.strModel ?? 'Unknown Model',
-                        style: const TextStyle(
+              // Item Details
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      item.itemDetails?.strModel ?? 'Unknown Model',
+                      style: const TextStyle(
                           fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        fontWeight: FontWeight.bold,
+                      ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 8),
-                      Row(
-                        children: [
-                          Text(
-                            'AED ${item.itemDetails?.intPricePerDay?.toString() ?? '0.0'}/day',
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Text(
+                          'AED ${item.itemDetails?.intPricePerDay?.toString() ?? '0.0'}/day',
                             style: const TextStyle(
                               fontSize: 14,
                               color: Colors.grey,
@@ -170,80 +170,80 @@ class _MyCartScreenState extends State<MyCartScreen> {
                       _buildInfoRow(
                         icon: Icons.calendar_today,
                         text: _formatDateRange(item.strStartDate, item.strEndDate),
-                      ),
+                        ),
                       const SizedBox(height: 4),
                       _buildInfoRow(
                         icon: Icons.location_on,
                         text: _formatLocation(item.strPickupLocationAddress, item.strDeliveryLocationAddress),
-                      ),
-                    ],
-                  ),
-                ),
-                // Edit/Delete Buttons
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.edit, color: Colors.orange),
-                      onPressed: () {
-                        _showEditDialog(context, item, cartProvider);
-                      },
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(),
-                    ),
-                    const SizedBox(height: 8),
-                    IconButton(
-                      icon: const Icon(Icons.delete, color: Colors.red),
-                      onPressed: () => _showDeleteConfirmation(context, item, cartProvider),
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(),
                     ),
                   ],
                 ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            // Continue Button
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: item.isAvailable == true
-                    ? () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => CheckoutPaymentScreen(
-                              totalAmount: totalAmount,
-                              cartdata: item,
-                              isCartPage: true,
-                            ),
+              ),
+              // Edit/Delete Buttons
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.edit, color: Colors.orange),
+                    onPressed: () {
+                        _showEditDialog(context, item, cartProvider);
+                    },
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                  ),
+                  const SizedBox(height: 8),
+                  IconButton(
+                    icon: const Icon(Icons.delete, color: Colors.red),
+                    onPressed: () => _showDeleteConfirmation(context, item, cartProvider),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          // Continue Button
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: item.isAvailable == true
+                  ? () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CheckoutPaymentScreen(
+                            totalAmount: totalAmount,
+                            cartdata: item,
+                            isCartPage: true,
                           ),
-                        );
-                      }
-                    : null,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: item.isAvailable == true ? AppColors.primary : Colors.grey,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  elevation: 0,
+                        ),
+                      );
+                    }
+                  : null,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: item.isAvailable == true ? AppColors.primary : Colors.grey,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Text(
-                  'Continue',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
+                elevation: 0,
+              ),
+              child: const Text(
+                'Continue',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildInfoRow({required IconData icon, required String text}) {
     return Row(
@@ -650,35 +650,35 @@ class _MyCartScreenState extends State<MyCartScreen> {
   }
 
   int _calculateTotalDays(DateTime? startDate, DateTime? endDate) {
-    if (startDate == null || endDate == null) {
-      return 1; // Default to 1 day if dates not selected
-    }
-    
-    // Create DateTime objects with times set to 0 since we only have dates
-    final start = DateTime(startDate.year, startDate.month, startDate.day);
-    final end = DateTime(endDate.year, endDate.month, endDate.day);
-    
-    // Calculate difference in days (add 1 to include both start and end date)
-    final difference = end.difference(start);
-    int days = difference.inDays + 1;
-    
-    // Ensure minimum of 1 day
-    return days > 0 ? days : 1;
+  if (startDate == null || endDate == null) {
+    return 1; // Default to 1 day if dates not selected
   }
+  
+  // Create DateTime objects with times set to 0 since we only have dates
+  final start = DateTime(startDate.year, startDate.month, startDate.day);
+  final end = DateTime(endDate.year, endDate.month, endDate.day);
+  
+  // Calculate difference in days (add 1 to include both start and end date)
+  final difference = end.difference(start);
+  int days = difference.inDays + 1;
+  
+  // Ensure minimum of 1 day
+  return days > 0 ? days : 1;
+}
 
-  int _calculateTotalAmount(int pricePerDay, int pricePerWeek, int pricePerMonth, int totalDays) {
-    if (totalDays >= 30) {
-      // Monthly pricing
-      final monthlyPrice = (pricePerMonth / 30) * totalDays;
-      return monthlyPrice.toInt();
-    } else if (totalDays >= 8) {
-      // Weekly pricing
-      final weeklyPrice = (pricePerWeek / 7) * totalDays;
-      return weeklyPrice.toInt();
-    } else {
-      // Daily pricing
-      final dailyPrice = pricePerDay * totalDays;
-      return dailyPrice.toInt();
-    }
+int _calculateTotalAmount(int pricePerDay, int pricePerWeek, int pricePerMonth, int totalDays) {
+  if (totalDays >= 30) {
+    // Monthly pricing
+    final monthlyPrice = (pricePerMonth / 30) * totalDays;
+    return monthlyPrice.toInt();
+  } else if (totalDays >= 8) {
+    // Weekly pricing
+    final weeklyPrice = (pricePerWeek / 7) * totalDays;
+    return weeklyPrice.toInt();
+  } else {
+    // Daily pricing
+    final dailyPrice = pricePerDay * totalDays;
+    return dailyPrice.toInt();
   }
+}
 }
