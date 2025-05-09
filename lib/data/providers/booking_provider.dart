@@ -629,11 +629,13 @@ class BookingProvider extends ChangeNotifier {
     }
   }
 
-  Future<bool> updateBooking(
+  Future<bool> updateBookingLocation(
     BuildContext context, {
     required String locationAddress,
     required List<double> coordinates,
     required String bookingId,
+    required String carId,
+    required bool isPickup,
   }) async {
     _setLoading(true);
     _setError(null);
@@ -646,27 +648,32 @@ class BookingProvider extends ChangeNotifier {
       }
 
       // Create request body with the correct format
-      final locationData = {
-        "_id": bookingId,
-        "strDeliveryLocation": {
-          "type": "Point",
-          "coordinates":coordinates
-        },
-        "strDeliveryLocationAddress":
-            locationAddress,
-        "strPickupLocation": {
-          "type": "Point",
-          "coordinates": coordinates 
-        },
-        "strPickupLocationAddress": locationAddress 
-      };
+      final locationData = isPickup
+          ? {
+              "_id": carId,
+              "strPickupLocation": {
+                "type": "Point",
+                "coordinates": coordinates
+              },
+              "strPickupLocationAddress": locationAddress
+            }
+          : {
+              "_id": carId,
+              "strDeliveryLocation": {
+                "type": "Point",
+                "coordinates": coordinates
+              },
+              "strDeliveryLocationAddress": locationAddress,
+            };
 
       final response =
           await _bookingService.updateBookingLocation(locationData);
 
       if (response.success) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Booking updated successfully!')));
+        await getReservationDetails(context, bookingId: bookingId);
+        await getBookingList(context);
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('Booking Location updated successfully!')));
         return true;
       } else {
         _handleError('Failed to update booking');
@@ -781,7 +788,7 @@ class BookingProvider extends ChangeNotifier {
 
     try {
       final ApiResponseModel<dynamic> response =
-          await _bookingService.updateBookingLocation({
+          await _bookingService.updateBookingDate({
         "_id": bookingId,
         "strNewStartDate": startDate,
         "strNewEndDate": endDate,
@@ -790,6 +797,7 @@ class BookingProvider extends ChangeNotifier {
       if (response.success) {
         // Refresh the booking list after successful update
         await getBookingList(context);
+        await getReservationDetails(context, bookingId: bookingId);
         return true;
       } else {
         _setError(response.error ?? 'Failed to update dates');
@@ -803,6 +811,44 @@ class BookingProvider extends ChangeNotifier {
     }
   }
 
+  Future<bool> createPayment(
+    BuildContext context, {
+    required String bookingId,
+    required double amount,
+    required String strBookingId,
+  }) async {
+    _setLoading(true);
+    _setError(null);
+
+    try {
+      final ApiResponseModel<dynamic> response =
+          await _bookingService.createPayment({
+        "intPayedAmount": amount,
+        "strBookingId": strBookingId,
+        "strBooking_Id": bookingId,
+        "strPaymentMode": "TAP_LINK",
+        "strPaymentRecievedBy": "COMPANY_BANK"
+      });
+
+      _setLoading(false);
+      if (response.success) {
+      
+        await getBookingList(context);
+        await getReservationDetails(context, bookingId: bookingId);
+          AppAlerts.showCustomSnackBar("Payment created successfully!",
+            isSuccess: true);
+        return true;
+      } else {
+        _handleError(response.error ?? 'Failed to create payment');
+        return false;
+      }
+    } catch (e) {
+      _setError(e.toString());
+      _setLoading(false);
+      return false;
+    }
+  }
+
   Future<void> getReservationDetails(BuildContext context,
       {required String bookingId}) async {
     _setLoading(true);
@@ -812,11 +858,12 @@ class BookingProvider extends ChangeNotifier {
       final response = await _bookingService.getReservationItemDetails({
         "_id": bookingId,
       });
-      
+
       if (response.success && response.data != null) {
         log('Reservation Details Response: ${response.data}');
         // Create ReservationItemDetailsModel directly from the response data
-        final reservationDetails = ReservationItemDetailsModel.fromJson(response.data);
+        final reservationDetails =
+            ReservationItemDetailsModel.fromJson(response.data);
         updateReservationDetails(reservationDetails);
       } else {
         _handleError(response.error ?? "Failed to fetch booking details");

@@ -467,7 +467,13 @@ class _CheckoutPaymentScreenState extends State<CheckoutPaymentScreen> {
                 widget.isCartPage == true ? widget.cartdata?.itemDetails?.intPricePerMonth?.toInt() ?? 0 : widget.carDetails?.intPricePerMonth?.toInt() ?? 0)
             .toDouble(),
         totalGadgetsAmount: provider.totalGadgetPrice,
-        carDetails: widget.isCartPage == true ? widget.cartdata?.itemDetails as ArrCar : widget.carDetails ?? ArrCar());
+        carDetails: ArrCar(
+          id: widget.isCartPage == true ? widget.cartdata?.itemDetails?.id ?? '' : widget.carDetails?.id ?? '',
+          strCarNumber: widget.isCartPage == true ? widget.cartdata?.itemDetails?.strCarNumber ?? '' : widget.carDetails?.strCarNumber ?? '',
+          strBrand: widget.isCartPage == true ? widget.cartdata?.itemDetails?.strBrand ?? '' : widget.carDetails?.strBrand ?? '',
+          strModel: widget.isCartPage == true ? widget.cartdata?.itemDetails?.strModel ?? '' : widget.carDetails?.strModel ?? '',
+          strDescription: widget.isCartPage == true ? widget.cartdata?.itemDetails?.strDescription ?? '' : widget.carDetails?.strDescription ?? '',
+        ));
 
     if (success) {
       await _showSuccessDialog(context);

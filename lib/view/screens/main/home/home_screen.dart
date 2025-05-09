@@ -44,8 +44,6 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
   }
 
- 
-
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context).size;
@@ -191,14 +189,32 @@ class _HomeScreenState extends State<HomeScreen> {
                                   lastDate: DateTime(2101),
                                 );
                                 if (picked != null) {
-                                  value.setSelectedStartDate(picked);
+                                  // Show time picker after date is selected
+                                  final TimeOfDay? pickedTime =
+                                      await showTimePicker(
+                                    context: context,
+                                    initialTime: TimeOfDay.now(),
+                                  );
 
-                                  // If both dates are selected, automatically apply the filter
-                                  if (value.selecteEnddDate != null) {
-                                    value.getCarDataList(
-                                        context: context,
-                                        endDate: value.selecteEnddDate,
-                                        startDate: value.selecteStratdDate);
+                                  if (pickedTime != null) {
+                                    // Combine date and time
+                                    final DateTime selectedDateTime = DateTime(
+                                      picked.year,
+                                      picked.month,
+                                      picked.day,
+                                      pickedTime.hour,
+                                      pickedTime.minute,
+                                    );
+                                    value
+                                        .setSelectedStartDate(selectedDateTime);
+
+                                    // If both dates are selected, automatically apply the filter
+                                    if (value.selecteEnddDate != null) {
+                                      value.getCarDataList(
+                                          context: context,
+                                          endDate: value.selecteEnddDate,
+                                          startDate: value.selecteStratdDate);
+                                    }
                                   }
                                 }
                               },
@@ -213,7 +229,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 DateTime initialDate =
                                     value.selecteStratdDate != null
                                         ? value.selecteStratdDate!
-                                            .add(const Duration(days: 1))
+                                            .add(Duration(days: 1))
                                         : DateTime.now();
 
                                 final DateTime? picked = await showDatePicker(
@@ -224,15 +240,32 @@ class _HomeScreenState extends State<HomeScreen> {
                                   lastDate: DateTime(2101),
                                 );
                                 if (picked != null) {
-                                  value.setSelectedEndtDate(picked);
+                                  // Show time picker after date is selected
+                                  final TimeOfDay? pickedTime =
+                                      await showTimePicker(
+                                    context: context,
+                                    initialTime: TimeOfDay.now(),
+                                  );
 
-                                  // Only show dialog and apply filter if both dates are selected
-                                  if (value.selecteStratdDate != null) {
-                                    // Apply filter directly without showing dialog
-                                    value.getCarDataList(
-                                        context: context,
-                                        endDate: value.selecteEnddDate,
-                                        startDate: value.selecteStratdDate);
+                                  if (pickedTime != null) {
+                                    // Combine date and time
+                                    final DateTime selectedDateTime = DateTime(
+                                      picked.year,
+                                      picked.month,
+                                      picked.day,
+                                      pickedTime.hour,
+                                      pickedTime.minute,
+                                    );
+                                    value.setSelectedEndtDate(selectedDateTime);
+
+                                    // Only show dialog and apply filter if both dates are selected
+                                    if (value.selecteStratdDate != null) {
+                                      // Apply filter directly without showing dialog
+                                      value.getCarDataList(
+                                          context: context,
+                                          endDate: value.selecteEnddDate,
+                                          startDate: value.selecteStratdDate);
+                                    }
                                   }
                                 }
                               },
@@ -243,32 +276,14 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       )),
 
-                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'Ride options',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            Provider.of<HomeController>(context, listen: false)
-                                .getCarDataList(context: context);
-                          },
-                          child: const Text(
-                            'Clear',
-                            style: TextStyle(
-                              color: AppColors.primary,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ],
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    child: Text(
+                      'Ride options',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -310,7 +325,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                     );
                                   },
                                   child: buildRideOption(
-                                    carType.strImgUrl ?? 'assets/images/placeholder_image.webp',
+                                    carType.strImgUrl ??
+                                        'assets/images/placeholder_image.webp',
                                     carType.strName ?? 'Unknown',
                                   ),
                                 ),
@@ -350,77 +366,88 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
 
                   // Car Cards
-                Padding(
-  padding: const EdgeInsets.symmetric(horizontal: 16),
-  child: OrientationBuilder(
-    builder: (context, orientation) =>
-        Consumer2<HomeController, FavouriteProvider>(
-      builder: (context, homeProvider, favProvider, child) {
-        final data = homeProvider.carListData;
-        log('car items length: ${homeProvider.carListData.length}');
-        
-        // Check if both dates are selected
-        bool areDatesSelected = homeProvider.selecteStratdDate != null && 
-                               homeProvider.selecteEnddDate != null;
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: OrientationBuilder(
+                      builder: (context, orientation) =>
+                          Consumer2<HomeController, FavouriteProvider>(
+                        builder: (context, homeProvider, favProvider, child) {
+                          final data = homeProvider.carListData;
+                          log('car items length: ${homeProvider.carListData.length}');
 
-        return homeProvider.isLoading
-            ? CarCardSkeletonLoader(
-                orientation: orientation,
-                mediaQuery: MediaQuery.of(context),
-                itemCount: 3, // You can adjust this number as needed
-              )
-            : homeProvider.carListData.isEmpty 
-            ? const Padding(
-                padding: EdgeInsets.only(top: 20),
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.directions_car_outlined,
-                        size: 50,
-                        color: Colors.grey,
+                          // Check if both dates are selected
+                          bool areDatesSelected =
+                              homeProvider.selecteStratdDate != null &&
+                                  homeProvider.selecteEnddDate != null;
+
+                          return homeProvider.isLoading
+                              ? CarCardSkeletonLoader(
+                                  orientation: orientation,
+                                  mediaQuery: MediaQuery.of(context),
+                                  itemCount:
+                                      3, // You can adjust this number as needed
+                                )
+                              : homeProvider.carListData.isEmpty
+                                  ? const Padding(
+                                      padding: EdgeInsets.only(top: 20),
+                                      child: Center(
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Icon(
+                                              Icons.directions_car_outlined,
+                                              size: 50,
+                                              color: Colors.grey,
+                                            ),
+                                            SizedBox(height: 10),
+                                            Text('No Available Cars'),
+                                          ],
+                                        ),
+                                      ),
+                                    )
+                                  : ListView.builder(
+                                      physics:
+                                          const NeverScrollableScrollPhysics(),
+                                      shrinkWrap: true,
+                                      itemCount: data.length,
+                                      itemBuilder: (context, index) {
+                                        return buildCarCard(
+                                          data[index],
+                                          data[index].strBrand ?? "Unknown",
+                                          data[index].strModel ?? "Unknown",
+                                          data[index].intRating.toString() ??
+                                              '4.0',
+                                          data[index].strCarCategory?.name ??
+                                              "Unknown",
+                                          'Manual',
+                                          data[index]
+                                              .intFuelCapacity
+                                              .toString(),
+                                          '${data[index].strSeatNo} Seats',
+                                          data[index].intPricePerDay.toString(),
+                                          data[index].strImgUrl ?? '',
+                                          data[index].isFavourite ?? false,
+                                          context,
+                                          orientation,
+                                          mediaQuery,
+                                          datesSelected:
+                                              areDatesSelected, // Pass the date selection status
+                                          onFavoriteTap: () {
+                                            favProvider
+                                                .addToFavourites(
+                                                    data[index].id ?? '0')
+                                                .then((_) {
+                                              homeProvider.getCarDataList(
+                                                  context: context);
+                                            });
+                                          },
+                                        );
+                                      });
+                        },
                       ),
-                      SizedBox(height: 10),
-                      Text('No Available Cars'),
-                    ],
+                    ),
                   ),
-                ),
-              )
-            : ListView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: data.length,
-                itemBuilder: (context, index) {
-                  return buildCarCard(
-                    data[index],
-                    data[index].strBrand ?? "Unknown",
-                    data[index].strModel ?? "Unknown",
-                    data[index].intRating.toString() ?? '4.0',
-                    data[index].strCarCategory?.name ?? "Unknown",
-                    'Manual',
-                    data[index].intFuelCapacity.toString(),
-                    '${data[index].strSeatNo} Seats',
-                    data[index].intPricePerDay.toString(),
-                    data[index].strImgUrl ?? '',
-                    data[index].isFavourite ?? false,
-                    context,
-                    orientation,
-                    mediaQuery,
-                    datesSelected: areDatesSelected, // Pass the date selection status
-                    onFavoriteTap: () {
-                      favProvider
-                          .addToFavourites(data[index].id ?? '0')
-                          .then((_) {
-                        homeProvider.getCarDataList(context: context);
-                      });
-                    },
-                  );
-                });
-      },
-    ),
-  ),
-),
                   const Gap(24)
                 ],
               ),

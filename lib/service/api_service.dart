@@ -95,13 +95,25 @@ class ApiService {
 
       return _handleResponse(response);
     } on DioException catch (e) {
-      if (e.response?.statusCode == 401) {
+      if (e.response?.statusCode == null) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.clear();
+        currentUserId = "";
+        globalUser = null;
+
+        if (context.mounted) {
+          Navigator.of(context).pushNamedAndRemoveUntil(
+            AppRoutes.loginPage,
+            (route) => false,
+          );
+        }
+      } else if (e.response?.statusCode == 401) {
         // Clear user data and redirect to login
         final prefs = await SharedPreferences.getInstance();
         await prefs.clear();
         currentUserId = "";
         globalUser = null;
-        
+
         if (context.mounted) {
           Navigator.of(context).pushNamedAndRemoveUntil(
             AppRoutes.loginPage,
@@ -109,7 +121,7 @@ class ApiService {
           );
         }
       }
-      
+
       if (onCustomErrorHandling != null) {
         onCustomErrorHandling(e);
       } else {
@@ -164,7 +176,7 @@ class ApiService {
             options: sendToken ? options : null,
             onSendProgress: (int sent, int total) {
           debugPrint('sent: $sent, total: $total');
-           debugPrint('data: $data');
+          debugPrint('data: $data');
         });
       case 'POSTFILE':
         options.contentType = 'multipart/form-data';

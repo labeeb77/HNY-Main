@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
+import 'package:hny_main/data/models/cart/cartlist_model.dart';
 import 'package:hny_main/data/models/response/car_list_model.dart';
 import 'package:hny_main/data/providers/booking_provider.dart';
+import 'package:hny_main/data/providers/mycart_provider.dart';
 import 'package:hny_main/view/screens/sub/checkout_screen/checkout_payment_screen.dart';
 import 'package:hny_main/view/screens/sub/checkout_screen/price_calculation.dart';
 import 'package:hny_main/view/screens/sub/checkout_screen/widgets/random_widget.dart';
@@ -34,7 +37,7 @@ class _CartScreenState extends State<CartScreen> {
             title: 'My Cart',
           ),
           body: SafeArea(
-            child: Column(
+            child:widget.arrCar.id != null ? Column(
               children: [
                 Expanded(
                   child: SingleChildScrollView(
@@ -135,7 +138,82 @@ class _CartScreenState extends State<CartScreen> {
                   ),
                 ),
               ],
+            ): Center(
+  child: Container(
+    width: double.infinity,
+    padding: const EdgeInsets.symmetric(horizontal: 24),
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Stack(
+          alignment: Alignment.center,
+          children: [
+            Container(
+              width: 120,
+              height: 120,
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                shape: BoxShape.circle,
+              ),
             ),
+            Icon(
+              Icons.remove_shopping_cart,
+              size: 64,
+              color: Colors.grey[400],
+            ),
+          ],
+        ),
+        const SizedBox(height: 32),
+        Text(
+          'Your cart is empty',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.w600,
+            color: Colors.grey[700],
+          ),
+        ),
+        const SizedBox(height: 16),
+        Container(
+          constraints: const BoxConstraints(maxWidth: 280),
+          child: Text(
+            'Add some items to your cart to proceed with checkout',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.grey[600],
+              height: 1.4,
+            ),
+          ),
+        ),
+        const SizedBox(height: 36),
+        Container(
+          width: 220,
+          height: 50,
+          child: ElevatedButton(
+            onPressed: () {
+              while (Navigator.canPop(context)) {
+                Navigator.pop(context);
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              elevation: 2,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(25),
+              ),
+            ),
+            child: const Text(
+              'Continue Booking',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ),
+      ],
+    ),
+  ),
+)
           ),
         );
       },
@@ -168,20 +246,25 @@ class _CartScreenState extends State<CartScreen> {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: SizedBox(
-                width: 100,
-                height: 134,
-                child: Image.network(
-                  errorBuilder: (context, error, stackTrace) => Image.network(
-                    'assets/images/placeholder_image.webp',
-                    fit: BoxFit.cover,
-                  ),
-                  imagePath,
-                  fit: BoxFit.cover,
-                ),
-              ),
+  borderRadius: BorderRadius.circular(8),
+  child: SizedBox(
+    width: 100,
+    height: 134,
+    child: imagePath != null && imagePath.isNotEmpty
+        ? Image.network(
+            imagePath,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) => Image.asset(
+              'assets/images/placeholder_image.webp',
+              fit: BoxFit.cover,
             ),
+          )
+        : Image.asset(
+            'assets/images/placeholder_image.webp',
+            fit: BoxFit.cover,
+          ),
+  ),
+),
             const SizedBox(width: 8),
             Expanded(
               child: Column(
@@ -189,16 +272,25 @@ class _CartScreenState extends State<CartScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        Text(
-                          name,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
+                        
+                        CircleAvatar(
+                          radius: 14,
+                          backgroundColor: AppColors.red,
+                          child: IconButton(
+                            icon: const Icon(Icons.delete,
+                                size: 18, color: AppColors.white),
+                            onPressed: () {
+                              _showDeleteConfirmation(context, widget.arrCar, Provider.of<MyCartProvider>(context, listen: false));
+                            },
+                            constraints: const BoxConstraints(),
+                            padding: EdgeInsets.zero,
                           ),
                         ),
-                        CircleAvatar(
+                                            Gap(12),
+
+                         CircleAvatar(
                           radius: 14,
                           backgroundColor: AppColors.orange,
                           child: IconButton(
@@ -209,6 +301,20 @@ class _CartScreenState extends State<CartScreen> {
                             padding: EdgeInsets.zero,
                           ),
                         ),
+                      ],
+                    ),
+                    Gap(8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(
+                          name,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                       
                       ],
                     ),
                     Text(
@@ -225,6 +331,34 @@ class _CartScreenState extends State<CartScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _showDeleteConfirmation(BuildContext context, ArrCar item, MyCartProvider cartProvider) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Item'),
+        content: const Text('Are you sure you want to remove this item from your cart?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () async{
+              
+              Navigator.pop(context);
+                cartProvider.deleteCartItem(await findCartItem(item.id!));
+                widget.arrCar.id = null;
+              setState(() {
+                
+              });
+            },
+            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+          ),
+        ],
       ),
     );
   }
@@ -558,5 +692,13 @@ class _CartScreenState extends State<CartScreen> {
         ],
       ),
     );
+  }
+   findCartItem(String carId) async{
+  await  Provider.of<MyCartProvider>(context, listen: false).fetchCartItems();
+    for (var element in Provider.of<MyCartProvider>(context, listen: false).cartItems) {
+      if (element.itemDetails?.id == carId) {
+        return element.id!;
+      }
+    }
   }
 }

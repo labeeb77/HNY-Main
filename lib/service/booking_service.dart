@@ -100,6 +100,24 @@ class BookingService {
         sendToken: true);
   }
 
+    Future<ApiResponseModel> updateBookingDate(
+      Map<String, dynamic> date) async {
+    return await _apiService.apiCall(
+        endpoint: ApiConstants.dateChange,
+        method: 'POST',
+        data: date,
+        sendToken: true);
+  }
+
+      Future<ApiResponseModel> createPayment(
+      Map<String, dynamic> date) async {
+    return await _apiService.apiCall(
+        endpoint: ApiConstants.createPayment,
+        method: 'POST',
+        data: date,
+        sendToken: true);
+  }
+
   Future<ApiResponseModel> getReservationItemDetails(reservationData) async {
     return await _apiService.apiCall(
         endpoint: ApiConstants.getReservationItemDetails,

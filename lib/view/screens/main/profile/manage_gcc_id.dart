@@ -142,6 +142,8 @@ class _ManageGCCIdState extends State<ManageGCCId> {
                             AppAlerts.showCustomSnackBar(
                                 "GCC ID updated successfully",
                                 isSuccess: true);
+                                
+                           if (widget.from == "register") {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -150,6 +152,9 @@ class _ManageGCCIdState extends State<ManageGCCId> {
                                 ),
                               ),
                             );
+                          } else {
+                            Navigator.pop(context);
+                          }
                           }
                         } else {
                           // If no image is selected, just navigate to next screen

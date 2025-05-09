@@ -30,6 +30,7 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
   TimeOfDay? selectedEndTime;
   List<double>? pickupCoordinates;
   List<double>? dropoffCoordinates;
+  bool _isLoading = false;
 
   final List<String> _paymentOptions = [
     'Pay Full Amount',
@@ -179,7 +180,7 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
         DateFormat("yyyy-MM-dd HH:mm:ss").format(endDateTime);
 
     try {
-      final success = await Provider.of<BookingProvider>(context, listen: false)
+       await Provider.of<BookingProvider>(context, listen: false)
           .updateBookingDates(
         context,
         bookingId: widget.carItem.id!,
@@ -187,9 +188,6 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
         endDate: formattedEndDate,
       );
 
-      if (success) {
-        Navigator.pop(context);
-      }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error updating dates: $e')),
@@ -199,36 +197,32 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
 
   Future<void> _handleLocationUpdate() async {
     try {
+      log(widget.bookingId.toString());
       if (pickUpLocation != widget.carItem.strPickupLocationAddress &&
           pickupCoordinates != null) {
-        final success =
+      
             await Provider.of<BookingProvider>(context, listen: false)
-                .updateBooking(
+                .updateBookingLocation(
           context,
+          isPickup: true,
           bookingId: widget.bookingId,
+          carId: widget.carItem.id!,
           coordinates: pickupCoordinates!,
           locationAddress: pickUpLocation ?? '',
         );
-        if (success) {
-          Provider.of<BookingProvider>(context, listen: false)
-              .getReservationDetails(context, bookingId: widget.bookingId);
-        }
       }
-
       if (dropOffLocation != widget.carItem.strDeliveryLocationAddress &&
           dropoffCoordinates != null) {
-        final success =
+       
             await Provider.of<BookingProvider>(context, listen: false)
-                .updateBooking(
+                .updateBookingLocation(
           context,
+          isPickup: false,
           bookingId: widget.bookingId,
+          carId: widget.carItem.id!,
           coordinates: dropoffCoordinates!,
           locationAddress: dropOffLocation ?? '',
         );
-        if (success) {
-          Provider.of<BookingProvider>(context, listen: false)
-              .getReservationDetails(context, bookingId: widget.bookingId);
-        }
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -238,35 +232,64 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
   }
 
   Future<void> _handleSubmit(String bookingID) async {
-    // Handle date updates
-    if (selectedStartDate != null &&
-        selectedEndDate != null &&
-        selectedStartTime != null &&
-        selectedEndTime != null) {
-      await _handleDateUpdate();
+    if (_isLoading) return; // Prevent multiple submissions
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      bool hasChanges = false;
+
+      // Handle date updates
+      if (selectedStartDate != null ||
+          selectedEndDate != null ||
+          selectedStartTime != null ||
+          selectedEndTime != null) {
+        await _handleDateUpdate();
+        hasChanges = true;
+      }
+
+      // Handle location updates
+      if (pickUpLocation != widget.carItem.strPickupLocationAddress ||
+          dropOffLocation != widget.carItem.strDeliveryLocationAddress) {
+        await _handleLocationUpdate();
+        hasChanges = true;
+      }
+
+      // If no changes were made
+      if (!hasChanges) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No changes to submit')),
+        );
+        return;
+      }
+
+      // Refresh data after successful updates
+      await Provider.of<BookingProvider>(context, listen: false)
+          .getReservationDetails(context, bookingId: widget.bookingId);
+      await Provider.of<BookingProvider>(context, listen: false)
+          .getBookingList(context);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Changes updated successfully!')),
+        );
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error updating changes: $e')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
-
-    // Handle location updates
-    if (pickUpLocation != widget.carItem.strPickupLocationAddress ||
-        dropOffLocation != widget.carItem.strDeliveryLocationAddress) {
-      await _handleLocationUpdate();
-    }
-
-    // If no changes were made
-    if (selectedStartDate == null &&
-        selectedEndDate == null &&
-        selectedStartTime == null &&
-        selectedEndTime == null &&
-        pickUpLocation == widget.carItem.strPickupLocationAddress &&
-        dropOffLocation == widget.carItem.strDeliveryLocationAddress) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No changes to submit')),
-      );
-      return;
-    }
-
-
-    Navigator.pop(context);
   }
 
   @override
@@ -290,15 +313,11 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
             children: [
               _buildDateSection(
                   'Start Date & Time',
-                  _formatDate(selectedStartDate) +
-                      ' ' +
-                      _formatTime(selectedStartTime)),
+                  '${_formatDate(selectedStartDate)} ${_formatTime(selectedStartTime)}'),
               const Gap(12),
               _buildDateSection(
                   'End Date & Time',
-                  _formatDate(selectedEndDate) +
-                      ' ' +
-                      _formatTime(selectedEndTime)),
+                  '${_formatDate(selectedEndDate)} ${_formatTime(selectedEndTime)}'),
             ],
           ),
           const SizedBox(height: 24),
@@ -376,9 +395,7 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
               const SizedBox(width: 16),
               Expanded(
                 child: ElevatedButton(
-                  onPressed: () {
-                    _handleSubmit(widget.bookingId);
-                  },
+                  onPressed: _isLoading ? null : () => _handleSubmit(widget.bookingId),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,
@@ -386,11 +403,21 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(24),
                     ),
+                    disabledBackgroundColor: AppColors.primary.withOpacity(0.5),
                   ),
-                  child: const Text(
-                    'Submit Changes',
-                    style: TextStyle(fontSize: 16),
-                  ),
+                  child: _isLoading
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                          ),
+                        )
+                      : const Text(
+                          'Submit Changes',
+                          style: TextStyle(fontSize: 16),
+                        ),
                 ),
               ),
             ],

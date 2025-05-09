@@ -185,16 +185,20 @@ class _MyBookingDetailsScreenState extends State<MyBookingDetailsScreen> {
           children: [
             // Car image
             ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: SizedBox(
-                width: 100,
-                height: 134,
-                child: Image.network(
-                  carItem.strImgUrl ?? 'https://via.placeholder.com/150',
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
+  borderRadius: BorderRadius.circular(8),
+  child: SizedBox(
+    width: 100,
+    height: 134,
+    child: Image.network(
+      carItem.strImgUrl ?? '',
+      fit: BoxFit.cover,
+      errorBuilder: (context, error, stackTrace) => Image.asset(
+        'assets/images/placeholder_image.webp',
+        fit: BoxFit.cover,
+      ),
+    ),
+  ),
+),
             const SizedBox(width: 8),
 
             // Car details
@@ -474,9 +478,16 @@ class _MyBookingDetailsScreenState extends State<MyBookingDetailsScreen> {
       totalAmount += item.intTotalAmount ?? 0;
     });
 
+    // Calculate sum of additional charges
+    double additionalCharges = 0;
+    bookingData.arrAddCharges?.forEach((charge) {
+      log('charge : ${charge.intAmount}');
+      additionalCharges += charge.intAmount ?? 0;
+    });
+
     // Get start and end dates from the first car item (if exists)
     final carItem = bookingData.arrBookingItems?.firstWhere(
-      (item) => item.type == ArrBookingItemType.CAR,
+      (item) => item.type == "CAR",
       orElse: () => ArrBookingItemTwo(),
     );
     final bookingId = bookingData.id;
@@ -507,8 +518,6 @@ class _MyBookingDetailsScreenState extends State<MyBookingDetailsScreen> {
               // Get the booking provider
               final bookingProvider = Provider.of<BookingProvider>(context, listen: false);
 
-              // Get the car item ID
-       
               // Call the download invoice method
               await bookingProvider.downloadInvoice(context, bookingId ?? "0");
             },
@@ -534,11 +543,13 @@ class _MyBookingDetailsScreenState extends State<MyBookingDetailsScreen> {
 
         _buildDetailRow('End date', _formatDate(endDate)),
         const SizedBox(height: 16),
+        _buildDetailRow('Additional Charges', '${additionalCharges.toStringAsFixed(2)} AED'),
+        const SizedBox(height: 16),
 
         // Assuming 'Balance amount' is pending payment
         _buildDetailRow(
           'Balance amount',
-          '${bookingData.intBalanceAmt ?? 1000} AED',
+          '${bookingData.intBalanceAmt?.toStringAsFixed(2)} AED',
           valueColor: Colors.orange,
         ),
         const SizedBox(height: 16),
@@ -560,7 +571,11 @@ class _MyBookingDetailsScreenState extends State<MyBookingDetailsScreen> {
           onTap: () {
             showModalBottomSheet(
               context: context,
-              builder: (context) => CompletePaymentSheet(),
+              builder: (context) => CompletePaymentSheet(
+                bookingId: bookingData.id ?? "",
+                strBookingId: bookingData.strBookingId ?? "",
+                balanceAmount: bookingData.intBalanceAmt ?? 0,
+              ),
             );
           },
           child: const Text(
