@@ -20,7 +20,7 @@ class HomeService {
     final String? endDate = end is DateTime ? end.toIso8601String() : end?.toString();
     
     ApiResponseModel<dynamic> apiResponse = await _apiService.apiCall(
-      endpoint: ApiConstants.getCartDataListUrl,
+      endpoint: ApiConstants.getCarDataListUrl,
       method: 'POST',
       sendToken: true,
       data: {

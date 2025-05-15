@@ -9,7 +9,7 @@ class ApiConstants {
   // API endpoints
   static const String login = 'login_customer';
   static const String otpVerify = 'otp_verify_customer';
-  static const String getCartDataListUrl = 'get_home_page';
+  static const String getCarDataListUrl = 'get_home_page';
   static const String fileUploadApiUrl = 'files_upload';
   static const String updateCustomerUrl = 'update_customer';
   static const String getProfileDetails = 'get_customer_by_id';

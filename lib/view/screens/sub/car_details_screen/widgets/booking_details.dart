@@ -1,5 +1,8 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:hny_main/data/providers/booking_provider.dart';
+import 'package:hny_main/data/providers/home_controller.dart';
 import 'package:provider/provider.dart';
 
 class DateTimeSelection extends StatelessWidget {
@@ -7,8 +10,8 @@ class DateTimeSelection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<BookingProvider>(
-      builder: (context, bookingProvider, child) {
+    return Consumer2<BookingProvider, HomeController>(
+      builder: (context, bookingProvider, homeController, child) {
         return Container(
           margin: const EdgeInsets.all(16),
           decoration: BoxDecoration(
@@ -41,8 +44,8 @@ class DateTimeSelection extends StatelessWidget {
                     left: 16.0, right: 16.0, bottom: 16.0),
                 child: DateTimeItem(
                   title: 'End Date & Time',
-                  date: bookingProvider.formattedEndDate,
-                  time: bookingProvider.formattedEndTime,
+                  date: bookingProvider.formattedEndDate.toString(),
+                  time: bookingProvider.formattedEndTime.toString(),
                   onTap: () {}
                   //  _selectDateTime(
                   //   context,

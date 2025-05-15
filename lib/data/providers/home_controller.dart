@@ -24,12 +24,20 @@ class HomeController extends ChangeNotifier {
   DateTime? selecteStratdDate;
   String? selectedDateTOString;
 
+  TimeOfDay? selectedStartTime;
+  String? selectedStartTimeString;
+
+  TimeOfDay? selectedEndTime;
+  String? selectedEndTimeString;
+
   DateTime? selecteEnddDate;
   String? selectedEndTOString;
 
   void setSelectedStartDate(DateTime date) {
     selectedDateTOString = DateFormat('dd-MM-yyyy').format(date);
     selecteStratdDate = date;
+    selectedStartTime = TimeOfDay.fromDateTime(date);
+    selectedStartTimeString = DateFormat('hh:mm a').format(date);
     log(selectedDateTOString.toString());
     notifyListeners();
   }
@@ -37,6 +45,8 @@ class HomeController extends ChangeNotifier {
   void setSelectedEndtDate(DateTime date) {
     selectedEndTOString = DateFormat('dd-MM-yyyy').format(date);
     selecteEnddDate = date;
+    selectedEndTime = TimeOfDay.fromDateTime(date);
+    selectedEndTimeString = DateFormat('hh:mm a').format(date);
     log(selectedDateTOString.toString());
     notifyListeners();
   }

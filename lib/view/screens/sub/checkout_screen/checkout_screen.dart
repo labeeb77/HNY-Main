@@ -31,189 +31,226 @@ class _CartScreenState extends State<CartScreen> {
             .where((gadget) => gadget.quantity > 0)
             .toList();
 
-        return Scaffold(
-          backgroundColor: AppColors.background,
-          appBar: const CommonAppBar(
-            title: 'My Cart',
-          ),
-          body: SafeArea(
-            child:widget.arrCar.id != null ? Column(
-              children: [
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildVehicleCard(
-                            widget.arrCar.strModel ?? 'Ford Escape',
-                            bookingProvider.calculateTotalAmount(
-                                widget.arrCar.intPricePerDay?.toInt() ?? 0,
-                                widget.arrCar.intPricePerWeek?.toInt() ?? 0,
-                                widget.arrCar.intPricePerMonth?.toInt() ?? 0),
-                           
-                                'assets/images/placeholder_image.webp',
-                            bookingProvider.formattedStartDate,
-                            bookingProvider.formattedEndDate,
-                            bookingProvider.pickupAddress,
-                            bookingProvider.dropoffAddress,
-                          ),
-                          const SizedBox(height: 16),
-
-                          // Display selected gadgets
-                          ...selectedGadgets.map((gadget) {
-                            return Column(
-                              children: [
-                                buildAddonCard(
-                                  bookingProvider,
-                                  gadget.name,
-                                  gadget.price.toInt(),
-                                  gadget.image,
-                                  quantity: gadget.quantity,
-                                  onQuantityChanged: (newQuantity) {
-                                    bookingProvider.updateGadgetQuantity(
-                                        gadget.id, newQuantity);
-                                  },
-                                ),
-                                const SizedBox(height: 16),
-                              ],
-                            );
-                          }).toList(),
-
-                          // buildPromoCodeSection(),
-                          // const SizedBox(height: 24),
-                          buildSuperCoinsSection(context),
-                          const SizedBox(height: 24),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                // Bottom section
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                  decoration: const BoxDecoration(
-                    color: AppColors.white,
-                    border: Border(
-                      top: BorderSide(color: AppColors.containerBorderColor),
-                    ),
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      buildOrderSummary(
-                        arrCar: widget.arrCar,
-                        provider: bookingProvider,
-                        vehiclePrice: bookingProvider.calculateTotalAmount(
-                            widget.arrCar.intPricePerDay?.toInt() ?? 0,
-                            widget.arrCar.intPricePerWeek?.toInt() ?? 0,
-                            widget.arrCar.intPricePerMonth?.toInt() ?? 0),
-                        gadgetPrice: bookingProvider.totalGadgetPrice.toInt(),
-                      ),
-                      const SizedBox(height: 16),
-                      SizedBox(
-                        height: 40,
-                        width: double.infinity,
-                        child: PrimaryElevateButton(
-                          ontap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => CheckoutPaymentScreen(
-                                  totalAmount: bookingProvider.calculateFinalTotalAmount(
-                                    vehicleDailyRate: widget.arrCar.intPricePerDay?.toInt() ?? 0,
-                                    vehicleWeeklyRate: widget.arrCar.intPricePerWeek?.toInt() ?? 0,
-                                    vehicleMonthlyRate: widget.arrCar.intPricePerMonth?.toInt() ?? 0,
-                                  ).toInt(),
-                                  carDetails: widget.arrCar,
-                                ),
-                              ),
-                            );
-                          },
-                          buttonName: "Proceed to checkout",
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ): Center(
-  child: Container(
-    width: double.infinity,
-    padding: const EdgeInsets.symmetric(horizontal: 24),
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Stack(
-          alignment: Alignment.center,
-          children: [
-            Container(
-              width: 120,
-              height: 120,
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-                shape: BoxShape.circle,
-              ),
-            ),
-            Icon(
-              Icons.remove_shopping_cart,
-              size: 64,
-              color: Colors.grey[400],
-            ),
-          ],
-        ),
-        const SizedBox(height: 32),
-        Text(
-          'Your cart is empty',
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.w600,
-            color: Colors.grey[700],
-          ),
-        ),
-        const SizedBox(height: 16),
-        Container(
-          constraints: const BoxConstraints(maxWidth: 280),
-          child: Text(
-            'Add some items to your cart to proceed with checkout',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.grey[600],
-              height: 1.4,
-            ),
-          ),
-        ),
-        const SizedBox(height: 36),
-        Container(
-          width: 220,
-          height: 50,
-          child: ElevatedButton(
-            onPressed: () {
+        return WillPopScope(
+          onWillPop: () async {
+            if (widget.arrCar.id != null) {
+              Navigator.pop(context);
+              return true;
+            } else {
               while (Navigator.canPop(context)) {
                 Navigator.pop(context);
               }
-            },
-            style: ElevatedButton.styleFrom(
-              elevation: 2,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(25),
-              ),
+              return true;
+            }
+          },
+          child: Scaffold(
+            backgroundColor: AppColors.background,
+            appBar: const CommonAppBar(
+              showLeading: false,
+              title: 'My Cart',
             ),
-            child: const Text(
-              'Continue Booking',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ),
-      ],
-    ),
-  ),
-)
+            body: SafeArea(
+                child: widget.arrCar.id != null
+                    ? Column(
+                        children: [
+                          Expanded(
+                            child: SingleChildScrollView(
+                              child: Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    _buildVehicleCard(
+                                      widget.arrCar.strModel ?? 'Ford Escape',
+                                      bookingProvider.calculateTotalAmount(
+                                          widget.arrCar.intPricePerDay
+                                                  ?.toInt() ??
+                                              0,
+                                          widget.arrCar.intPricePerWeek
+                                                  ?.toInt() ??
+                                              0,
+                                          widget.arrCar.intPricePerMonth
+                                                  ?.toInt() ??
+                                              0),
+                                      'assets/images/placeholder_image.webp',
+                                      bookingProvider.formattedStartDate,
+                                      bookingProvider.formattedEndDate,
+                                      bookingProvider.pickupAddress,
+                                      bookingProvider.dropoffAddress,
+                                    ),
+                                    const SizedBox(height: 16),
+
+                                    // Display selected gadgets
+                                    ...selectedGadgets.map((gadget) {
+                                      return Column(
+                                        children: [
+                                          buildAddonCard(
+                                            bookingProvider,
+                                            gadget.name,
+                                            gadget.price.toInt(),
+                                            gadget.image,
+                                            quantity: gadget.quantity,
+                                            onQuantityChanged: (newQuantity) {
+                                              bookingProvider
+                                                  .updateGadgetQuantity(
+                                                      gadget.id, newQuantity);
+                                            },
+                                          ),
+                                          const SizedBox(height: 16),
+                                        ],
+                                      );
+                                    }).toList(),
+
+                                    // buildPromoCodeSection(),
+                                    // const SizedBox(height: 24),
+                                    buildSuperCoinsSection(context),
+                                    const SizedBox(height: 24),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          // Bottom section
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 16),
+                            decoration: const BoxDecoration(
+                              color: AppColors.white,
+                              border: Border(
+                                top: BorderSide(
+                                    color: AppColors.containerBorderColor),
+                              ),
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                buildOrderSummary(
+                                  arrCar: widget.arrCar,
+                                  provider: bookingProvider,
+                                  vehiclePrice:
+                                      bookingProvider.calculateTotalAmount(
+                                          widget.arrCar.intPricePerDay
+                                                  ?.toInt() ??
+                                              0,
+                                          widget.arrCar.intPricePerWeek
+                                                  ?.toInt() ??
+                                              0,
+                                          widget.arrCar.intPricePerMonth
+                                                  ?.toInt() ??
+                                              0),
+                                  gadgetPrice:
+                                      bookingProvider.totalGadgetPrice.toInt(),
+                                ),
+                                const SizedBox(height: 16),
+                                SizedBox(
+                                  height: 40,
+                                  width: double.infinity,
+                                  child: PrimaryElevateButton(
+                                    ontap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              CheckoutPaymentScreen(
+                                            totalAmount: bookingProvider
+                                                .calculateFinalTotalAmount(
+                                                  vehicleDailyRate: widget
+                                                          .arrCar.intPricePerDay
+                                                          ?.toInt() ??
+                                                      0,
+                                                  vehicleWeeklyRate: widget
+                                                          .arrCar
+                                                          .intPricePerWeek
+                                                          ?.toInt() ??
+                                                      0,
+                                                  vehicleMonthlyRate: widget
+                                                          .arrCar
+                                                          .intPricePerMonth
+                                                          ?.toInt() ??
+                                                      0,
+                                                )
+                                                .toInt(),
+                                            carDetails: widget.arrCar,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    buttonName: "Proceed to checkout",
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      )
+                    : Center(
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(horizontal: 24),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  Container(
+                                    width: 120,
+                                    height: 120,
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[200],
+                                      shape: BoxShape.circle,
+                                    ),
+                                  ),
+                                  Icon(
+                                    Icons.remove_shopping_cart,
+                                    size: 64,
+                                    color: Colors.grey[400],
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 32),
+                              Text(
+                                'Your cart is empty',
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.grey[700],
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              Container(
+                                constraints:
+                                    const BoxConstraints(maxWidth: 280),
+                                child: Text(
+                                  'Add some items to your cart to proceed with checkout',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.grey[600],
+                                    height: 1.4,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 36),
+                              Container(
+                                  width: 220,
+                                  height: 50,
+                                  child: AppButton(
+                                      child: Text(
+                                        "Continue Booking",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                      onPressed: () {
+                                        while (Navigator.canPop(context)) {
+                                          Navigator.pop(context);
+                                        }
+                                      })),
+                            ],
+                          ),
+                        ),
+                      )),
           ),
         );
       },
@@ -246,25 +283,26 @@ class _CartScreenState extends State<CartScreen> {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             ClipRRect(
-  borderRadius: BorderRadius.circular(8),
-  child: SizedBox(
-    width: 100,
-    height: 134,
-    child: imagePath != null && imagePath.isNotEmpty
-        ? Image.network(
-            imagePath,
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) => Image.asset(
-              'assets/images/placeholder_image.webp',
-              fit: BoxFit.cover,
+              borderRadius: BorderRadius.circular(8),
+              child: SizedBox(
+                width: 100,
+                height: 134,
+                child: imagePath != null && imagePath.isNotEmpty
+                    ? Image.network(
+                        imagePath,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) =>
+                            Image.asset(
+                          'assets/images/placeholder_image.webp',
+                          fit: BoxFit.cover,
+                        ),
+                      )
+                    : Image.asset(
+                        'assets/images/placeholder_image.webp',
+                        fit: BoxFit.cover,
+                      ),
+              ),
             ),
-          )
-        : Image.asset(
-            'assets/images/placeholder_image.webp',
-            fit: BoxFit.cover,
-          ),
-  ),
-),
             const SizedBox(width: 8),
             Expanded(
               child: Column(
@@ -274,7 +312,6 @@ class _CartScreenState extends State<CartScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        
                         CircleAvatar(
                           radius: 14,
                           backgroundColor: AppColors.red,
@@ -282,15 +319,18 @@ class _CartScreenState extends State<CartScreen> {
                             icon: const Icon(Icons.delete,
                                 size: 18, color: AppColors.white),
                             onPressed: () {
-                              _showDeleteConfirmation(context, widget.arrCar, Provider.of<MyCartProvider>(context, listen: false));
+                              _showDeleteConfirmation(
+                                  context,
+                                  widget.arrCar,
+                                  Provider.of<MyCartProvider>(context,
+                                      listen: false));
                             },
                             constraints: const BoxConstraints(),
                             padding: EdgeInsets.zero,
                           ),
                         ),
-                                            Gap(12),
-
-                         CircleAvatar(
+                        Gap(12),
+                        CircleAvatar(
                           radius: 14,
                           backgroundColor: AppColors.orange,
                           child: IconButton(
@@ -314,7 +354,6 @@ class _CartScreenState extends State<CartScreen> {
                             fontWeight: FontWeight.w500,
                           ),
                         ),
-                       
                       ],
                     ),
                     Text(
@@ -335,26 +374,25 @@ class _CartScreenState extends State<CartScreen> {
     );
   }
 
-  void _showDeleteConfirmation(BuildContext context, ArrCar item, MyCartProvider cartProvider) {
+  void _showDeleteConfirmation(
+      BuildContext context, ArrCar item, MyCartProvider cartProvider) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Delete Item'),
-        content: const Text('Are you sure you want to remove this item from your cart?'),
+        content: const Text(
+            'Are you sure you want to remove this item from your cart?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: const Text('Cancel'),
           ),
           TextButton(
-            onPressed: () async{
-              
+            onPressed: () async {
               Navigator.pop(context);
-                cartProvider.deleteCartItem(await findCartItem(item.id!));
-                widget.arrCar.id = null;
-              setState(() {
-                
-              });
+              cartProvider.deleteCartItem(await findCartItem(item.id!));
+              widget.arrCar.id = null;
+              setState(() {});
             },
             child: const Text('Delete', style: TextStyle(color: Colors.red)),
           ),
@@ -693,9 +731,11 @@ class _CartScreenState extends State<CartScreen> {
       ),
     );
   }
-   findCartItem(String carId) async{
-  await  Provider.of<MyCartProvider>(context, listen: false).fetchCartItems();
-    for (var element in Provider.of<MyCartProvider>(context, listen: false).cartItems) {
+
+  findCartItem(String carId) async {
+    await Provider.of<MyCartProvider>(context, listen: false).fetchCartItems();
+    for (var element
+        in Provider.of<MyCartProvider>(context, listen: false).cartItems) {
       if (element.itemDetails?.id == carId) {
         return element.id!;
       }

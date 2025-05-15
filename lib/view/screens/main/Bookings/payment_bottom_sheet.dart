@@ -43,6 +43,8 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
     dropOffLocation = widget.carItem.strDeliveryLocationAddress;
     selectedStartDate = widget.carItem.strStartDate;
     selectedEndDate = widget.carItem.strEndDate;
+    selectedStartTime = TimeOfDay.fromDateTime(widget.carItem.strStartDate!);
+    selectedEndTime = TimeOfDay.fromDateTime(widget.carItem.strEndDate!);
     super.initState();
   }
 
@@ -180,14 +182,13 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
         DateFormat("yyyy-MM-dd HH:mm:ss").format(endDateTime);
 
     try {
-       await Provider.of<BookingProvider>(context, listen: false)
+      await Provider.of<BookingProvider>(context, listen: false)
           .updateBookingDates(
         context,
         bookingId: widget.carItem.id!,
         startDate: formattedStartDate,
         endDate: formattedEndDate,
       );
-
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error updating dates: $e')),
@@ -200,9 +201,8 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
       log(widget.bookingId.toString());
       if (pickUpLocation != widget.carItem.strPickupLocationAddress &&
           pickupCoordinates != null) {
-      
-            await Provider.of<BookingProvider>(context, listen: false)
-                .updateBookingLocation(
+        await Provider.of<BookingProvider>(context, listen: false)
+            .updateBookingLocation(
           context,
           isPickup: true,
           bookingId: widget.bookingId,
@@ -213,9 +213,8 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
       }
       if (dropOffLocation != widget.carItem.strDeliveryLocationAddress &&
           dropoffCoordinates != null) {
-       
-            await Provider.of<BookingProvider>(context, listen: false)
-                .updateBookingLocation(
+        await Provider.of<BookingProvider>(context, listen: false)
+            .updateBookingLocation(
           context,
           isPickup: false,
           bookingId: widget.bookingId,
@@ -311,12 +310,10 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildDateSection(
-                  'Start Date & Time',
+              _buildDateSection('Start Date & Time',
                   '${_formatDate(selectedStartDate)} ${_formatTime(selectedStartTime)}'),
               const Gap(12),
-              _buildDateSection(
-                  'End Date & Time',
+              _buildDateSection('End Date & Time',
                   '${_formatDate(selectedEndDate)} ${_formatTime(selectedEndTime)}'),
             ],
           ),
@@ -395,7 +392,8 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
               const SizedBox(width: 16),
               Expanded(
                 child: ElevatedButton(
-                  onPressed: _isLoading ? null : () => _handleSubmit(widget.bookingId),
+                  onPressed:
+                      _isLoading ? null : () => _handleSubmit(widget.bookingId),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,
@@ -411,7 +409,8 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
                           width: 20,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(Colors.white),
                           ),
                         )
                       : const Text(

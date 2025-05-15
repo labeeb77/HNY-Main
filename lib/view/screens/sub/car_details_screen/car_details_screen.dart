@@ -18,21 +18,32 @@ class CarDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-        final homeController = Provider.of<HomeController>(context, listen: false);
-    final bookingProvider = Provider.of<BookingProvider>(context, listen: false);
-    
+    final homeController = Provider.of<HomeController>(context, listen: false);
+    final bookingProvider =
+        Provider.of<BookingProvider>(context, listen: false);
+
     // Set the selected dates from HomeController to BookingProvider
     // This should run only once when the screen builds
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (homeController.selecteStratdDate != null) {
-        bookingProvider.updateStartDate(homeController.selecteStratdDate ?? DateTime.now());
+        bookingProvider.updateStartDate(
+            homeController.selecteStratdDate ?? DateTime.now());
       }
-      
+
       if (homeController.selecteEnddDate != null) {
-        bookingProvider.updateEndDate(homeController.selecteEnddDate ?? DateTime.now());
+        bookingProvider
+            .updateEndDate(homeController.selecteEnddDate ?? DateTime.now());
       }
-      
-      // You might also need to set times if you're storing them separately
+
+      if (homeController.selectedStartTime != null) {
+        bookingProvider.updateStartTime(
+            homeController.selectedStartTime ?? TimeOfDay.now());
+      }
+
+      if (homeController.selectedEndTime != null) {
+        bookingProvider.updateEndTime(
+            homeController.selectedEndTime ?? TimeOfDay.now());
+      }
     });
     return Scaffold(
       body: SingleChildScrollView(
@@ -56,8 +67,10 @@ class CarDetailsScreen extends StatelessWidget {
       ),
       bottomNavigationBar: Consumer<BookingProvider>(
         builder: (context, bookingProvider, child) {
-          final totalAmount =
-              bookingProvider.calculateTotalAmount(arrCar.intPricePerDay?.toInt() ?? 0,arrCar.intPricePerWeek?.toInt() ?? 0, arrCar.intPricePerMonth?.toInt() ?? 0);
+          final totalAmount = bookingProvider.calculateTotalAmount(
+              arrCar.intPricePerDay?.toInt() ?? 0,
+              arrCar.intPricePerWeek?.toInt() ?? 0,
+              arrCar.intPricePerMonth?.toInt() ?? 0);
           return SizedBox(
             height: 100,
             child: BookingPrice(
