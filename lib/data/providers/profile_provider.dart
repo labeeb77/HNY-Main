@@ -26,6 +26,7 @@ class ProfileProvider with ChangeNotifier {
 
   String? selectedGender;
   String? selectedNationality;
+  String? selectedDateOfBirthInISO;
   // Removed selectedCitizenship
 
   File? _selectedProfileImage;
@@ -90,7 +91,7 @@ class ProfileProvider with ChangeNotifier {
       }
 
       final AddProfileModel data = AddProfileModel(
-        strDateOfBirth: dobController.text,
+        strDateOfBirth: selectedDateOfBirthInISO,
         strEmail: emailController.text,
         strEmiratesIdUrl: globalUser?.strEmiratesIdUrl ?? "",
         strFcmToken: "",

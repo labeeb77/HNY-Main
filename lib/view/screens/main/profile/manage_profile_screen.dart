@@ -281,7 +281,8 @@ class _ManageProfileScreenState extends State<ManageProfileScreen> {
       if (result == true) {
         // Only navigate on success
         if (from == "register") {
-          Navigator.of(context).pushNamed(AppRoutes.manageGccId,arguments:from);
+          Navigator.of(context)
+              .pushNamed(AppRoutes.manageGccId, arguments: from);
         } else {
           Navigator.pop(context);
         }
@@ -471,7 +472,8 @@ class _ManageProfileScreenState extends State<ManageProfileScreen> {
                         );
                         if (date != null) {
                           // Store the ISO format internally if needed
-                          final isoFormat = formatDateToISO(date);
+                          profileProvider.selectedDateOfBirthInISO =
+                              formatDateToISO(date);
                           // Display the user-friendly format
                           profileProvider.dobController.text =
                               formatDateForDisplay(date);
@@ -531,7 +533,11 @@ class _ManageProfileScreenState extends State<ManageProfileScreen> {
                   child: ElevatedButton(
                     onPressed: _isLoading
                         ? null
-                        : () => _handleSave(context, widget.screenName == "Add" ? "register" : "profile"),
+                        : () => _handleSave(
+                            context,
+                            widget.screenName == "Add"
+                                ? "register"
+                                : "profile"),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,
                       shape: RoundedRectangleBorder(
@@ -581,7 +587,11 @@ class _ManageProfileScreenState extends State<ManageProfileScreen> {
                       child: ElevatedButton(
                         onPressed: _isLoading
                             ? null
-                            : () => _handleSave(context, widget.screenName == "Add" ? "register" : "profile"),
+                            : () => _handleSave(
+                                context,
+                                widget.screenName == "Add"
+                                    ? "register"
+                                    : "profile"),
                         style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primary,
                             shape: ContinuousRectangleBorder(
