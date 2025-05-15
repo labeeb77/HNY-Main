@@ -556,7 +556,7 @@ class _MyBookingDetailsScreenState extends State<MyBookingDetailsScreen> {
 
         _buildDetailRow(
           'Total amount',
-          '${(totalAmount * 1.05).floor()} AED',
+          '${(bookingData.intCheckoutAmount ?? 0).toStringAsFixed(2)} AED',
           valueStyle: const TextStyle(
             fontSize: 22,
             fontWeight: FontWeight.bold,

@@ -9,6 +9,7 @@ import 'package:hny_main/core/routes/app_routes.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
 import 'package:hny_main/data/providers/favourite_provider.dart';
 import 'package:hny_main/data/providers/home_controller.dart';
+import 'package:hny_main/data/providers/mycart_provider.dart';
 import 'package:hny_main/view/screens/Search/search.dart';
 import 'package:hny_main/view/screens/main/home/filter_bottomsheet.dart';
 import 'package:hny_main/view/screens/main/home/widgets_elements.dart';
@@ -38,7 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((va) {
       final homeController =
           Provider.of<HomeController>(context, listen: false);
-      homeController.getCarDataList(context: context);
+      // homeController.getCarDataList(context: context);
       homeController.getCarTypeList();
     });
     super.initState();
@@ -55,18 +56,20 @@ class _HomeScreenState extends State<HomeScreen> {
           CircledIcon(
             circleColor: AppColors.circleAvatarBackground,
             iconColor: AppColors.white,
-            badgeValue: "2",
+            // badgeValue: "2",
             icon: Icons.notifications_outlined,
           ),
           const Gap(
             12,
           ),
-          CircledIcon(
-            circleColor: AppColors.circleAvatarBackground,
-            iconColor: AppColors.white,
-            badgeValue: "2",
-            icon: Icons.shopping_cart_outlined,
-            ontap: () => Navigator.pushNamed(context, AppRoutes.myCartPage),
+          Consumer<MyCartProvider>(
+            builder: (context, value, child) => CircledIcon(
+              circleColor: AppColors.circleAvatarBackground,
+              iconColor: AppColors.white,
+              badgeValue: value.cartItems.length.toString(),
+              icon: Icons.shopping_cart_outlined,
+              ontap: () => Navigator.pushNamed(context, AppRoutes.myCartPage),
+            ),
           ),
           const Gap(
             24,
@@ -149,7 +152,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                   circleColor: AppColors.white,
                   iconColor: AppColors.iconGrey,
-                  badgeValue: "1",
+                  // badgeValue: "1",
                   icon: Icons.filter_alt_outlined,
                 ),
               ],
@@ -276,14 +279,38 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       )),
 
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16),
-                    child: Text(
-                      'Ride options',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Ride options',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Consumer<HomeController>(
+                          builder: (context, homeController, child) {
+                            return homeController.isFilterOn
+                                ? InkWell(
+                                    onTap: () {
+                                      // Reset all filters
+                                      homeController.clearAllFilters(context);
+                                    },
+                                    child: const Text(
+                                      'Clear Filter',
+                                      style: TextStyle(
+                                        color:AppColors.orange,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  )
+                                : const SizedBox.shrink();
+                          },
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -322,6 +349,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                         .getCarDataList(
                                       context: context,
                                       search: carType.strName,
+                                      startDate: homeController.selecteStratdDate,
+                                      endDate: homeController.selecteEnddDate,
                                     );
                                   },
                                   child: buildRideOption(
@@ -413,36 +442,56 @@ class _HomeScreenState extends State<HomeScreen> {
                                       itemCount: data.length,
                                       itemBuilder: (context, index) {
                                         return buildCarCard(
-                                          data[index],
-                                          data[index].strBrand ?? "Unknown",
-                                          data[index].strModel ?? "Unknown",
-                                          data[index].intRating.toString() ??
-                                              '4.0',
-                                          data[index].strCarCategory?.name ??
-                                              "Unknown",
-                                          'Manual',
-                                          data[index]
-                                              .intFuelCapacity
-                                              .toString(),
-                                          '${data[index].strSeatNo} Seats',
-                                          data[index].intPricePerDay.toString(),
-                                          data[index].strImgUrl ?? '',
-                                          data[index].isFavourite ?? false,
-                                          context,
-                                          orientation,
-                                          mediaQuery,
-                                          datesSelected:
-                                              areDatesSelected, // Pass the date selection status
-                                          onFavoriteTap: () {
+                                            data[index],
+                                            data[index].strBrand ?? "Unknown",
+                                            data[index].strModel ?? "Unknown",
+                                            data[index].intRating.toString() ??
+                                                '4.0',
+                                            data[index].strCarCategory?.name ??
+                                                "Unknown",
+                                            'Manual',
+                                            data[index]
+                                                .intFuelCapacity
+                                                .toString(),
+                                            '${data[index].strSeatNo} Seats',
+                                            data[index]
+                                                .intPricePerDay
+                                                .toString(),
+                                            data[index].strImgUrl ?? '',
+                                            data[index].isFavourite ?? false,
+                                            context,
+                                            orientation,
+                                            mediaQuery,
+                                            datesSelected:
+                                                areDatesSelected, // Pass the date selection status
+                                            onFavoriteTap: () {
+                                          if (data[index].isFavourite ==
+                                              false) {
                                             favProvider
                                                 .addToFavourites(
                                                     data[index].id ?? '0')
                                                 .then((_) {
                                               homeProvider.getCarDataList(
-                                                  context: context);
+                                                  context: context,
+                                                  startDate:
+                                                      homeProvider.selecteStratdDate,
+                                                  endDate:
+                                                      homeProvider.selecteEnddDate);
                                             });
-                                          },
-                                        );
+                                          } else {
+                                            favProvider
+                                                .removeFromFavourites(
+                                                    findFavId(data[index].id))
+                                                .then((_) {
+                                              homeProvider.getCarDataList(
+                                                  context: context,
+                                                  startDate:
+                                                      homeProvider.selecteStratdDate,
+                                                  endDate:
+                                                      homeProvider.selecteEnddDate);
+                                            });
+                                          }
+                                        });
                                       });
                         },
                       ),
@@ -456,6 +505,13 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
+  }
+
+  String findFavId(String? id) {
+    final favProvider = Provider.of<FavouriteProvider>(context, listen: false);
+    final favList = favProvider.favArrList;
+    final favItem = favList.firstWhere((element) => element.strCarId == id);
+    return favItem.id;
   }
 }
 

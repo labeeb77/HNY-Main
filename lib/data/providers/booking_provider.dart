@@ -10,8 +10,10 @@ import 'package:hny_main/data/models/booking/reservation_item_details_model.dart
 import 'package:hny_main/data/models/response/api_response_model.dart';
 import 'package:hny_main/data/models/response/car_list_model.dart';
 import 'package:hny_main/data/models/price_calculation.dart';
+import 'package:hny_main/data/providers/mycart_provider.dart';
 import 'package:hny_main/service/booking_service.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
 
@@ -431,6 +433,7 @@ class BookingProvider extends ChangeNotifier {
         if (response.success) {
           // Show custom animation instead of SnackBar
           showSuccessAnimation(context);
+          Provider.of<MyCartProvider>(context, listen: false).fetchCartItems();
           return true;
         }
         return true;
@@ -832,10 +835,9 @@ class BookingProvider extends ChangeNotifier {
 
       _setLoading(false);
       if (response.success) {
-      
         await getBookingList(context);
         await getReservationDetails(context, bookingId: bookingId);
-          AppAlerts.showCustomSnackBar("Payment created successfully!",
+        AppAlerts.showCustomSnackBar("Payment created successfully!",
             isSuccess: true);
         return true;
       } else {

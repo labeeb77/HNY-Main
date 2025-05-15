@@ -133,7 +133,6 @@ class PriceRangeBottomSheet extends StatelessWidget {
                       value.clearCarTypes();
                       value.changeSliderValue(const RangeValues(30, 50));
                       value.getCarDataList(context: context);
-
                       Navigator.pop(context);
                     },
                     child: const AppText(

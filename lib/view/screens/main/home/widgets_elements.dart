@@ -377,7 +377,13 @@ Widget buildFavCarCard(
       //     context,
       //     MaterialPageRoute(
       //       builder: (context) => CarDetailsScreen(
-      //         arrCar: arrCar,
+      //         arrCar: ArrCar(
+      //           id: arrCar.strCarId,
+      //           strBrand: arrCar.strBrand,
+      //           strModel: arrCar.strModel,
+      //           strCarCategory: arrCar.strCarCategory,
+                
+      //         ),
       //       ),
       //     ));
     },

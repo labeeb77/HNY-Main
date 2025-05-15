@@ -67,6 +67,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                 MediaQuery.of(context).orientation,
                 mediaQuery,
                 onFavoriteTap: () { 
+                  
                   favouriteProvider
                       .removeFromFavourites(data[index].id ?? '0');
                 },

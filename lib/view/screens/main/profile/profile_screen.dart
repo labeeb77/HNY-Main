@@ -9,6 +9,7 @@ import 'package:hny_main/core/utils/app_colors.dart';
 import 'package:hny_main/data/providers/auth_provider.dart';
 import 'package:hny_main/data/providers/bottom_nav_controller.dart';
 import 'package:hny_main/data/providers/profile_provider.dart';
+import 'package:hny_main/view/common/bottom_nav.dart';
 import 'package:hny_main/view/screens/main/profile/widgets_elements.dart';
 import 'package:hny_main/view/widgets/app_text_widget.dart';
 import 'package:hny_main/view/widgets/common_app_bar.dart';
@@ -244,13 +245,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ]),
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 22),
-                child: const Column(
+                child: Column(
                   children: [
                     GeneralElementContainer(
+                      onTap: () {
+                        BottomNavController bookingProvider =
+                            Provider.of<BottomNavController>(context,
+                                listen: false);
+                        bookingProvider.changeScreenIndex(1);
+                      },
                       title: "My Bookings",
                       leadingIcon: Icons.book_online_outlined,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: double.infinity,
                       child: Divider(
                         color: AppColors.lightDivider,
@@ -258,10 +265,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
                     GeneralElementContainer(
+                      onTap: () {
+                        BottomNavController bookingProvider =
+                            Provider.of<BottomNavController>(context,
+                                listen: false);
+                        bookingProvider.changeScreenIndex(2);
+                      },
                       title: "My Favorites",
                       leadingIcon: Icons.favorite_border_outlined,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: double.infinity,
                       child: Divider(
                         color: AppColors.lightDivider,
@@ -269,6 +282,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
                     GeneralElementContainer(
+                      onTap: () {
+                        Navigator.pushNamed(context, AppRoutes.myCartPage);
+                      },
                       title: "My Cart",
                       leadingIcon: Icons.shopping_bag_outlined,
                     ),

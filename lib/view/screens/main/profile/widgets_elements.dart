@@ -8,31 +8,35 @@ class GeneralElementContainer extends StatelessWidget {
   final title;
   final leadingIcon;
   final isDelete;
+  final onTap;
   const GeneralElementContainer(
-      {super.key, this.title, this.leadingIcon, this.isDelete = false});
+      {super.key, this.title, this.leadingIcon, this.isDelete = false, this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Icon(
-          leadingIcon,
-          size: 28,
-          color: isDelete ? AppColors.orange : AppColors.black,
-        ),
-        const Gap(20),
-        AppText(
-          title,
-          fontWeight: FontWeight.w600,
-          color: isDelete ? AppColors.orange : AppColors.black,
-        ),
-        const Spacer(),
-        Icon(
-          Icons.arrow_forward_ios,
-          size: 16,
-          color: isDelete ? AppColors.orange : AppColors.iconGrey,
-        )
-      ],
+    return InkWell(
+      onTap: onTap,
+      child: Row(
+        children: [
+          Icon(
+            leadingIcon,
+            size: 28,
+            color: isDelete ? AppColors.orange : AppColors.black,
+          ),
+          const Gap(20),
+          AppText(
+            title,
+            fontWeight: FontWeight.w600,
+            color: isDelete ? AppColors.orange : AppColors.black,
+          ),
+          const Spacer(),
+          Icon(
+            Icons.arrow_forward_ios,
+            size: 16,
+            color: isDelete ? AppColors.orange : AppColors.iconGrey,
+          )
+        ],
+      ),
     );
   }
 }

@@ -14,9 +14,11 @@ class HomeController extends ChangeNotifier {
   List<ArrTypeList> _carTypeListData = [];
 
   bool _isLoading = false;
+  bool _isFilterOn = false;
   String? _error;
   String? searchQuery = '';
   RangeValues currentRangeValues = const RangeValues(30, 50);
+  RangeValues defaultRangeValues = const RangeValues(30, 50);
   Set<String> selectedCarTypeIds = {};
 
   HomeController(BuildContext context) : _homeService = HomeService(context);
@@ -32,6 +34,10 @@ class HomeController extends ChangeNotifier {
 
   DateTime? selecteEnddDate;
   String? selectedEndTOString;
+
+  bool get isFilterOn => _isFilterOn || 
+      currentRangeValues != defaultRangeValues || 
+      selectedCarTypeIds.isNotEmpty;
 
   void setSelectedStartDate(DateTime date) {
     selectedDateTOString = DateFormat('dd-MM-yyyy').format(date);
@@ -53,6 +59,12 @@ class HomeController extends ChangeNotifier {
 
   void filterWithDate() {}
 
+  void _updateFilterState() {
+    _isFilterOn = currentRangeValues != defaultRangeValues || 
+        selectedCarTypeIds.isNotEmpty;
+    notifyListeners();
+  }
+
   void filterCars() {
     List<ArrCar> filteredCars = _carListData.where((car) {
       bool matchesPrice = car.intPricePerDay != null &&
@@ -67,6 +79,7 @@ class HomeController extends ChangeNotifier {
     }).toList();
 
     _carListData = filteredCars;
+    _updateFilterState();
     notifyListeners();
   }
 
@@ -105,6 +118,7 @@ class HomeController extends ChangeNotifier {
   // Public Methods
   void changeSliderValue(RangeValues value) {
     currentRangeValues = value;
+    _updateFilterState();
     notifyListeners();
   }
 
@@ -116,6 +130,7 @@ class HomeController extends ChangeNotifier {
     } else {
       selectedCarTypeIds.add(carType.id!);
     }
+    _updateFilterState();
     notifyListeners();
   }
 
@@ -127,7 +142,15 @@ class HomeController extends ChangeNotifier {
 
   void clearCarTypes() {
     selectedCarTypeIds.clear();
+    _updateFilterState();
+    notifyListeners();
+  }
 
+  void clearAllFilters(BuildContext context) {
+    currentRangeValues = defaultRangeValues;
+    selectedCarTypeIds.clear();
+    _isFilterOn = false;
+    getCarDataList(context: context,startDate: selecteStratdDate,endDate: selecteEnddDate);
     notifyListeners();
   }
 
@@ -142,6 +165,8 @@ class HomeController extends ChangeNotifier {
 
       if (data != null) {
         _updateCarList(data.arrCars ?? []);
+        // Update isFilterOn based on whether any filter is applied
+        _isFilterOn = search != null && search.isNotEmpty;
         notifyListeners();
       } else {
         _handleError("Failed to fetch car data");

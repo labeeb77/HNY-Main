@@ -23,6 +23,7 @@ class MyCartProvider with ChangeNotifier {
       final cartData = await _cartService.fetchMyCartList();
       if (cartData != null && cartData.arrList != null) {
         _cartItems = cartData.arrList!;
+        notifyListeners();
       } else {
         _setError('Failed to fetch cart items');
       }
@@ -38,7 +39,7 @@ class MyCartProvider with ChangeNotifier {
       final response = await _cartService.deleteCartItem(cartItemId);
       if (response.success) {
         _cartItems.removeWhere((item) => item.id == cartItemId);
-        notifyListeners();
+        await fetchCartItems();
         AppAlerts.showCustomSnackBar('Item removed from cart', isSuccess: true);
       } else {
         AppAlerts.showCustomSnackBar('Failed to remove item', isSuccess: false);
