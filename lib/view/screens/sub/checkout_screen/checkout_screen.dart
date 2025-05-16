@@ -1,13 +1,13 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
-import 'package:hny_main/data/models/cart/cartlist_model.dart';
 import 'package:hny_main/data/models/response/car_list_model.dart';
 import 'package:hny_main/data/providers/booking_provider.dart';
 import 'package:hny_main/data/providers/mycart_provider.dart';
 import 'package:hny_main/view/screens/sub/checkout_screen/checkout_payment_screen.dart';
 import 'package:hny_main/view/screens/sub/checkout_screen/price_calculation.dart';
-import 'package:hny_main/view/screens/sub/checkout_screen/widgets/random_widget.dart';
 import 'package:hny_main/view/widgets/app_button.dart';
 import 'package:hny_main/view/widgets/common_app_bar.dart';
 import 'package:provider/provider.dart';
@@ -72,7 +72,8 @@ class _CartScreenState extends State<CartScreen> {
                                           widget.arrCar.intPricePerMonth
                                                   ?.toInt() ??
                                               0),
-                                      'assets/images/placeholder_image.webp',
+                                      widget.arrCar.strImgUrl ??
+                                          'assets/images/placeholder_image.webp',
                                       bookingProvider.formattedStartDate,
                                       bookingProvider.formattedEndDate,
                                       bookingProvider.pickupAddress,
@@ -266,6 +267,7 @@ class _CartScreenState extends State<CartScreen> {
     String pickup,
     String dropoff,
   ) {
+    log('chop car :$imagePath');
     return Container(
       decoration: BoxDecoration(
           color: AppColors.white,

@@ -607,7 +607,7 @@ class BookingProvider extends ChangeNotifier {
         "intTotalDays": totalDays,
         "intTotalDiscount": 0,
         "intTotalAmount": totalFinalAmount,
-        "intPayedAmount": payedAmount,
+        "intPayedAmount": _selectedPaymentMethod == "CASH" ? 0 : payedAmount,
         "intCheckoutAmount": 0,
         "intBalanceAmt": 0,
         "arrCarItems": arrCarItems,

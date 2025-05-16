@@ -223,10 +223,11 @@ class _HomeScreenState extends State<HomeScreen> {
                               },
                               value:
                                   value.selectedDateTOString ?? 'Select Date',
-                              title: "Start Date",
+                              title: "Trip Start",
                             ),
                             const SizedBox(width: 16),
                             DateSectionWidget(
+                              isEnd: true,
                               onTap: () async {
                                 // Set minimum date to start date if selected
                                 DateTime initialDate =
@@ -273,7 +274,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 }
                               },
                               value: value.selectedEndTOString ?? 'Select Date',
-                              title: "End Date",
+                              title: "Trip End",
                             ),
                           ],
                         ),
@@ -519,11 +520,13 @@ class DateSectionWidget extends StatelessWidget {
   final String title;
   final String value;
   final VoidCallback onTap;
+  bool isEnd;
 
-  const DateSectionWidget({
+   DateSectionWidget({
     required this.title,
     required this.value,
     required this.onTap,
+    this.isEnd = false,
     super.key,
   });
 
@@ -547,15 +550,11 @@ class DateSectionWidget extends StatelessWidget {
             ],
           ),
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: isEnd?MainAxisAlignment.end:MainAxisAlignment.start,
             children: [
-              const Icon(
-                Icons.calendar_month,
-                size: 18,
-              ),
-              const Gap(14),
+             
               Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment:isEnd?CrossAxisAlignment.end: CrossAxisAlignment.start,
                 children: [
                   Text(title),
                   const SizedBox(height: 4),

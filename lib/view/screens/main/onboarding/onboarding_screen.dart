@@ -27,7 +27,7 @@ class OnboardingPage extends StatelessWidget {
       children: [
         // Background image
         Positioned.fill(
-          child: Image.asset(
+          child: Image.network(
             info.imageAsset,
             fit: BoxFit.cover,
           ),
