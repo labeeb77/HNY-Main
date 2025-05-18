@@ -391,8 +391,8 @@ class BookingProvider extends ChangeNotifier {
     try {
       // Validate required fields
       if (_startDate == null || _endDate == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Please select trip start and trip end')));
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('Please select trip start and trip end')));
         return false;
       }
 
@@ -830,7 +830,8 @@ class BookingProvider extends ChangeNotifier {
         "strBookingId": strBookingId,
         "strBooking_Id": bookingId,
         "strPaymentMode": "TAP_LINK",
-        "strPaymentRecievedBy": "COMPANY_BANK"
+        "strPaymentRecievedBy": "COMPANY_BANK",
+        "isDirectLink":true
       };
       if (strAltMobileNo != null && strAltMobileNo.isNotEmpty) {
         paymentData["strAltMobileNo"] = strAltMobileNo;
@@ -845,13 +846,15 @@ class BookingProvider extends ChangeNotifier {
         await getBookingList(context);
         await getReservationDetails(context, bookingId: bookingId);
         final mobileNo = response.data['strMobileNo'] ?? '';
-        final paymentLink = response.data['paymentLink'] ?? '';
+        final paymentLink = response.data['short_url'] ?? '';
         showDialog(
           context: context,
           barrierDismissible: false,
           builder: (ctx) => AlertDialog(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -860,7 +863,8 @@ class BookingProvider extends ChangeNotifier {
                 const SizedBox(height: 18),
                 Text(
                   'A payment link has been successfully sent to',
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.w500),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 8),
@@ -882,11 +886,11 @@ class BookingProvider extends ChangeNotifier {
                   ),
                 ),
                 const SizedBox(height: 18),
+                    if (paymentLink != '' && paymentLink != null)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Text('You can also access it directly '),
-                    if (paymentLink != null && paymentLink.isNotEmpty)
                       GestureDetector(
                         onTap: () async {
                           await launchUrl(Uri.parse(paymentLink));
@@ -920,7 +924,8 @@ class BookingProvider extends ChangeNotifier {
                     Navigator.of(ctx).pop();
                     Navigator.of(ctx).pop();
                   },
-                  child: const Text('Close', style: TextStyle(fontSize: 16, color: Colors.white)),
+                  child: const Text('Close',
+                      style: TextStyle(fontSize: 16, color: Colors.white)),
                 ),
               ),
             ],
