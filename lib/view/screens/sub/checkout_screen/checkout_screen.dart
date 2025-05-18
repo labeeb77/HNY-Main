@@ -46,7 +46,8 @@ class _CartScreenState extends State<CartScreen> {
           child: Scaffold(
             backgroundColor: AppColors.background,
             appBar: const CommonAppBar(
-              showLeading: false,
+              showLeading: true,
+              goToHome: true,
               title: 'My Cart',
             ),
             body: SafeArea(
@@ -61,7 +62,8 @@ class _CartScreenState extends State<CartScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     _buildVehicleCard(
-                                      widget.arrCar.strModel ?? 'Ford Escape',
+                                      widget.arrCar.strModel ?? 'Unknown',
+                                      widget.arrCar.strBrand ?? 'Unknown',
                                       bookingProvider.calculateTotalAmount(
                                           widget.arrCar.intPricePerDay
                                                   ?.toInt() ??
@@ -259,7 +261,8 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   Widget _buildVehicleCard(
-    String name,
+    String model,
+    String brand,
     int price,
     String imagePath,
     String startDate,
@@ -267,6 +270,7 @@ class _CartScreenState extends State<CartScreen> {
     String pickup,
     String dropoff,
   ) {
+    final bookingProvider = Provider.of<BookingProvider>(context, listen: false);
     log('chop car :$imagePath');
     return Container(
       decoration: BoxDecoration(
@@ -281,96 +285,118 @@ class _CartScreenState extends State<CartScreen> {
           ]),
       child: Padding(
         padding: const EdgeInsets.all(8),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: SizedBox(
-                width: 100,
-                height: 134,
-                child: imagePath != null && imagePath.isNotEmpty
-                    ? Image.network(
-                        imagePath,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) =>
-                            Image.asset(
+        child: IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: SizedBox(
+                  width: 100,
+                  child: imagePath != null && imagePath.isNotEmpty
+                      ? Image.network(
+                          imagePath,
+                          fit: BoxFit.fitHeight,
+                          errorBuilder: (context, error, stackTrace) =>
+                              Image.asset(
+                            'assets/images/placeholder_image.webp',
+                            fit: BoxFit.cover,
+                          ),
+                        )
+                      : Image.asset(
                           'assets/images/placeholder_image.webp',
                           fit: BoxFit.cover,
                         ),
-                      )
-                    : Image.asset(
-                        'assets/images/placeholder_image.webp',
-                        fit: BoxFit.cover,
-                      ),
+                ),
               ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        CircleAvatar(
-                          radius: 14,
-                          backgroundColor: AppColors.red,
-                          child: IconButton(
-                            icon: const Icon(Icons.delete,
-                                size: 18, color: AppColors.white),
-                            onPressed: () {
-                              _showDeleteConfirmation(
-                                  context,
-                                  widget.arrCar,
-                                  Provider.of<MyCartProvider>(context,
-                                      listen: false));
-                            },
-                            constraints: const BoxConstraints(),
-                            padding: EdgeInsets.zero,
+              const SizedBox(width: 8),
+              Expanded(
+                child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "$brand $model",
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
-                        ),
-                        Gap(12),
-                        CircleAvatar(
-                          radius: 14,
-                          backgroundColor: AppColors.orange,
-                          child: IconButton(
-                            icon: const Icon(Icons.edit,
-                                size: 18, color: AppColors.white),
-                            onPressed: () {},
-                            constraints: const BoxConstraints(),
-                            padding: EdgeInsets.zero,
+                          CircleAvatar(
+                            radius: 14,
+                            backgroundColor: AppColors.red,
+                            child: IconButton(
+                              icon: const Icon(Icons.delete,
+                                  size: 18, color: AppColors.white),
+                              onPressed: () {
+                                _showDeleteConfirmation(
+                                    context,
+                                    widget.arrCar,
+                                    Provider.of<MyCartProvider>(context,
+                                        listen: false));
+                              },
+                              constraints: const BoxConstraints(),
+                              padding: EdgeInsets.zero,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    Gap(8),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Text(
-                          name,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Text(
-                      "AED ${price.toStringAsFixed(1)}",
-                      style: const TextStyle(
-                        fontSize: 18,
-                        color: AppColors.orange,
-                        fontWeight: FontWeight.w500,
+                        ],
                       ),
-                    ),
-                    buildDateRow(startDate, endDate),
-                    buildLocationRow(pickup, dropoff),
-                  ]),
-            ),
-          ],
+                      const Gap(4),
+                      Text(
+                        "AED ${price.toStringAsFixed(1)}",
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: AppColors.orange,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const Gap(4),
+                      Row(
+                        children: [
+                        
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    const Icon(Icons.access_time, size: 12, color: Colors.grey),
+                                    const SizedBox(width: 2),
+                                    Text(
+                                      'Trip Start: $startDate ${bookingProvider.formattedStartTime}',
+                                      style: const TextStyle(fontSize: 12),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 2),
+                                Row(
+                                  children: [
+                                    const Icon(Icons.access_time, size: 12, color: Colors.grey),
+                                    const SizedBox(width: 2),
+                                    Text(
+                                      'Trip End: $endDate ${bookingProvider.formattedEndTime}',
+                                      style: const TextStyle(fontSize: 12),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const Gap(2),
+                      buildLocationRow(pickup, dropoff),
+                    ]),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -640,11 +666,22 @@ class _CartScreenState extends State<CartScreen> {
         const Icon(Icons.calendar_today, size: 14),
         const SizedBox(width: 4),
         Expanded(
-          child: Text(
-            '$startDate - $endDate',
-            style: const TextStyle(fontSize: 12),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                startDate,
+                style: const TextStyle(fontSize: 12),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              Text(
+                endDate,
+                style: const TextStyle(fontSize: 12),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
           ),
         ),
       ],

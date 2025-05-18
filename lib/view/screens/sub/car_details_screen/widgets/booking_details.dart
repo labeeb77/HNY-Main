@@ -27,7 +27,7 @@ class DateTimeSelection extends StatelessWidget {
                 padding: const EdgeInsets.only(
                     left: 16.0, right: 16.0, top: 16.0),
                 child: DateTimeItem(
-                  title: 'Start Date & Time',
+                  title: 'Trip Start',
                   date: bookingProvider.formattedStartDate,
                   time: bookingProvider.formattedStartTime,
                   onTap: () {}
@@ -43,7 +43,7 @@ class DateTimeSelection extends StatelessWidget {
                 padding: const EdgeInsets.only(
                     left: 16.0, right: 16.0, bottom: 16.0),
                 child: DateTimeItem(
-                  title: 'End Date & Time',
+                  title: 'Trip End',
                   date: bookingProvider.formattedEndDate.toString(),
                   time: bookingProvider.formattedEndTime.toString(),
                   onTap: () {}

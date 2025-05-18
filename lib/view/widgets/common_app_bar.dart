@@ -9,9 +9,12 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
 final showLeading;
   final title;
   final showBorder;
+  final List<Widget> actions;
+  final bool goToHome;
   const CommonAppBar({
 this.showLeading = true,
-    super.key,required this.title, this.showBorder = false,
+this.goToHome = false,
+    super.key,required this.title, this.showBorder = false,  this.actions = const [],
   });
 
   @override
@@ -21,6 +24,7 @@ this.showLeading = true,
       backgroundColor: AppColors.background,
       leading: showLeading? CommonBackButton(
         showBorder: showBorder,
+        goToHome: goToHome,
       ):const SizedBox(),
       title:  Text(
         title,
@@ -28,6 +32,7 @@ this.showLeading = true,
       ),
       scrolledUnderElevation: 0.0,
       elevation: 0,
+      actions: actions,
     );
   }
 }

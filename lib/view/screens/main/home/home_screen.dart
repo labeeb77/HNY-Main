@@ -186,10 +186,20 @@ class _HomeScreenState extends State<HomeScreen> {
                               onTap: () async {
                                 final DateTime? picked = await showDatePicker(
                                   context: context,
-                                  initialDate:
-                                      value.selecteStratdDate ?? DateTime.now(),
-                                  firstDate: DateTime(2000),
-                                  lastDate: DateTime(2101),
+                                  initialDate: value.selecteEnddDate != null
+                                      ? value.selecteEnddDate!.subtract(const Duration(days: 1))
+                                      : DateTime.now(),
+                                  firstDate: DateTime.now(),
+                                  lastDate: value.selecteEnddDate != null
+                                      ? value.selecteEnddDate!.subtract(const Duration(days: 1))
+                                      : DateTime(2101),
+                                  selectableDayPredicate: (DateTime date) {
+                                    // Disable dates after end date
+                                    if (value.selecteEnddDate != null) {
+                                      return date.isBefore(value.selecteEnddDate!);
+                                    }
+                                    return true;
+                                  },
                                 );
                                 if (picked != null) {
                                   // Show time picker after date is selected
@@ -230,18 +240,24 @@ class _HomeScreenState extends State<HomeScreen> {
                               isEnd: true,
                               onTap: () async {
                                 // Set minimum date to start date if selected
-                                DateTime initialDate =
-                                    value.selecteStratdDate != null
-                                        ? value.selecteStratdDate!
-                                            .add(Duration(days: 1))
-                                        : DateTime.now();
+                                DateTime initialDate = value.selecteStratdDate != null
+                                    ? value.selecteStratdDate!.add(const Duration(days: 1))
+                                    : DateTime.now();
 
                                 final DateTime? picked = await showDatePicker(
                                   context: context,
                                   initialDate: initialDate,
-                                  firstDate:
-                                      value.selecteStratdDate ?? DateTime(2000),
+                                  firstDate: value.selecteStratdDate != null 
+                                      ? value.selecteStratdDate!.add(const Duration(days: 1))
+                                      : DateTime.now(),
                                   lastDate: DateTime(2101),
+                                  selectableDayPredicate: (DateTime date) {
+                                    // Disable dates before start date
+                                    if (value.selecteStratdDate != null) {
+                                      return date.isAfter(value.selecteStratdDate!);
+                                    }
+                                    return true;
+                                  },
                                 );
                                 if (picked != null) {
                                   // Show time picker after date is selected
@@ -426,7 +442,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                               MainAxisAlignment.center,
                                           children: [
                                             Icon(
-                                              Icons.directions_car_outlined,
+                                              Icons.directions_car_filled_rounded,
                                               size: 50,
                                               color: Colors.grey,
                                             ),
@@ -522,7 +538,7 @@ class DateSectionWidget extends StatelessWidget {
   final VoidCallback onTap;
   bool isEnd;
 
-   DateSectionWidget({
+  DateSectionWidget({
     required this.title,
     required this.value,
     required this.onTap,
@@ -536,7 +552,7 @@ class DateSectionWidget extends StatelessWidget {
       child: GestureDetector(
         onTap: onTap,
         child: Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(12),
@@ -549,23 +565,70 @@ class DateSectionWidget extends StatelessWidget {
               ),
             ],
           ),
-          child: Row(
-            mainAxisAlignment: isEnd?MainAxisAlignment.end:MainAxisAlignment.start,
+          child: Column(
+            crossAxisAlignment: isEnd ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
-             
-              Column(
-                crossAxisAlignment:isEnd?CrossAxisAlignment.end: CrossAxisAlignment.start,
-                children: [
-                  Text(title),
-                  const SizedBox(height: 4),
-                  Text(
-                    value,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
-                ],
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey,
+                ),
+              ),
+              const SizedBox(height: 4),
+              SizedBox(
+                height: 40,
+                child: value == 'Select Date'
+                    ? Column(
+                        crossAxisAlignment: isEnd ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            value,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                              height: 1.2,
+                            ),
+                            textAlign: isEnd ? TextAlign.end : TextAlign.start,
+                          ),
+                          const SizedBox(height: 4),
+                          Align(
+                            alignment: isEnd ? Alignment.centerRight : Alignment.centerLeft,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.directions_car_filled_rounded,
+                                  size: 14,
+                                  color: Colors.grey[400],
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  isEnd ? 'Return' : 'Pickup',
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: Colors.grey[400],
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      )
+                    : Text(
+                        value,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 13,
+                          height: 1.2,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: isEnd ? TextAlign.end : TextAlign.start,
+                      ),
               ),
             ],
           ),

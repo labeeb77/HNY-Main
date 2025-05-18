@@ -394,7 +394,7 @@ class _MyCartScreenState extends State<MyCartScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const Text(
-                                  'Start Date',
+                                  'Trip Start',
                                   style: TextStyle(
                                     fontSize: 12,
                                     color: Colors.grey,

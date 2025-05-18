@@ -216,6 +216,149 @@ class ArrAddCharge {
       };
 }
 
+class ReservArrCar {
+  String? id;
+  String? strCarCode;
+  String? strCarNumber;
+  String? strBrand;
+  String? strStatus;
+  String? chrStatus;
+  String? strModel;
+  String? strDescription;
+  String? strCarCategory;
+  int? strSeatNo;
+  String? strFuelType;
+  String? strImgUrl;
+  List<String?>? arrImgUrl;
+  int? intPower;
+  int? intFuelCapacity;
+  int? intRating;
+  String? strVarients;
+  String? strYear;
+  String? strColor;
+  int? intPricePerDay;
+  int? intPricePerWeek;
+  int? intPricePerMonth;
+  List<CarFeature>? arrCarFeatures;
+  String? strCreatedBy;
+  DateTime? strCreatedTime;
+
+  ReservArrCar({
+    this.id,
+    this.strCarCode,
+    this.strCarNumber,
+    this.strBrand,
+    this.strStatus,
+    this.chrStatus,
+    this.strModel,
+    this.strDescription,
+    this.strCarCategory,
+    this.strSeatNo,
+    this.strFuelType,
+    this.strImgUrl,
+    this.arrImgUrl,
+    this.intPower,
+    this.intFuelCapacity,
+    this.intRating,
+    this.strVarients,
+    this.strYear,
+    this.strColor,
+    this.intPricePerDay,
+    this.intPricePerWeek,
+    this.intPricePerMonth,
+    this.arrCarFeatures,
+    this.strCreatedBy,
+    this.strCreatedTime,
+  });
+
+  factory ReservArrCar.fromJson(Map<String, dynamic> json) => ReservArrCar(
+        id: json["_id"],
+        strCarCode: json["strCarCode"],
+        strCarNumber: json["strCarNumber"],
+        strBrand: json["strBrand"],
+        strStatus: json["strStatus"],
+        chrStatus: json["chrStatus"],
+        strModel: json["strModel"],
+        strDescription: json["strDescription"],
+        strCarCategory: json["strCarCategory"],
+        strSeatNo: json["strSeatNo"],
+        strFuelType: json["strFuelType"],
+        strImgUrl: json["strImgUrl"],
+        arrImgUrl: json["arrImgUrl"] == null
+            ? []
+            : List<String?>.from(json["arrImgUrl"]!.map((x) => x)),
+        intPower: json["intPower"],
+        intFuelCapacity: json["intFuelCapacity"],
+        intRating: json["intRating"],
+        strVarients: json["strVarients"],
+        strYear: json["strYear"],
+        strColor: json["strColor"],
+        intPricePerDay: json["intPricePerDay"],
+        intPricePerWeek: json["intPricePerWeek"],
+        intPricePerMonth: json["intPricePerMonth"],
+        arrCarFeatures: json["arrCarFeatures"] == null
+            ? []
+            : List<CarFeature>.from(
+                json["arrCarFeatures"]!.map((x) => CarFeature.fromJson(x))),
+        strCreatedBy: json["strCreatedBy"],
+        strCreatedTime: json["strCreatedTime"] == null
+            ? null
+            : DateTime.parse(json["strCreatedTime"]),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "_id": id,
+        "strCarCode": strCarCode,
+        "strCarNumber": strCarNumber,
+        "strBrand": strBrand,
+        "strStatus": strStatus,
+        "chrStatus": chrStatus,
+        "strModel": strModel,
+        "strDescription": strDescription,
+        "strCarCategory": strCarCategory,
+        "strSeatNo": strSeatNo,
+        "strFuelType": strFuelType,
+        "strImgUrl": strImgUrl,
+        "arrImgUrl": arrImgUrl == null
+            ? []
+            : List<dynamic>.from(arrImgUrl!.map((x) => x)),
+        "intPower": intPower,
+        "intFuelCapacity": intFuelCapacity,
+        "intRating": intRating,
+        "strVarients": strVarients,
+        "strYear": strYear,
+        "strColor": strColor,
+        "intPricePerDay": intPricePerDay,
+        "intPricePerWeek": intPricePerWeek,
+        "intPricePerMonth": intPricePerMonth,
+        "arrCarFeatures": arrCarFeatures == null
+            ? []
+            : List<dynamic>.from(arrCarFeatures!.map((x) => x.toJson())),
+        "strCreatedBy": strCreatedBy,
+        "strCreatedTime": strCreatedTime?.toIso8601String(),
+      };
+}
+
+class CarFeature {
+  String? strFeatures;
+  String? strDescription;
+
+  CarFeature({
+    this.strFeatures,
+    this.strDescription,
+  });
+
+  factory CarFeature.fromJson(Map<String, dynamic> json) => CarFeature(
+        strFeatures: json["strFeatures"],
+        strDescription: json["strDescription"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "strFeatures": strFeatures,
+        "strDescription": strDescription,
+      };
+}
+
 class ArrBookingItemTwo {
   String? id;
   String? strCarNumber;
@@ -252,6 +395,7 @@ class ArrBookingItemTwo {
   String? strUpdatedBy;
   DateTime? strUpdatedTime;
   List<ArrTask>? arrTasks;
+  List<ReservArrCar>? reservArrCar;
 
   ArrBookingItemTwo({
     this.id,
@@ -289,6 +433,7 @@ class ArrBookingItemTwo {
     this.strUpdatedBy,
     this.strUpdatedTime,
     this.arrTasks,
+    this.reservArrCar,
   });
 
   factory ArrBookingItemTwo.fromJson(Map<String, dynamic> json) =>
@@ -343,6 +488,10 @@ class ArrBookingItemTwo {
             ? []
             : List<ArrTask>.from(
                 json["arrTasks"]!.map((x) => ArrTask.fromJson(x))),
+        reservArrCar: json["arrCar"] == null
+            ? []
+            : List<ReservArrCar>.from(
+                json["arrCar"]!.map((x) => ReservArrCar.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
@@ -383,6 +532,9 @@ class ArrBookingItemTwo {
         "arrTasks": arrTasks == null
             ? []
             : List<dynamic>.from(arrTasks!.map((x) => x.toJson())),
+        "arrCar": reservArrCar == null
+            ? []
+            : List<dynamic>.from(reservArrCar!.map((x) => x.toJson())),
       };
 }
 

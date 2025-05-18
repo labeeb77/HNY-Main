@@ -33,8 +33,8 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
   bool _isLoading = false;
 
   final List<String> _paymentOptions = [
-    'Pay Full Amount',
-    'Pay Custom Amount',
+    'Full Amount',
+    'Custom Amount',
   ];
 
   @override
@@ -80,7 +80,7 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
   Future<void> _selectEndDate() async {
     if (selectedStartDate == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select start date first')),
+        const SnackBar(content: Text('Please select Trip Start first')),
       );
       return;
     }
@@ -170,7 +170,7 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
     // Validate dates
     if (startDateTime.isAfter(endDateTime)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Start date must be before end date')),
+        const SnackBar(content: Text('Trip Start must be before Trip End')),
       );
       return;
     }
@@ -310,10 +310,10 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildDateSection('Start Date & Time',
+              _buildDateSection('Trip Start',
                   '${_formatDate(selectedStartDate)} ${_formatTime(selectedStartTime)}'),
               const Gap(12),
-              _buildDateSection('End Date & Time',
+              _buildDateSection('Trip End',
                   '${_formatDate(selectedEndDate)} ${_formatTime(selectedEndTime)}'),
             ],
           ),
@@ -556,7 +556,7 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
             Text(
               _paymentOptions[index],
               style: const TextStyle(
-                fontSize: 16,
+                fontSize: 14,
                 fontWeight: FontWeight.bold,
               ),
             ),

@@ -40,7 +40,7 @@ class HomeController extends ChangeNotifier {
       selectedCarTypeIds.isNotEmpty;
 
   void setSelectedStartDate(DateTime date) {
-    selectedDateTOString = DateFormat('MMMM d, h a').format(date);
+    selectedDateTOString = DateFormat('MMM d, y\nh:mm a').format(date);
     selecteStratdDate = date;
     selectedStartTime = TimeOfDay.fromDateTime(date);
     selectedStartTimeString = DateFormat('hh:mm a').format(date);
@@ -49,8 +49,7 @@ class HomeController extends ChangeNotifier {
   }
 
   void setSelectedEndtDate(DateTime date) {
-        selectedEndTOString = DateFormat('MMMM d, h a').format(date);
-
+    selectedEndTOString = DateFormat('MMM d, y\nh:mm a').format(date);
     selecteEnddDate = date;
     selectedEndTime = TimeOfDay.fromDateTime(date);
     selectedEndTimeString = DateFormat('hh:mm a').format(date);

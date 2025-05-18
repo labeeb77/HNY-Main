@@ -84,7 +84,7 @@ class _SearchPageState extends State<SearchPage> {
                         }
                       },
                       value: value.selectedDateTOString ?? 'Select Date',
-                      title: "Start Date",
+                      title: "Trip Start",
                     ),
                     const SizedBox(width: 16),
                     DateSectionWidget(

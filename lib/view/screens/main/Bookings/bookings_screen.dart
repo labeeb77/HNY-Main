@@ -284,9 +284,9 @@ class BookingCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(bottom: 16, top: index == 0 ? 16 : 0),
+      margin: EdgeInsets.only(bottom: 12, top: index == 0 ? 12 : 0),
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(17),
+          borderRadius: BorderRadius.circular(12),
           color: AppColors.white,
           boxShadow: const [
             BoxShadow(
@@ -296,32 +296,35 @@ class BookingCard extends StatelessWidget {
                 blurRadius: 12)
           ]),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
             // Top row with booking ID and status
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Booking ID
-                Flexible(
+                Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       const Text(
                         'Booking Id',
                         style: TextStyle(
                           color: Colors.grey,
-                          fontSize: 14,
+                          fontSize: 12,
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 2),
                       Text(
                         data.strBookingId!,
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 14,
+                          fontSize: 13,
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -331,136 +334,137 @@ class BookingCard extends StatelessWidget {
                 const SizedBox(width: 8),
                 // Status Badge
                 Container(
-                  constraints: const BoxConstraints(maxWidth: 100),
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: _getStatusColor(data.strStatus ?? '').withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
                     data.strStatus ?? 'N/A',
                     style: TextStyle(
                       color: _getStatusColor(data.strStatus ?? ''),
-                      fontSize: 12,
+                      fontSize: 11,
                       fontWeight: FontWeight.w600,
                     ),
-                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
             // Dates row
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Start date
-                Flexible(
+                Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       const Text(
-                        'Start date',
+                        'Trip Start',
                         style: TextStyle(
                           color: Colors.grey,
-                          fontSize: 14,
+                          fontSize: 12,
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 2),
                       Text(
                         formatDateOnly(data.strStartDate.toString()),
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 14,
+                          fontSize: 13,
+                          height: 1.1,
                         ),
-                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(width: 16),
                 // End date
-                Flexible(
+                Expanded(
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       const Text(
-                        'End date',
+                        'Trip End',
                         style: TextStyle(
                           color: Colors.grey,
-                          fontSize: 14,
+                          fontSize: 12,
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 2),
                       Text(
                         formatDateOnly(data.strEndDate.toString()),
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 14,
+                          fontSize: 13,
+                          height: 1.1,
                         ),
-                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.end,
                       ),
                     ],
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
             // Bottom row with amounts and button
             Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 // Amounts section
                 Expanded(
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       // Total amount
-                      Flexible(
+                      Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
                           children: [
                             const Text(
                               'Total',
                               style: TextStyle(
                                 color: Colors.grey,
-                                fontSize: 14,
+                                fontSize: 12,
                               ),
                             ),
-                            const SizedBox(height: 4),
+                            const SizedBox(height: 2),
                             Text(
                               '${data.intTotalAmount?.floor()} AED',
                               style: const TextStyle(
                                 color: Colors.blue,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 16,
+                                fontSize: 14,
                               ),
-                              overflow: TextOverflow.ellipsis,
                             ),
                           ],
                         ),
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: 12),
                       // Balance amount
-                      Flexible(
+                      Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
                           children: [
                             const Text(
                               'Balance',
                               style: TextStyle(
                                 color: Colors.grey,
-                                fontSize: 14,
+                                fontSize: 12,
                               ),
                             ),
-                            const SizedBox(height: 4),
+                            const SizedBox(height: 2),
                             Text(
                               '${data.intBalanceAmt?.floor()} AED',
                               style: const TextStyle(
                                 color: Colors.red,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 16,
+                                fontSize: 14,
                               ),
-                              overflow: TextOverflow.ellipsis,
                             ),
                           ],
                         ),
@@ -468,17 +472,17 @@ class BookingCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 12),
                 // View Details button
                 SizedBox(
-                  width: 90,
+                  width: 120,
                   height: 36,
                   child: PrimaryElevateButton(
                     ontap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) =>MyBookingDetailsScreen(bookingId: data.id!)
+                          builder: (context) => MyBookingDetailsScreen(bookingId: data.id!)
                         ),
                       );
                     },
@@ -495,6 +499,21 @@ class BookingCard extends StatelessWidget {
 
   String formatDateOnly(String timestamp) {
     DateTime dateTime = DateTime.parse(timestamp);
-    return "${dateTime.year}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.day.toString().padLeft(2, '0')}";
+    String month = _getMonthName(dateTime.month);
+    String day = dateTime.day.toString();
+    String year = dateTime.year.toString();
+    String hour = dateTime.hour > 12 ? (dateTime.hour - 12).toString() : dateTime.hour.toString();
+    String minute = dateTime.minute.toString().padLeft(2, '0');
+    String amPm = dateTime.hour >= 12 ? 'PM' : 'AM';
+    
+    return "$month $day $year\n$hour:$minute $amPm";
+  }
+
+  String _getMonthName(int month) {
+    const months = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    ];
+    return months[month - 1];
   }
 }

@@ -133,7 +133,11 @@ class _MyBookingDetailsScreenState extends State<MyBookingDetailsScreen> {
                     children: [
                       // Car Items
                       ...carItems
-                          .map((item) => _buildVehicleCard(item, context))
+                          .map((item) => _buildVehicleCard(
+                                item,
+                                item.reservArrCar?.firstOrNull ?? ReservArrCar(),
+                                context,
+                              ))
                           .toList(),
 
                       // Add-on Items
@@ -163,101 +167,165 @@ class _MyBookingDetailsScreenState extends State<MyBookingDetailsScreen> {
     );
   }
 
-  Widget _buildVehicleCard(ArrBookingItemTwo carItem, context) {
+  Widget _buildVehicleCard(ArrBookingItemTwo carItem, ReservArrCar reservArrCar, context) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
             offset: const Offset(1, 1),
-            spreadRadius: 4,
-            color: Colors.grey.shade200,
-            blurRadius: 6,
+            spreadRadius: 0.1,
+            color: const Color.fromARGB(255, 225, 225, 225),
+            blurRadius: 12,
           ),
         ],
       ),
       child: Padding(
-        padding: const EdgeInsets.all(8),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            // Car image
-            ClipRRect(
-  borderRadius: BorderRadius.circular(8),
-  child: SizedBox(
-    width: 100,
-    height: 134,
-    child: Image.network(
-      carItem.strImgUrl ?? '',
-      fit: BoxFit.cover,
-      errorBuilder: (context, error, stackTrace) => Image.asset(
-        'assets/images/placeholder_image.webp',
-        fit: BoxFit.cover,
-      ),
-    ),
-  ),
-),
-            const SizedBox(width: 8),
-
-            // Car details
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                      carItem.strModel.toString(),
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      InkWell(
-                        child: CircleAvatar(
-                          radius: 14,
-                          backgroundColor: Colors.deepOrange,
-                          child: IconButton(
-                            icon: const Icon(
-                              Icons.edit,
-                              size: 18,
-                              color: Colors.white,
-                            ),
-                            onPressed: () {
-                              showPaymentSheet(context, carItem,widget.bookingId);
-                            },
-                            constraints: const BoxConstraints(),
-                            padding: EdgeInsets.zero,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Text(
-                    'AED ${carItem.intTotalAmount?.floor() ?? 0}',
-                    style: const TextStyle(
-                      fontSize: 18,
-                      color: Colors.deepOrange,
-                      fontWeight: FontWeight.w700,
+        padding: const EdgeInsets.all(12),
+        child: IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Car image
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: SizedBox(
+                  width: 100,
+                  child: Image.network(
+                    reservArrCar.strImgUrl ?? '',
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => Image.asset(
+                      'assets/images/placeholder_image.webp',
+                      fit: BoxFit.cover,
                     ),
                   ),
-                  _buildDateRow(
-                    _formatDate(carItem.strStartDate),
-                    _formatDate(carItem.strEndDate),
-                  ),
-                  const SizedBox(height: 5),
-                  _buildLocationRow(
-                    _getLocationText(carItem.strPickupLocationAddress),
-                    _getLocationText(carItem.strDeliveryLocationAddress),
-                  ),
-                ],
+                ),
               ),
-            ),
-          ],
+              const SizedBox(width: 12),
+              // Car details
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            "${reservArrCar.strBrand ?? ''} ${carItem.strModel ?? ''}",
+                            style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w700,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        InkWell(
+                          child: CircleAvatar(
+                            radius: 14,
+                            backgroundColor: Colors.deepOrange,
+                            child: IconButton(
+                              icon: const Icon(
+                                Icons.edit,
+                                size: 18,
+                                color: Colors.white,
+                              ),
+                              onPressed: () {
+                                showPaymentSheet(context, carItem, widget.bookingId);
+                              },
+                              constraints: const BoxConstraints(),
+                              padding: EdgeInsets.zero,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'AED ${carItem.intTotalAmount?.toStringAsFixed(1) ?? '0.0'}',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        color: Colors.deepOrange,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    // Trip Start
+                    Row(
+                      children: [
+                        const Icon(Icons.access_time, size: 14, color: Colors.grey),
+                        const SizedBox(width: 4),
+                        const Text('Trip Start:', style: TextStyle(fontSize: 13, color: Colors.black)),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            _formatDate(carItem.strStartDate),
+                            style: const TextStyle(fontSize: 12, color: Colors.black),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 2),
+                    // Trip End
+                    Row(
+                      children: [
+                        const Icon(Icons.access_time, size: 14, color: Colors.grey),
+                        const SizedBox(width: 4),
+                        const Text('Trip End:', style: TextStyle(fontSize: 13, color: Colors.black)),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            _formatDate(carItem.strEndDate),
+                            style: const TextStyle(fontSize: 12, color: Colors.black),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 2),
+                    // Location rows
+                    Row(
+                      children: [
+                        const Icon(Icons.location_on, size: 16, color: Colors.grey),
+                        const SizedBox(width: 4),
+                        const Text('Pickup:', style: TextStyle(fontSize: 13, color: Colors.black)),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            _getLocationText(carItem.strPickupLocationAddress),
+                            style: const TextStyle(fontSize: 13, color: Colors.black),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 2),
+                    Row(
+                      children: [
+                        const Icon(Icons.location_on, size: 16, color: Colors.grey),
+                        const SizedBox(width: 4),
+                        const Text('Drop-off:', style: TextStyle(fontSize: 13, color: Colors.black)),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            _getLocationText(carItem.strDeliveryLocationAddress),
+                            style: const TextStyle(fontSize: 13, color: Colors.black),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -538,10 +606,10 @@ class _MyBookingDetailsScreenState extends State<MyBookingDetailsScreen> {
             'Booking id', 'BK${bookingData.strBookingId ?? "00000"}'),
         const SizedBox(height: 16),
 
-        _buildDetailRow('Start date', _formatDate(startDate)),
+        _buildDetailRow('Trip Start', _formatDate(startDate)),
         const SizedBox(height: 16),
 
-        _buildDetailRow('End date', _formatDate(endDate)),
+        _buildDetailRow('Trip End', _formatDate(endDate)),
         const SizedBox(height: 16),
         _buildDetailRow('Additional Charges', '${additionalCharges.toStringAsFixed(2)} AED'),
         const SizedBox(height: 16),
@@ -567,23 +635,26 @@ class _MyBookingDetailsScreenState extends State<MyBookingDetailsScreen> {
         const SizedBox(height: 24),
 
         // Complete Payment Link
-        InkWell(
-          onTap: () {
-            showModalBottomSheet(
-              context: context,
-              builder: (context) => CompletePaymentSheet(
-                bookingId: bookingData.id ?? "",
-                strBookingId: bookingData.strBookingId ?? "",
-                balanceAmount: bookingData.intBalanceAmt ?? 0,
+        Visibility(
+          visible: bookingData.intBalanceAmt != 0,
+          child: InkWell(
+            onTap: () {
+              showModalBottomSheet(
+                context: context,
+                builder: (context) => CompletePaymentSheet(
+                  bookingId: bookingData.id ?? "",
+                  strBookingId: bookingData.strBookingId ?? "",
+                  balanceAmount: bookingData.intBalanceAmt ?? 0,
+                ),
+              );
+            },
+            child: const Text(
+              "Are you want to complete payment?",
+              style: TextStyle(
+                color: Colors.blue,
+                fontWeight: FontWeight.w500,
+                decoration: TextDecoration.underline,
               ),
-            );
-          },
-          child: const Text(
-            "Are you want to complete payment?",
-            style: TextStyle(
-              color: Colors.blue,
-              fontWeight: FontWeight.w500,
-              decoration: TextDecoration.underline,
             ),
           ),
         ),
@@ -703,10 +774,8 @@ class _MyBookingDetailsScreenState extends State<MyBookingDetailsScreen> {
   // Helper methods
   String _formatDate(DateTime? date) {
     if (date == null) return 'N/A';
-    return DateFormat('MMMM d, yyyy').format(date);
+    return DateFormat('MMMM d, yyyy hh:mm a').format(date);
   }
-
-  
 
   String _getLocationText(String? location) {
     return location ?? 'Location not specified';

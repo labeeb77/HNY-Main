@@ -392,14 +392,14 @@ class BookingProvider extends ChangeNotifier {
       // Validate required fields
       if (_startDate == null || _endDate == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Please select start and end dates')));
+            const SnackBar(content: Text('Please select trip start and trip end')));
         return false;
       }
 
       if (_endDate!.isBefore(_startDate!)) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-              content: Text('End date cannot be before the start date')),
+              content: Text('Trip end cannot be before the trip start')),
         );
         return false;
       }
@@ -814,40 +814,127 @@ class BookingProvider extends ChangeNotifier {
     }
   }
 
-  Future<bool> createPayment(
+  Future<Map<String, dynamic>?> createPayment(
     BuildContext context, {
     required String bookingId,
     required double amount,
     required String strBookingId,
+    String? strAltMobileNo,
   }) async {
     _setLoading(true);
     _setError(null);
 
     try {
-      final ApiResponseModel<dynamic> response =
-          await _bookingService.createPayment({
+      final Map<String, dynamic> paymentData = {
         "intPayedAmount": amount,
         "strBookingId": strBookingId,
         "strBooking_Id": bookingId,
         "strPaymentMode": "TAP_LINK",
         "strPaymentRecievedBy": "COMPANY_BANK"
-      });
+      };
+      if (strAltMobileNo != null && strAltMobileNo.isNotEmpty) {
+        paymentData["strAltMobileNo"] = strAltMobileNo;
+      }
+
+      final ApiResponseModel<dynamic> response =
+          await _bookingService.createPayment(paymentData);
 
       _setLoading(false);
       if (response.success) {
+        log(response.data.toString());
         await getBookingList(context);
         await getReservationDetails(context, bookingId: bookingId);
-        AppAlerts.showCustomSnackBar("Payment created successfully!",
-            isSuccess: true);
-        return true;
+        final mobileNo = response.data['strMobileNo'] ?? '';
+        final paymentLink = response.data['paymentLink'] ?? '';
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (ctx) => AlertDialog(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Icon(Icons.check_circle, color: Colors.green, size: 60),
+                const SizedBox(height: 18),
+                Text(
+                  'A payment link has been successfully sent to',
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 8),
+                GestureDetector(
+                  onTap: () async {
+                    if (mobileNo.isNotEmpty) {
+                      final smsUri = Uri.parse('sms:+$mobileNo');
+                      await launchUrl(smsUri);
+                    }
+                  },
+                  child: Text(
+                    '+$mobileNo',
+                    style: const TextStyle(
+                      color: Colors.blue,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 18),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text('You can also access it directly '),
+                    if (paymentLink != null && paymentLink.isNotEmpty)
+                      GestureDetector(
+                        onTap: () async {
+                          await launchUrl(Uri.parse(paymentLink));
+                        },
+                        child: const Text(
+                          'click here',
+                          style: TextStyle(
+                            color: Colors.blue,
+                            fontWeight: FontWeight.bold,
+                            decoration: TextDecoration.underline,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ],
+            ),
+            actionsAlignment: MainAxisAlignment.center,
+            actions: [
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                  ),
+                  onPressed: () {
+                    Navigator.of(ctx).pop();
+                    Navigator.of(ctx).pop();
+                  },
+                  child: const Text('Close', style: TextStyle(fontSize: 16, color: Colors.white)),
+                ),
+              ),
+            ],
+          ),
+        );
+        return response.data;
       } else {
         _handleError(response.error ?? 'Failed to create payment');
-        return false;
+        return null;
       }
     } catch (e) {
       _setError(e.toString());
       _setLoading(false);
-      return false;
+      return null;
     }
   }
 
