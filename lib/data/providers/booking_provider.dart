@@ -868,21 +868,12 @@ class BookingProvider extends ChangeNotifier {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 8),
-                GestureDetector(
-                  onTap: () async {
-                    if (mobileNo.isNotEmpty) {
-                      final smsUri = Uri.parse('sms:+$mobileNo');
-                      await launchUrl(smsUri);
-                    }
-                  },
-                  child: Text(
-                    '+$mobileNo',
-                    style: const TextStyle(
-                      color: Colors.blue,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                      decoration: TextDecoration.underline,
-                    ),
+                Text(
+                  '+$mobileNo',
+                  style: const TextStyle(
+                    color: Colors.blue,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
                   ),
                 ),
                 const SizedBox(height: 18),
