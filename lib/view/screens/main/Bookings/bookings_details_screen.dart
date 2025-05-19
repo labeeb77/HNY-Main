@@ -258,7 +258,7 @@ class _MyBookingDetailsScreenState extends State<MyBookingDetailsScreen> {
                     // Trip Start
                     Row(
                       children: [
-                        const Icon(Icons.access_time, size: 14, color: Colors.grey),
+                        const Icon(Icons.calendar_month, size: 14, color: Colors.grey),
                         const SizedBox(width: 4),
                         const Text('Trip Start:', style: TextStyle(fontSize: 13, color: Colors.black)),
                         const SizedBox(width: 4),
@@ -275,7 +275,7 @@ class _MyBookingDetailsScreenState extends State<MyBookingDetailsScreen> {
                     // Trip End
                     Row(
                       children: [
-                        const Icon(Icons.access_time, size: 14, color: Colors.grey),
+                        const Icon(Icons.calendar_month, size: 14, color: Colors.grey),
                         const SizedBox(width: 4),
                         const Text('Trip End:', style: TextStyle(fontSize: 13, color: Colors.black)),
                         const SizedBox(width: 4),
@@ -387,30 +387,32 @@ class _MyBookingDetailsScreenState extends State<MyBookingDetailsScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "addOnItem.strName" ?? "addOnItem.strAddOnName" ?? 'Add-on',
+                        "${addOnItem.strName}",
                         style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
-                      CircleAvatar(
-                        radius: 14,
-                        backgroundColor: Colors.deepOrange,
-                        child: IconButton(
-                          icon: const Icon(
-                            Icons.edit,
-                            size: 18,
-                            color: Colors.white,
-                          ),
-                          onPressed: () {
-                            // Handle edit add-on
-                          },
-                          constraints: const BoxConstraints(),
-                          padding: EdgeInsets.zero,
-                        ),
-                      ),
+                      // CircleAvatar(
+                      //   radius: 14,
+                      //   backgroundColor: Colors.deepOrange,
+                      //   child: IconButton(
+                      //     icon: const Icon(
+                      //       Icons.edit,
+                      //       size: 18,
+                      //       color: Colors.white,
+                      //     ),
+                      //     onPressed: () {
+                      //       // Handle edit add-on
+                      //     },
+                      //     constraints: const BoxConstraints(),
+                      //     padding: EdgeInsets.zero,
+                      //   ),
+                      // ),
                     ],
                   ),
+                  const SizedBox(height: 8),
+
                   Text(
                     'AED ${addOnItem.intTotalAmount?.floor() ?? 0}',
                     style: const TextStyle(
@@ -427,7 +429,7 @@ class _MyBookingDetailsScreenState extends State<MyBookingDetailsScreen> {
                         style: TextStyle(fontSize: 14, color: Colors.grey),
                       ),
                       Text(
-                        '${"addOnItem.intQty" ?? 1}',
+                        '${addOnItem.intQty ?? 1}',
                         style: const TextStyle(
                             fontSize: 14, fontWeight: FontWeight.bold),
                       ),
@@ -612,6 +614,11 @@ class _MyBookingDetailsScreenState extends State<MyBookingDetailsScreen> {
         _buildDetailRow('Trip End', _formatDate(endDate)),
         const SizedBox(height: 16),
         _buildDetailRow('Additional Charges', '${additionalCharges.toStringAsFixed(2)} AED'),
+        const SizedBox(height: 16),
+        _buildDetailRow(
+          'Paid amount',
+          '${(double.parse(bookingData.intCheckoutAmount?.toStringAsFixed(2) ?? '0') - double.parse(bookingData.intBalanceAmt?.toStringAsFixed(2) ?? '0')).toStringAsFixed(2)} AED',
+        ),
         const SizedBox(height: 16),
 
         // Assuming 'Balance amount' is pending payment

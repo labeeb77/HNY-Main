@@ -65,6 +65,7 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: initialDate,
+      initialDatePickerMode: DatePickerMode.day,
       firstDate: selectedStartDate ?? now,
       lastDate: selectedEndDate ?? now.add(const Duration(days: 365)),
     );

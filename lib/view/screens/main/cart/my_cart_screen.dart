@@ -80,189 +80,221 @@ class _MyCartScreenState extends State<MyCartScreen> {
   }
 
   Widget _buildCartItem(BuildContext context, ArrList item, MyCartProvider cartProvider) {
-  log("image url: ${item.itemDetails?.strImgUrl}");
-  
-  final int totalDays = _calculateTotalDays(item.strStartDate, item.strEndDate);
-  final int totalAmount = _calculateTotalAmount(
-    item.itemDetails?.intPricePerDay?.toInt() ?? 0,
-    item.itemDetails?.intPricePerWeek?.toInt() ?? 0,
-    item.itemDetails?.intPricePerMonth?.toInt() ?? 0,
-    totalDays
-  );
-  
-  return Container(
-    margin: const EdgeInsets.only(bottom: 16),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(12),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.grey.withOpacity(0.1),
-          spreadRadius: 1,
-          blurRadius: 10,
-          offset: const Offset(0, 1),
-        ),
-      ],
-    ),
-    child: Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Item Image
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: Image.network(
-                  item.itemDetails?.strImgUrl ?? 'assets/images/placeholder_image.webp',
-                  width: 100,
-                  height: 100,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) =>
-                      Container(
-                        width: 100,
-                        height: 100,
-                        color: Colors.grey[300],
-                        child: const Icon(Icons.error),
-                      ),
-                ),
-              ),
-                const SizedBox(width: 12),
-              // Item Details
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      item.itemDetails?.strModel ?? 'Unknown Model',
-                      style: const TextStyle(
-                          fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Text(
-                          'AED ${item.itemDetails?.intPricePerDay?.toString() ?? '0.0'}/day',
-                            style: const TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey,
-                            ),
-                          ),
-                          const Spacer(),
-                       
-                        ],
-                      ),
-                         Text(
-                            'Total: AED $totalAmount',
-                            style: const TextStyle(
-                              fontSize: 16,
-                              color: Colors.orange,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                      const SizedBox(height: 8),
-                      _buildInfoRow(
-                        icon: Icons.calendar_today,
-                        text: _formatDateRange(item.strStartDate, item.strEndDate),
-                        ),
-                      const SizedBox(height: 4),
-                      _buildInfoRow(
-                        icon: Icons.location_on,
-                        text: _formatLocation(item.strPickupLocationAddress, item.strDeliveryLocationAddress),
-                    ),
-                  ],
-                ),
-              ),
-              // Edit/Delete Buttons
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.edit, color: Colors.orange),
-                    onPressed: () {
-                        _showEditDialog(context, item, cartProvider);
-                    },
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                  ),
-                  const SizedBox(height: 8),
-                  IconButton(
-                    icon: const Icon(Icons.delete, color: Colors.red),
-                    onPressed: () => _showDeleteConfirmation(context, item, cartProvider),
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          // Continue Button
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: item.isAvailable == true
-                  ? () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => CheckoutPaymentScreen(
-                            totalAmount: totalAmount,
-                            cartdata: item,
-                            isCartPage: true,
-                          ),
-                        ),
-                      );
-                    }
-                  : null,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: item.isAvailable == true ? AppColors.primary : Colors.grey,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                elevation: 0,
-              ),
-              child: const Text(
-                'Continue',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
+    log("image url: ${item.itemDetails?.strImgUrl}");
+    
+    final int totalDays = _calculateTotalDays(item.strStartDate, item.strEndDate);
+    final int totalAmount = _calculateTotalAmount(
+      item.itemDetails?.intPricePerDay?.toInt() ?? 0,
+      item.itemDetails?.intPricePerWeek?.toInt() ?? 0,
+      item.itemDetails?.intPricePerMonth?.toInt() ?? 0,
+      totalDays
+    );
+    
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            offset: const Offset(1, 1),
+            spreadRadius: 0.1,
+            color: const Color.fromARGB(255, 225, 225, 225),
+            blurRadius: 12,
           ),
         ],
       ),
-    ),
-  );
-}
-
-  Widget _buildInfoRow({required IconData icon, required String text}) {
-    return Row(
-      children: [
-        Icon(icon, size: 16, color: Colors.grey),
-        const SizedBox(width: 4),
-        Expanded(
-          child: Text(
-            text,
-            style: const TextStyle(
-              fontSize: 14,
-              color: Colors.grey,
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          children: [
+            IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Item Image
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: SizedBox(
+                      width: 100,
+                      child: Image.network(
+                        item.itemDetails?.strImgUrl ?? '',
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) => Image.asset(
+                          'assets/images/placeholder_image.webp',
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  // Item Details
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                "${item.itemDetails?.strBrand ?? ''} ${item.itemDetails?.strModel ?? ''}",
+                                style: const TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            Row(
+                              children: [
+                                IconButton(
+                                  icon: const Icon(Icons.edit, size: 18, color: Colors.deepOrange),
+                                  onPressed: () => _showEditDialog(context, item, cartProvider),
+                                  padding: EdgeInsets.zero,
+                                  constraints: const BoxConstraints(),
+                                ),
+                                const SizedBox(width: 8),
+                                IconButton(
+                                  icon: const Icon(Icons.delete, size: 18, color: Colors.red),
+                                  onPressed: () => _showDeleteConfirmation(context, item, cartProvider),
+                                  padding: EdgeInsets.zero,
+                                  constraints: const BoxConstraints(),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'AED ${totalAmount}',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Colors.deepOrange,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        // Date rows
+                        Row(
+                          children: [
+                            const Icon(Icons.calendar_month, size: 14, color: Colors.grey),
+                            const SizedBox(width: 4),
+                            const Text('Trip Start:', style: TextStyle(fontSize: 13, color: Colors.black)),
+                            const SizedBox(width: 4),
+                            Expanded(
+                              child: Text(
+                                _formatDateTime(item.strStartDate),
+                                style: const TextStyle(fontSize: 12, color: Colors.black),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 2),
+                        Row(
+                          children: [
+                            const Icon(Icons.calendar_month, size: 14, color: Colors.grey),
+                            const SizedBox(width: 4),
+                            const Text('Trip End:', style: TextStyle(fontSize: 13, color: Colors.black)),
+                            const SizedBox(width: 4),
+                            Expanded(
+                              child: Text(
+                                _formatDateTime(item.strEndDate),
+                                style: const TextStyle(fontSize: 12, color: Colors.black),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 2),
+                        // Location rows
+                        Row(
+                          children: [
+                            const Icon(Icons.location_on, size: 16, color: Colors.grey),
+                            const SizedBox(width: 4),
+                            const Text('Pickup:', style: TextStyle(fontSize: 13, color: Colors.black)),
+                            const SizedBox(width: 4),
+                            Expanded(
+                              child: Text(
+                                item.strPickupLocationAddress ?? 'Select Location',
+                                style: const TextStyle(fontSize: 13, color: Colors.black),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 2),
+                        Row(
+                          children: [
+                            const Icon(Icons.location_on, size: 16, color: Colors.grey),
+                            const SizedBox(width: 4),
+                            const Text('Drop-off:', style: TextStyle(fontSize: 13, color: Colors.black)),
+                            const SizedBox(width: 4),
+                            Expanded(
+                              child: Text(
+                                item.strDeliveryLocationAddress ?? 'Select Location',
+                                style: const TextStyle(fontSize: 13, color: Colors.black),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
+            const SizedBox(height: 16),
+            // Continue Button
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: item.isAvailable == true
+                    ? () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CheckoutPaymentScreen(
+                              totalAmount: totalAmount,
+                              cartdata: item,
+                              isCartPage: true,
+                            ),
+                          ),
+                        );
+                      }
+                    : null,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: item.isAvailable == true ? AppColors.primary : Colors.grey,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  elevation: 0,
+                ),
+                child: const Text(
+                  'Continue',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
-      ],
+      ),
     );
+  }
+
+  String _formatDateTime(DateTime? date) {
+    if (date == null) return 'N/A';
+    return DateFormat('MMMM d, yyyy hh:mm a').format(date);
   }
 
   void _showDeleteConfirmation(BuildContext context, ArrList item, MyCartProvider cartProvider) {
@@ -639,46 +671,36 @@ class _MyCartScreenState extends State<MyCartScreen> {
     );
   }
 
-  String _formatDateRange(DateTime? start, DateTime? end) {
-    if (start == null || end == null) return 'No dates selected';
-    final formatter = DateFormat('MMM dd, yyyy');
-    return '${formatter.format(start)} - ${formatter.format(end)}';
-  }
-
-  String _formatLocation(String? pickup, String? dropoff) {
-    return '${pickup ?? 'Select Location'} - ${dropoff ?? 'Select Location'}';
-  }
-
   int _calculateTotalDays(DateTime? startDate, DateTime? endDate) {
-  if (startDate == null || endDate == null) {
-    return 1; // Default to 1 day if dates not selected
+    if (startDate == null || endDate == null) {
+      return 1; // Default to 1 day if dates not selected
+    }
+    
+    // Create DateTime objects with times set to 0 since we only have dates
+    final start = DateTime(startDate.year, startDate.month, startDate.day);
+    final end = DateTime(endDate.year, endDate.month, endDate.day);
+    
+    // Calculate difference in days (add 1 to include both start and end date)
+    final difference = end.difference(start);
+    int days = difference.inDays + 1;
+    
+    // Ensure minimum of 1 day
+    return days > 0 ? days : 1;
   }
-  
-  // Create DateTime objects with times set to 0 since we only have dates
-  final start = DateTime(startDate.year, startDate.month, startDate.day);
-  final end = DateTime(endDate.year, endDate.month, endDate.day);
-  
-  // Calculate difference in days (add 1 to include both start and end date)
-  final difference = end.difference(start);
-  int days = difference.inDays + 1;
-  
-  // Ensure minimum of 1 day
-  return days > 0 ? days : 1;
-}
 
-int _calculateTotalAmount(int pricePerDay, int pricePerWeek, int pricePerMonth, int totalDays) {
-  if (totalDays >= 30) {
-    // Monthly pricing
-    final monthlyPrice = (pricePerMonth / 30) * totalDays;
-    return monthlyPrice.toInt();
-  } else if (totalDays >= 8) {
-    // Weekly pricing
-    final weeklyPrice = (pricePerWeek / 7) * totalDays;
-    return weeklyPrice.toInt();
-  } else {
-    // Daily pricing
-    final dailyPrice = pricePerDay * totalDays;
-    return dailyPrice.toInt();
+  int _calculateTotalAmount(int pricePerDay, int pricePerWeek, int pricePerMonth, int totalDays) {
+    if (totalDays >= 30) {
+      // Monthly pricing
+      final monthlyPrice = (pricePerMonth / 30) * totalDays;
+      return monthlyPrice.toInt();
+    } else if (totalDays >= 8) {
+      // Weekly pricing
+      final weeklyPrice = (pricePerWeek / 7) * totalDays;
+      return weeklyPrice.toInt();
+    } else {
+      // Daily pricing
+      final dailyPrice = pricePerDay * totalDays;
+      return dailyPrice.toInt();
+    }
   }
-}
 }

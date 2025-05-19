@@ -101,179 +101,181 @@ class _CompletePaymentSheetState extends State<CompletePaymentSheet> {
           borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
         ),
         child: Consumer<HomeController>(
-          builder: (context, value, child) => Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Complete Payment',
-                textAlign: TextAlign.start,
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 20),
-
-              // Payment Type Selection
-              Row(
-                children: [
-                  Expanded(
-                    child: RadioListTile<bool>(
-                      visualDensity: VisualDensity.compact,
-                      dense: true,
-                      contentPadding: EdgeInsets.zero,
-                      title: const Text(
-                        'Full Amount',
-                        style: TextStyle(fontSize: 13),
-                      ),
-                      value: true,
-                      groupValue: isFullPayment,
-                      onChanged: (value) {
-                        setState(() {
-                          isFullPayment = value!;
-                          if (isFullPayment) {
-                            _amountController.text =
-                                widget.balanceAmount.toStringAsFixed(2);
-                          }
-                        });
-                      },
-                    ),
+          builder: (context, value, child) => IntrinsicHeight(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Complete Payment',
+                  textAlign: TextAlign.start,
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
                   ),
-                  Expanded(
-                    child: RadioListTile<bool>(
-                      visualDensity: VisualDensity.compact,
-                      dense: true,
-                      contentPadding: EdgeInsets.zero,
-                      title: const Text(
-                        'Custom Amount',
-                        style: TextStyle(fontSize: 13),
+                ),
+                const SizedBox(height: 20),
+
+                // Payment Type Selection
+                Row(
+                  children: [
+                    Expanded(
+                      child: RadioListTile<bool>(
+                        visualDensity: VisualDensity.compact,
+                        dense: true,
+                        contentPadding: EdgeInsets.zero,
+                        title: const Text(
+                          'Full Amount',
+                          style: TextStyle(fontSize: 13),
+                        ),
+                        value: true,
+                        groupValue: isFullPayment,
+                        onChanged: (value) {
+                          setState(() {
+                            isFullPayment = value!;
+                            if (isFullPayment) {
+                              _amountController.text =
+                                  widget.balanceAmount.toStringAsFixed(2);
+                            }
+                          });
+                        },
                       ),
-                      value: false,
-                      groupValue: isFullPayment,
-                      onChanged: (value) {
-                        setState(() {
-                          isFullPayment = value!;
-                        });
-                      },
+                    ),
+                    Expanded(
+                      child: RadioListTile<bool>(
+                        visualDensity: VisualDensity.compact,
+                        dense: true,
+                        contentPadding: EdgeInsets.zero,
+                        title: const Text(
+                          'Custom Amount',
+                          style: TextStyle(fontSize: 13),
+                        ),
+                        value: false,
+                        groupValue: isFullPayment,
+                        onChanged: (value) {
+                          setState(() {
+                            isFullPayment = value!;
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+
+                // Amount Input
+                if (!isFullPayment) ...[
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: _amountController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      labelText: 'Enter Amount',
+                      prefixText: 'AED ',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      errorText: errorMessage,
                     ),
                   ),
                 ],
-              ),
 
-              // Amount Input
-              if (!isFullPayment) ...[
-                const SizedBox(height: 16),
-                TextField(
-                  controller: _amountController,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    labelText: 'Enter Amount',
-                    prefixText: 'AED ',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
+                const Gap(16),
+                // Alternative Mobile Number Input
+                const Text(
+                  'Alternative Mobile Number',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Container(
+                      height: 48,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey.shade300),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: CountryCodePicker(
+                        onChanged: (CountryCode countryCode) {
+                          setState(() {
+                            _altCountryCode = countryCode.dialCode?.replaceAll('+', '') ?? '971';
+                          });
+                        },
+                        initialSelection: 'AE',
+                        favorite: const ['AE'],
+                        showCountryOnly: false,
+                        showOnlyCountryWhenClosed: false,
+                        alignLeft: false,
+                        padding: EdgeInsets.zero,
+                        dialogSize: Size(MediaQuery.of(context).size.width * 0.9, MediaQuery.of(context).size.height * 0.6),
+                      ),
                     ),
-                    errorText: errorMessage,
-                  ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: TextFormField(
+                        controller: _altMobileController,
+                        keyboardType: TextInputType.phone,
+                        decoration: InputDecoration(
+                          labelText: 'Mobile Number',
+                          hintText: 'Enter alternative mobile number',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        ),
+                        validator: (value) {
+                          if (value != null && value.isNotEmpty && value.length < 9) {
+                            return 'Phone number must be at least 9 digits';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                const Gap(16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.all(12),
+                        alignment: Alignment.centerLeft,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(6),
+                          color: AppColors.primary.withOpacity(0.1),
+                        ),
+                        child: Text(
+                          "${isFullPayment ? widget.balanceAmount.toStringAsFixed(2) : double.parse(_amountController.text).toStringAsFixed(2)} AED",
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w800,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const Gap(20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    PrimaryElevateButton(
+                      buttonName: "Cancel",
+                      isGrey: false,
+                      ontap: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                    const SizedBox(width: 10),
+                    PrimaryElevateButton(
+                      ontap: isLoading ? null : _handlePayment,
+                      buttonName:
+                          isLoading ? "Processing..." : "Proceed to payment",
+                    ),
+                  ],
                 ),
               ],
-
-              const Gap(16),
-              // Alternative Mobile Number Input
-              const Text(
-                'Alternative Mobile Number',
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-              ),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  Container(
-                    height: 48,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey.shade300),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: CountryCodePicker(
-                      onChanged: (CountryCode countryCode) {
-                        setState(() {
-                          _altCountryCode = countryCode.dialCode?.replaceAll('+', '') ?? '971';
-                        });
-                      },
-                      initialSelection: 'AE',
-                      favorite: const ['AE'],
-                      showCountryOnly: false,
-                      showOnlyCountryWhenClosed: false,
-                      alignLeft: false,
-                      padding: EdgeInsets.zero,
-                      dialogSize: Size(MediaQuery.of(context).size.width * 0.9, MediaQuery.of(context).size.height * 0.6),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: TextFormField(
-                      controller: _altMobileController,
-                      keyboardType: TextInputType.phone,
-                      decoration: InputDecoration(
-                        labelText: 'Mobile Number',
-                        hintText: 'Enter alternative mobile number',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                      ),
-                      validator: (value) {
-                        if (value != null && value.isNotEmpty && value.length < 9) {
-                          return 'Phone number must be at least 9 digits';
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-                ],
-              ),
-              const Gap(16),
-              Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.all(12),
-                      alignment: Alignment.centerLeft,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(6),
-                        color: AppColors.primary.withOpacity(0.1),
-                      ),
-                      child: Text(
-                        "${isFullPayment ? widget.balanceAmount.toStringAsFixed(2) : double.parse(_amountController.text).toStringAsFixed(2)} AED",
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w800,
-                          color: AppColors.primary,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const Gap(20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  PrimaryElevateButton(
-                    buttonName: "Cancel",
-                    isGrey: false,
-                    ontap: () {
-                      Navigator.pop(context);
-                    },
-                  ),
-                  const SizedBox(width: 10),
-                  PrimaryElevateButton(
-                    ontap: isLoading ? null : _handlePayment,
-                    buttonName:
-                        isLoading ? "Processing..." : "Proceed to payment",
-                  ),
-                ],
-              ),
-            ],
+            ),
           ),
         ),
       ),

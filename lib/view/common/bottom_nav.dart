@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
 import 'package:hny_main/data/providers/bottom_nav_controller.dart';
 import 'package:hny_main/data/providers/home_controller.dart';
+import 'package:hny_main/data/providers/mycart_provider.dart';
 import 'package:hny_main/data/providers/profile_provider.dart';
 import 'package:hny_main/view/screens/main/home/widgets_elements.dart';
 import 'package:provider/provider.dart';
@@ -23,6 +24,7 @@ class _BottomNavState extends State<BottomNav> {
           .getCarDataList(context: context);
       Provider.of<ProfileProvider>(context, listen: false)
           .getUserProfileDetails(context);
+      Provider.of<MyCartProvider>(context, listen: false).fetchCartItems();
     });
     super.initState();
   }

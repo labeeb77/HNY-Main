@@ -9,7 +9,9 @@ import 'package:intl/intl.dart';
 
 class HomeController extends ChangeNotifier {
   final HomeService _homeService;
-
+callNot(){
+  notifyListeners();
+}
   List<ArrCar> _carListData = [];
   List<ArrTypeList> _carTypeListData = [];
 

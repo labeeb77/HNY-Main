@@ -363,7 +363,7 @@ class _CartScreenState extends State<CartScreen> {
                               children: [
                                 Row(
                                   children: [
-                                    const Icon(Icons.access_time, size: 12, color: Colors.grey),
+                                    const Icon(Icons.calendar_month, size: 12, color: Colors.grey),
                                     const SizedBox(width: 2),
                                     Text(
                                       'Trip Start: $startDate ${bookingProvider.formattedStartTime}',
@@ -376,7 +376,7 @@ class _CartScreenState extends State<CartScreen> {
                                 const SizedBox(height: 2),
                                 Row(
                                   children: [
-                                    const Icon(Icons.access_time, size: 12, color: Colors.grey),
+                                    const Icon(Icons.calendar_month, size: 12, color: Colors.grey),
                                     const SizedBox(width: 2),
                                     Text(
                                       'Trip End: $endDate ${bookingProvider.formattedEndTime}',

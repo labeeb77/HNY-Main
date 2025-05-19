@@ -4,8 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
 import 'package:hny_main/data/models/response/car_list_model.dart';
+import 'package:hny_main/data/providers/favourite_provider.dart';
+import 'package:hny_main/data/providers/home_controller.dart';
 import 'package:hny_main/view/screens/main/home/widgets_elements.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:provider/provider.dart';
 
 class CarHeader extends StatefulWidget {
   final ArrCar arrCar;
@@ -26,7 +29,8 @@ class _CarHeaderState extends State<CarHeader> {
       children: [
         Stack(
           children: [
-            if (widget.arrCar.arrImgUrl != null && widget.arrCar.arrImgUrl!.isNotEmpty)
+            if (widget.arrCar.arrImgUrl != null &&
+                widget.arrCar.arrImgUrl!.isNotEmpty)
               Column(
                 children: [
                   CarouselSlider.builder(
@@ -64,7 +68,8 @@ class _CarHeaderState extends State<CarHeader> {
                   const SizedBox(height: 8),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: widget.arrCar.arrImgUrl!.asMap().entries.map((entry) {
+                    children:
+                        widget.arrCar.arrImgUrl!.asMap().entries.map((entry) {
                       return GestureDetector(
                         onTap: () => _controller.jumpToPage(entry.key),
                         child: Container(
@@ -90,7 +95,7 @@ class _CarHeaderState extends State<CarHeader> {
                 width: double.infinity,
                 fit: BoxFit.cover,
               ),
-            _buildHeaderIcons(context),
+            _buildHeaderIcons(context, widget.arrCar.id),
           ],
         ),
         Padding(
@@ -103,7 +108,6 @@ class _CarHeaderState extends State<CarHeader> {
               _buildCarTitle(),
               const SizedBox(height: 8),
               _buildCarDescription(),
-             
             ],
           ),
         ),
@@ -148,7 +152,6 @@ class _CarHeaderState extends State<CarHeader> {
             maxLines: 1,
           ),
         ),
-        
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
           decoration: BoxDecoration(
@@ -179,8 +182,7 @@ class _CarHeaderState extends State<CarHeader> {
     );
   }
 
-  Widget _buildHeaderIcons(BuildContext context) {
-    // This remains the same as your original implementation
+  Widget _buildHeaderIcons(BuildContext context, carId) {
     return Positioned(
       top: 40,
       left: 0,
@@ -204,10 +206,53 @@ class _CarHeaderState extends State<CarHeader> {
                   icon: Icons.share,
                 ),
                 const Gap(12),
-                CircledIcon(
-                  circleColor: AppColors.circleAvatarBackground,
-                  iconColor: AppColors.white,
-                  icon: Icons.favorite_border,
+                InkWell(
+                  onTap: () {},
+                  child: CircledIcon(
+                    ontap: () async {
+                      final homePro = Provider.of<HomeController>(context, listen: false);
+                      final favPro = Provider.of<FavouriteProvider>(context, listen: false);
+                      try {
+                        if (!widget.arrCar.isFavourite!) {
+                          await favPro.addToFavourites(carId).then((onValue) {
+                            homePro.getCarDataList(
+                              context: context,
+                              startDate: homePro.selecteStratdDate,
+                              endDate: homePro.selecteEnddDate,
+                            );
+                            homePro.callNot();
+                          });
+                        } else {
+                          final favId = findFavId(carId);
+                          if (favId.isNotEmpty) {
+                            await favPro.removeFromFavourites(favId).then((_) {
+                              homePro.getCarDataList(
+                                context: context,
+                                startDate: homePro.selecteStratdDate,
+                                endDate: homePro.selecteEnddDate,
+                              );
+                              homePro.callNot();
+                            });
+                          }
+                        }
+                        setState(() {
+                          widget.arrCar.isFavourite = !widget.arrCar.isFavourite!;
+                        });
+                      } catch (e) {
+                        log('Error toggling favorite: $e');
+                        // Optionally show a snackbar or dialog to inform the user
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Failed to update favorite status'),
+                            duration: Duration(seconds: 2),
+                          ),
+                        );
+                      }
+                    },
+                    circleColor: AppColors.circleAvatarBackground,
+                    iconColor: widget.arrCar.isFavourite! ? AppColors.red : AppColors.white,
+                    icon: widget.arrCar.isFavourite! ? Icons.favorite : Icons.favorite_border,
+                  ),
                 )
               ],
             ),
@@ -215,5 +260,20 @@ class _CarHeaderState extends State<CarHeader> {
         ),
       ),
     );
+  }
+
+  String findFavId(String? id) {
+    final favProvider = Provider.of<FavouriteProvider>(context, listen: false);
+    final favList = favProvider.favArrList;
+    try {
+      final favItem = favList.firstWhere(
+        (element) => element.strCarId == id,
+        orElse: () => throw Exception('Favorite item not found'),
+      );
+      return favItem.id;
+    } catch (e) {
+      log('Error finding favorite ID: $e');
+      return '';
+    }
   }
 }

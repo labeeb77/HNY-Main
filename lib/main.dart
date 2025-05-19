@@ -6,6 +6,7 @@ import 'package:hny_main/view/screens/Search/search.dart';
 import 'package:hny_main/view/screens/main/onboarding/onboarding_screen.dart';
 import 'package:hny_main/view/screens/main/splash_screen/splash_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() {
   runApp(const MyApp());
@@ -26,6 +27,15 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         initialRoute: AppRoutes.splashScreen,
         onGenerateRoute: AppRoutes.generateRoute,
+        supportedLocales: [
+          const Locale('en', 'GB'), // British English for dd/MM/yyyy
+        ],
+          localizationsDelegates: [
+    GlobalMaterialLocalizations.delegate,
+    GlobalWidgetsLocalizations.delegate,
+    GlobalCupertinoLocalizations.delegate,
+  ],
+        locale: const Locale('en', 'GB'), // force it to use dd/MM/yyyy
         home: const SplashScreen(),
       ),
     );

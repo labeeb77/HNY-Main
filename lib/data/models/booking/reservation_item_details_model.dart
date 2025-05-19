@@ -38,6 +38,7 @@ class ReservationItemDetailsModel {
   String? strCusMobileNo;
   String? strMobileNo;
   String? strCusName;
+  String? strName;
   String? strEmail;
   double? intBalanceAmt;
   dynamic intDepositAmount;
@@ -78,6 +79,7 @@ class ReservationItemDetailsModel {
     this.strCusMobileNo,
     this.strMobileNo,
     this.strCusName,
+    this.strName,
     this.strEmail,
     this.intBalanceAmt,
     this.intDepositAmount,
@@ -120,6 +122,7 @@ class ReservationItemDetailsModel {
         strCusMobileNo: json["strCusMobileNo"],
         strMobileNo: json["strMobileNo"],
         strCusName: json["strCusName"],
+        strName: json["strName"],
         strEmail: json["strEmail"],
         intBalanceAmt: json["intBalanceAmt"]?.toDouble(),
         intDepositAmount: json["intDepositAmount"],
@@ -176,6 +179,7 @@ class ReservationItemDetailsModel {
         "strCusMobileNo": strCusMobileNo,
         "strMobileNo": strMobileNo,
         "strCusName": strCusName,
+        "strName": strName,
         "strEmail": strEmail,
         "intBalanceAmt": intBalanceAmt,
         "intDepositAmount": intDepositAmount,
@@ -199,20 +203,24 @@ class ReservationItemDetailsModel {
 class ArrAddCharge {
   double? intAmount;
   String? strAdditionalChargeType;
+  int? count;
 
   ArrAddCharge({
     this.intAmount,
     this.strAdditionalChargeType,
+    this.count,
   });
 
   factory ArrAddCharge.fromJson(Map<String, dynamic> json) => ArrAddCharge(
         intAmount: json["intAmount"]?.toDouble(),
         strAdditionalChargeType: json["strAdditionalChargeType"],
+        count: json["count"],
       );
 
   Map<String, dynamic> toJson() => {
         "intAmount": intAmount,
         "strAdditionalChargeType": strAdditionalChargeType,
+        "count": count,
       };
 }
 
@@ -396,6 +404,16 @@ class ArrBookingItemTwo {
   DateTime? strUpdatedTime;
   List<ArrTask>? arrTasks;
   List<ReservArrCar>? reservArrCar;
+  String? strName;
+  String? strDescription;
+  int? intQty;
+  int? intTotalFinalAmount;
+  String? strAddOnItemId;
+  String? strAddOnName;
+  String? strAssigneeName;
+  int? intCancellationFee;
+  int? intDeductionAmount;
+  int? intOldTotalAmount;
 
   ArrBookingItemTwo({
     this.id,
@@ -434,6 +452,16 @@ class ArrBookingItemTwo {
     this.strUpdatedTime,
     this.arrTasks,
     this.reservArrCar,
+    this.strName,
+    this.strDescription,
+    this.intQty,
+    this.intTotalFinalAmount,
+    this.strAddOnItemId,
+    this.strAddOnName,
+    this.strAssigneeName,
+    this.intCancellationFee,
+    this.intDeductionAmount,
+    this.intOldTotalAmount,
   });
 
   factory ArrBookingItemTwo.fromJson(Map<String, dynamic> json) =>
@@ -492,6 +520,16 @@ class ArrBookingItemTwo {
             ? []
             : List<ReservArrCar>.from(
                 json["arrCar"]!.map((x) => ReservArrCar.fromJson(x))),
+        strName: json["strName"],
+        strDescription: json["strDescription"],
+        intQty: json["intQty"],
+        intTotalFinalAmount: json["intTotalFinalAmount"],
+        strAddOnItemId: json["strAddOnItemId"],
+        strAddOnName: json["strAddOnName"],
+        strAssigneeName: json["strAssigneeName"],
+        intCancellationFee: json["intCancellationFee"],
+        intDeductionAmount: json["intDeductionAmount"],
+        intOldTotalAmount: json["intOldTotalAmount"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -535,6 +573,16 @@ class ArrBookingItemTwo {
         "arrCar": reservArrCar == null
             ? []
             : List<dynamic>.from(reservArrCar!.map((x) => x.toJson())),
+        "strName": strName,
+        "strDescription": strDescription,
+        "intQty": intQty,
+        "intTotalFinalAmount": intTotalFinalAmount,
+        "strAddOnItemId": strAddOnItemId,
+        "strAddOnName": strAddOnName,
+        "strAssigneeName": strAssigneeName,
+        "intCancellationFee": intCancellationFee,
+        "intDeductionAmount": intDeductionAmount,
+        "intOldTotalAmount": intOldTotalAmount,
       };
 }
 
