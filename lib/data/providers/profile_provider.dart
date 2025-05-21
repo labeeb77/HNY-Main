@@ -27,7 +27,7 @@ class ProfileProvider with ChangeNotifier {
   String? selectedGender;
   String? selectedNationality;
   String? selectedDateOfBirthInISO;
-  // Removed selectedCitizenship
+  String? selectedCitizenshipType;
 
   File? _selectedProfileImage;
   // We'll keep these properties but won't use them in the add profile flow
@@ -68,6 +68,8 @@ class ProfileProvider with ChangeNotifier {
   void setNationality(String value) =>
       _updateValue(() => selectedNationality = value);
   void setGender(String value) => _updateValue(() => selectedGender = value);
+  void setCitizenshipType(String value) =>
+      _updateValue(() => selectedCitizenshipType = value.toLowerCase());
 
   void setPassportImagePath(File? image) =>
       _updateValue(() => _selectedPassportImagePath = image);
@@ -103,6 +105,7 @@ class ProfileProvider with ChangeNotifier {
         strNationality: selectedNationality,
         strPassportUrl: globalUser?.strPassportUrl ?? "",
         strProfileUrl: profileUploadedUrl ?? globalUser?.strProfileUrl ?? "",
+        strCitizenType: selectedCitizenshipType,
       );
 
       log("AddProfileModel Details:");
@@ -117,6 +120,8 @@ class ProfileProvider with ChangeNotifier {
       log("lastName: ${data.strLastName}");
       log("licenceUrl: ${data.strLicenceUrl}");
       log("nationality: ${data.strNationality}");
+            log("citizenship: ${data.strCitizenType}");
+
       log("passportUrl: ${data.strPassportUrl}");
       log("profileUrl: ${data.strProfileUrl}");
       final ApiResponseModel<dynamic> apiResponse =

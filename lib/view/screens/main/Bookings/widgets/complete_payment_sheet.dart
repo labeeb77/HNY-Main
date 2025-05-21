@@ -28,6 +28,7 @@ class CompletePaymentSheet extends StatefulWidget {
 class _CompletePaymentSheetState extends State<CompletePaymentSheet> {
   bool isFullPayment = true;
   bool isLoading = false;
+  bool isPaymentProcessing = false;
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _altMobileController = TextEditingController();
   String? errorMessage;
@@ -55,7 +56,7 @@ class _CompletePaymentSheetState extends State<CompletePaymentSheet> {
     }
 
     setState(() {
-      isLoading = true;
+      isPaymentProcessing = true;
       errorMessage = null;
     });
 
@@ -85,7 +86,7 @@ class _CompletePaymentSheetState extends State<CompletePaymentSheet> {
     } finally {
       if (mounted) {
         setState(() {
-          isLoading = false;
+          isPaymentProcessing = false;
         });
       }
     }
@@ -268,9 +269,9 @@ class _CompletePaymentSheetState extends State<CompletePaymentSheet> {
                     ),
                     const SizedBox(width: 10),
                     PrimaryElevateButton(
-                      ontap: isLoading ? null : _handlePayment,
-                      buttonName:
-                          isLoading ? "Processing..." : "Proceed to payment",
+                      ontap: isPaymentProcessing ? null : _handlePayment,
+                      buttonName: "Proceed to payment",
+                      loading: isPaymentProcessing,
                     ),
                   ],
                 ),

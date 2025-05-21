@@ -215,6 +215,13 @@ class _ManageProfileScreenState extends State<ManageProfileScreen> {
     'Zambia',
     'Zimbabwe'
   ];
+
+  final List<String> _citizenshipTypes = [
+    'Tourist',
+    'Gcc',
+    'Resident'
+  ];
+
   bool _isLoading = false;
 
   @override
@@ -351,6 +358,13 @@ class _ManageProfileScreenState extends State<ManageProfileScreen> {
     if (profileProvider.selectedNationality == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please select your nationality')),
+      );
+      return false;
+    }
+
+    if (profileProvider.selectedCitizenshipType == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select your citizenship type')),
       );
       return false;
     }
@@ -510,6 +524,12 @@ class _ManageProfileScreenState extends State<ManageProfileScreen> {
                         profileProvider.selectedNationality,
                         _countries,
                         profileProvider),
+                    _buildCountryDropdown(
+                        'Citizenship',
+                        profileProvider.selectedCitizenshipType,
+                        _citizenshipTypes,
+                        profileProvider,
+                        isCitizenship: true),
                     const SizedBox(height: 24),
                   ],
                 ),
@@ -698,7 +718,7 @@ class _ManageProfileScreenState extends State<ManageProfileScreen> {
   }
 
   Widget _buildCountryDropdown(String label, String? value, List<String> items,
-      ProfileProvider provider) {
+      ProfileProvider provider, {bool isCitizenship = false}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: Column(
@@ -731,7 +751,7 @@ class _ManageProfileScreenState extends State<ManageProfileScreen> {
                 borderRadius: BorderRadius.circular(4),
                 borderSide: const BorderSide(color: Colors.grey),
               ),
-              hintText: 'Select a country',
+              hintText: 'Select ${label.toLowerCase()}',
             ),
             isExpanded: true,
             items: items.map((String item) {
@@ -742,7 +762,11 @@ class _ManageProfileScreenState extends State<ManageProfileScreen> {
             }).toList(),
             onChanged: (String? newValue) {
               if (newValue != null) {
-                provider.setNationality(newValue);
+                if (isCitizenship) {
+                  provider.setCitizenshipType(newValue);
+                } else {
+                  provider.setNationality(newValue);
+                }
               }
             },
           ),

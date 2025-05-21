@@ -26,21 +26,21 @@ class ReservationItemDetailsModel {
   dynamic intPromocodeDiscount;
   dynamic intCoinsUsed;
   dynamic intCoinDiscount;
-  double? intTotalAmount;
-  double? intAmountExcludingVat;
-  double? intVatAmount;
+  dynamic intTotalAmount;
+  dynamic intAmountExcludingVat;
+  dynamic intVatAmount;
   dynamic intVatPercentage;
   dynamic intPayedAmount;
   dynamic intTotalDiscount;
-  double? intCheckoutAmount;
-  double? intTotalVatAmount;
+  dynamic intCheckoutAmount;
+  dynamic intTotalVatAmount;
   dynamic intRewardCoinCount;
   String? strCusMobileNo;
   String? strMobileNo;
   String? strCusName;
   String? strName;
   String? strEmail;
-  double? intBalanceAmt;
+  dynamic intBalanceAmt;
   dynamic intDepositAmount;
   DateTime? strStartDate;
   DateTime? strEndDate;
@@ -95,45 +95,45 @@ class ReservationItemDetailsModel {
 
   factory ReservationItemDetailsModel.fromJson(Map<String, dynamic> json) =>
       ReservationItemDetailsModel(
-        success: json["success"],
-        message: json["message"],
-        statusCode: json["statusCode"],
-        id: json["_id"],
-        chrStatus: json["chrStatus"],
-        strStatus: json["strStatus"],
-        strCustomerId: json["strCustomerId"],
-        strBookingId: json["strBookingId"],
-        strBookingType: json["strBookingType"],
-        strPaymentMode: json["strPaymentMode"],
-        strRemarks: json["strRemarks"],
-        strPromocode: json["strPromocode"],
-        intPromocodeDiscount: json["intPromocodeDiscount"],
-        intCoinsUsed: json["intCoinsUsed"],
-        intCoinDiscount: json["intCoinDiscount"],
-        intTotalAmount: json["intTotalAmount"]?.toDouble(),
-        intAmountExcludingVat: json["intAmountExcludingVat"]?.toDouble(),
-        intVatAmount: json["intVatAmount"]?.toDouble(),
-        intVatPercentage: json["intVatPercentage"],
-        intPayedAmount: json["intPayedAmount"],
-        intTotalDiscount: json["intTotalDiscount"],
-        intCheckoutAmount: json["intCheckoutAmount"]?.toDouble(),
-        intTotalVatAmount: json["intTotalVatAmount"]?.toDouble(),
-        intRewardCoinCount: json["intRewardCoinCount"],
-        strCusMobileNo: json["strCusMobileNo"],
-        strMobileNo: json["strMobileNo"],
-        strCusName: json["strCusName"],
-        strName: json["strName"],
-        strEmail: json["strEmail"],
-        intBalanceAmt: json["intBalanceAmt"]?.toDouble(),
-        intDepositAmount: json["intDepositAmount"],
+        success: json["success"] ?? false,
+        message: json["message"] ?? '',
+        statusCode: json["statusCode"] ?? 0,
+        id: json["_id"] ?? '',
+        chrStatus: json["chrStatus"] ?? '',
+        strStatus: json["strStatus"] ?? '',
+        strCustomerId: json["strCustomerId"] ?? '',
+        strBookingId: json["strBookingId"] ?? '',
+        strBookingType: json["strBookingType"] ?? '',
+        strPaymentMode: json["strPaymentMode"] ?? '',
+        strRemarks: json["strRemarks"] ?? '',
+        strPromocode: json["strPromocode"] ?? '',
+        intPromocodeDiscount: json["intPromocodeDiscount"] ?? 0,
+        intCoinsUsed: json["intCoinsUsed"] ?? 0,
+        intCoinDiscount: json["intCoinDiscount"] ?? 0,
+        intTotalAmount: json["intTotalAmount"] ?? 0,
+        intAmountExcludingVat: json["intAmountExcludingVat"] ?? 0,
+        intVatAmount: json["intVatAmount"] ?? 0,
+        intVatPercentage: json["intVatPercentage"] ?? 0,
+        intPayedAmount: json["intPayedAmount"] ?? 0,
+        intTotalDiscount: json["intTotalDiscount"] ?? 0,
+        intCheckoutAmount: json["intCheckoutAmount"] ?? 0,
+        intTotalVatAmount: json["intTotalVatAmount"] ?? 0,
+        intRewardCoinCount: json["intRewardCoinCount"] ?? 0,
+        strCusMobileNo: json["strCusMobileNo"] ?? '',
+        strMobileNo: json["strMobileNo"] ?? '',
+        strCusName: json["strCusName"] ?? '',
+        strName: json["strName"] ?? '',
+        strEmail: json["strEmail"] ?? '',
+        intBalanceAmt: json["intBalanceAmt"] ?? 0,
+        intDepositAmount: json["intDepositAmount"] ?? 0,
         strStartDate: json["strStartDate"] == null
             ? null
             : DateTime.parse(json["strStartDate"]),
         strEndDate: json["strEndDate"] == null
             ? null
             : DateTime.parse(json["strEndDate"]),
-        isVatIncluded: json["isVatIncluded"],
-        strCreatedBy: json["strCreatedBy"],
+        isVatIncluded: json["isVatIncluded"] ?? false,
+        strCreatedBy: json["strCreatedBy"] ?? '',
         strCreatedTime: json["strCreatedTime"] == null
             ? null
             : DateTime.parse(json["strCreatedTime"]),
@@ -201,9 +201,9 @@ class ReservationItemDetailsModel {
 }
 
 class ArrAddCharge {
-  double? intAmount;
+  dynamic intAmount;
   String? strAdditionalChargeType;
-  int? count;
+  dynamic count;
 
   ArrAddCharge({
     this.intAmount,
@@ -212,15 +212,15 @@ class ArrAddCharge {
   });
 
   factory ArrAddCharge.fromJson(Map<String, dynamic> json) => ArrAddCharge(
-        intAmount: json["intAmount"]?.toDouble(),
-        strAdditionalChargeType: json["strAdditionalChargeType"],
-        count: json["count"],
+        intAmount: json["intAmount"] ?? 0,
+        strAdditionalChargeType: json["strAdditionalChargeType"] ?? '',
+        count: json["count"] ?? 0,
       );
 
   Map<String, dynamic> toJson() => {
-        "intAmount": intAmount,
-        "strAdditionalChargeType": strAdditionalChargeType,
-        "count": count,
+        "intAmount": intAmount ?? 0,
+        "strAdditionalChargeType": strAdditionalChargeType ?? '',
+        "count": count ?? 0,
       };
 }
 
@@ -234,19 +234,19 @@ class ReservArrCar {
   String? strModel;
   String? strDescription;
   String? strCarCategory;
-  int? strSeatNo;
+  dynamic strSeatNo;
   String? strFuelType;
   String? strImgUrl;
   List<String?>? arrImgUrl;
-  int? intPower;
-  int? intFuelCapacity;
-  int? intRating;
+  dynamic intPower;
+  dynamic intFuelCapacity;
+  dynamic intRating;
   String? strVarients;
   String? strYear;
   String? strColor;
-  int? intPricePerDay;
-  int? intPricePerWeek;
-  int? intPricePerMonth;
+  dynamic intPricePerDay;
+  dynamic intPricePerWeek;
+  dynamic intPricePerMonth;
   List<CarFeature>? arrCarFeatures;
   String? strCreatedBy;
   DateTime? strCreatedTime;
@@ -280,69 +280,69 @@ class ReservArrCar {
   });
 
   factory ReservArrCar.fromJson(Map<String, dynamic> json) => ReservArrCar(
-        id: json["_id"],
-        strCarCode: json["strCarCode"],
-        strCarNumber: json["strCarNumber"],
-        strBrand: json["strBrand"],
-        strStatus: json["strStatus"],
-        chrStatus: json["chrStatus"],
-        strModel: json["strModel"],
-        strDescription: json["strDescription"],
-        strCarCategory: json["strCarCategory"],
-        strSeatNo: json["strSeatNo"],
-        strFuelType: json["strFuelType"],
-        strImgUrl: json["strImgUrl"],
+        id: json["_id"] ?? '',
+        strCarCode: json["strCarCode"] ?? '',
+        strCarNumber: json["strCarNumber"] ?? '',
+        strBrand: json["strBrand"] ?? '',
+        strStatus: json["strStatus"] ?? '',
+        chrStatus: json["chrStatus"] ?? '',
+        strModel: json["strModel"] ?? '',
+        strDescription: json["strDescription"] ?? '',
+        strCarCategory: json["strCarCategory"] ?? '',
+        strSeatNo: json["strSeatNo"] ?? 0,
+        strFuelType: json["strFuelType"] ?? '',
+        strImgUrl: json["strImgUrl"] ?? '',
         arrImgUrl: json["arrImgUrl"] == null
             ? []
-            : List<String?>.from(json["arrImgUrl"]!.map((x) => x)),
-        intPower: json["intPower"],
-        intFuelCapacity: json["intFuelCapacity"],
-        intRating: json["intRating"],
-        strVarients: json["strVarients"],
-        strYear: json["strYear"],
-        strColor: json["strColor"],
-        intPricePerDay: json["intPricePerDay"],
-        intPricePerWeek: json["intPricePerWeek"],
-        intPricePerMonth: json["intPricePerMonth"],
+            : List<String?>.from(json["arrImgUrl"]!.map((x) => x ?? '')),
+        intPower: json["intPower"] ?? 0,
+        intFuelCapacity: json["intFuelCapacity"] ?? 0,
+        intRating: json["intRating"] ?? 0,
+        strVarients: json["strVarients"] ?? '',
+        strYear: json["strYear"] ?? '',
+        strColor: json["strColor"] ?? '',
+        intPricePerDay: json["intPricePerDay"] ?? 0,
+        intPricePerWeek: json["intPricePerWeek"] ?? 0,
+        intPricePerMonth: json["intPricePerMonth"] ?? 0,
         arrCarFeatures: json["arrCarFeatures"] == null
             ? []
             : List<CarFeature>.from(
                 json["arrCarFeatures"]!.map((x) => CarFeature.fromJson(x))),
-        strCreatedBy: json["strCreatedBy"],
+        strCreatedBy: json["strCreatedBy"] ?? '',
         strCreatedTime: json["strCreatedTime"] == null
             ? null
             : DateTime.parse(json["strCreatedTime"]),
       );
 
   Map<String, dynamic> toJson() => {
-        "_id": id,
-        "strCarCode": strCarCode,
-        "strCarNumber": strCarNumber,
-        "strBrand": strBrand,
-        "strStatus": strStatus,
-        "chrStatus": chrStatus,
-        "strModel": strModel,
-        "strDescription": strDescription,
-        "strCarCategory": strCarCategory,
-        "strSeatNo": strSeatNo,
-        "strFuelType": strFuelType,
-        "strImgUrl": strImgUrl,
+        "_id": id ?? '',
+        "strCarCode": strCarCode ?? '',
+        "strCarNumber": strCarNumber ?? '',
+        "strBrand": strBrand ?? '',
+        "strStatus": strStatus ?? '',
+        "chrStatus": chrStatus ?? '',
+        "strModel": strModel ?? '',
+        "strDescription": strDescription ?? '',
+        "strCarCategory": strCarCategory ?? '',
+        "strSeatNo": strSeatNo ?? 0,
+        "strFuelType": strFuelType ?? '',
+        "strImgUrl": strImgUrl ?? '',
         "arrImgUrl": arrImgUrl == null
             ? []
-            : List<dynamic>.from(arrImgUrl!.map((x) => x)),
-        "intPower": intPower,
-        "intFuelCapacity": intFuelCapacity,
-        "intRating": intRating,
-        "strVarients": strVarients,
-        "strYear": strYear,
-        "strColor": strColor,
-        "intPricePerDay": intPricePerDay,
-        "intPricePerWeek": intPricePerWeek,
-        "intPricePerMonth": intPricePerMonth,
+            : List<dynamic>.from(arrImgUrl!.map((x) => x ?? '')),
+        "intPower": intPower ?? 0,
+        "intFuelCapacity": intFuelCapacity ?? 0,
+        "intRating": intRating ?? 0,
+        "strVarients": strVarients ?? '',
+        "strYear": strYear ?? '',
+        "strColor": strColor ?? '',
+        "intPricePerDay": intPricePerDay ?? 0,
+        "intPricePerWeek": intPricePerWeek ?? 0,
+        "intPricePerMonth": intPricePerMonth ?? 0,
         "arrCarFeatures": arrCarFeatures == null
             ? []
             : List<dynamic>.from(arrCarFeatures!.map((x) => x.toJson())),
-        "strCreatedBy": strCreatedBy,
+        "strCreatedBy": strCreatedBy ?? '',
         "strCreatedTime": strCreatedTime?.toIso8601String(),
       };
 }
@@ -357,13 +357,13 @@ class CarFeature {
   });
 
   factory CarFeature.fromJson(Map<String, dynamic> json) => CarFeature(
-        strFeatures: json["strFeatures"],
-        strDescription: json["strDescription"],
+        strFeatures: json["strFeatures"] ?? '',
+        strDescription: json["strDescription"] ?? '',
       );
 
   Map<String, dynamic> toJson() => {
-        "strFeatures": strFeatures,
-        "strDescription": strDescription,
+        "strFeatures": strFeatures ?? '',
+        "strDescription": strDescription ?? '',
       };
 }
 
@@ -377,25 +377,25 @@ class ArrBookingItemTwo {
   StrLocation? strPickupLocation;
   String? strPickupLocationAddress;
   String? strDeliveryLocationAddress;
-  int? intTotalAmount;
-  int? intTotalFinalVatAmount;
-  double? intAmountExcludingVat;
-  double? intVatAmount;
-  int? intVatPercentage;
+  dynamic intTotalAmount;
+  dynamic intTotalFinalVatAmount;
+  dynamic intAmountExcludingVat;
+  dynamic intVatAmount;
+  dynamic intVatPercentage;
   dynamic strBookingType;
   String? type;
-  int? intPricePerDay;
+  dynamic intPricePerDay;
   String? strImgUrl;
   String? strModel;
-  int? intPricePerMonth;
-  int? intPricePerWeek;
+  dynamic intPricePerMonth;
+  dynamic intPricePerWeek;
   String? arrBookingItemStrBookingId;
   String? strBookingId;
   String? strContractId;
   String? strCarId;
   String? chrStatus;
-  int? intUnitPrice;
-  int? intTotalDays;
+  dynamic intUnitPrice;
+  dynamic intTotalDays;
   bool? isVatIncluded;
   String? strCreatedBy;
   DateTime? strCreatedTime;
@@ -406,14 +406,14 @@ class ArrBookingItemTwo {
   List<ReservArrCar>? reservArrCar;
   String? strName;
   String? strDescription;
-  int? intQty;
-  int? intTotalFinalAmount;
+  dynamic intQty;
+  dynamic intTotalFinalAmount;
   String? strAddOnItemId;
   String? strAddOnName;
   String? strAssigneeName;
-  int? intCancellationFee;
-  int? intDeductionAmount;
-  int? intOldTotalAmount;
+  dynamic intCancellationFee;
+  dynamic intDeductionAmount;
+  dynamic intOldTotalAmount;
 
   ArrBookingItemTwo({
     this.id,
@@ -466,9 +466,9 @@ class ArrBookingItemTwo {
 
   factory ArrBookingItemTwo.fromJson(Map<String, dynamic> json) =>
       ArrBookingItemTwo(
-        id: json["_id"],
-        strCarNumber: json["strCarNumber"],
-        strCarCode: json["strCarCode"],
+        id: json["_id"] ?? '',
+        strCarNumber: json["strCarNumber"] ?? '',
+        strCarCode: json["strCarCode"] ?? '',
         strStartDate: json["strStartDate"] == null
             ? null
             : DateTime.parse(json["strStartDate"]),
@@ -481,34 +481,34 @@ class ArrBookingItemTwo {
         strPickupLocation: json["strPickupLocation"] == null
             ? null
             : StrLocation.fromJson(json["strPickupLocation"]),
-        strPickupLocationAddress: json["strPickupLocationAddress"],
-        strDeliveryLocationAddress: json["strDeliveryLocationAddress"],
-        intTotalAmount: json["intTotalAmount"],
-        intTotalFinalVatAmount: json["intTotalFinalVatAmount"],
-        intAmountExcludingVat: json["intAmountExcludingVat"]?.toDouble(),
-        intVatAmount: json["intVatAmount"]?.toDouble(),
-        intVatPercentage: json["intVatPercentage"],
-        strBookingType: json["strBookingType"],
-        type: json["type"],
-        intPricePerDay: json["intPricePerDay"],
-        strImgUrl: json["strImgUrl"],
-        strModel: json["strModel"],
-        intPricePerMonth: json["intPricePerMonth"],
-        intPricePerWeek: json["intPricePerWeek"],
-        arrBookingItemStrBookingId: json["strBooking_Id"],
-        strBookingId: json["strBookingId"],
-        strContractId: json["strContractId"],
-        strCarId: json["strCarId"],
-        chrStatus: json["chrStatus"],
-        intUnitPrice: json["intUnitPrice"],
-        intTotalDays: json["intTotalDays"],
-        isVatIncluded: json["isVatIncluded"],
-        strCreatedBy: json["strCreatedBy"],
+        strPickupLocationAddress: json["strPickupLocationAddress"] ?? '',
+        strDeliveryLocationAddress: json["strDeliveryLocationAddress"] ?? '',
+        intTotalAmount: json["intTotalAmount"] ?? 0,
+        intTotalFinalVatAmount: json["intTotalFinalVatAmount"] ?? 0,
+        intAmountExcludingVat: json["intAmountExcludingVat"] ?? 0,
+        intVatAmount: json["intVatAmount"] ?? 0,
+        intVatPercentage: json["intVatPercentage"] ?? 0,
+        strBookingType: json["strBookingType"] ?? '',
+        type: json["type"] ?? '',
+        intPricePerDay: json["intPricePerDay"] ?? 0,
+        strImgUrl: json["strImgUrl"] ?? '',
+        strModel: json["strModel"] ?? '',
+        intPricePerMonth: json["intPricePerMonth"] ?? 0,
+        intPricePerWeek: json["intPricePerWeek"] ?? 0,
+        arrBookingItemStrBookingId: json["strBooking_Id"] ?? '',
+        strBookingId: json["strBookingId"] ?? '',
+        strContractId: json["strContractId"] ?? '',
+        strCarId: json["strCarId"] ?? '',
+        chrStatus: json["chrStatus"] ?? '',
+        intUnitPrice: json["intUnitPrice"] ?? 0,
+        intTotalDays: json["intTotalDays"] ?? 0,
+        isVatIncluded: json["isVatIncluded"] ?? false,
+        strCreatedBy: json["strCreatedBy"] ?? '',
         strCreatedTime: json["strCreatedTime"] == null
             ? null
             : DateTime.parse(json["strCreatedTime"]),
-        strStatus: json["strStatus"],
-        strUpdatedBy: json["strUpdatedBy"],
+        strStatus: json["strStatus"] ?? '',
+        strUpdatedBy: json["strUpdatedBy"] ?? '',
         strUpdatedTime: json["strUpdatedTime"] == null
             ? null
             : DateTime.parse(json["strUpdatedTime"]),
@@ -520,52 +520,52 @@ class ArrBookingItemTwo {
             ? []
             : List<ReservArrCar>.from(
                 json["arrCar"]!.map((x) => ReservArrCar.fromJson(x))),
-        strName: json["strName"],
-        strDescription: json["strDescription"],
-        intQty: json["intQty"],
-        intTotalFinalAmount: json["intTotalFinalAmount"],
-        strAddOnItemId: json["strAddOnItemId"],
-        strAddOnName: json["strAddOnName"],
-        strAssigneeName: json["strAssigneeName"],
-        intCancellationFee: json["intCancellationFee"],
-        intDeductionAmount: json["intDeductionAmount"],
-        intOldTotalAmount: json["intOldTotalAmount"],
+        strName: json["strName"] ?? '',
+        strDescription: json["strDescription"] ?? '',
+        intQty: json["intQty"] ?? 0,
+        intTotalFinalAmount: json["intTotalFinalAmount"] ?? 0,
+        strAddOnItemId: json["strAddOnItemId"] ?? '',
+        strAddOnName: json["strAddOnName"] ?? '',
+        strAssigneeName: json["strAssigneeName"] ?? '',
+        intCancellationFee: json["intCancellationFee"] ?? 0,
+        intDeductionAmount: json["intDeductionAmount"] ?? 0,
+        intOldTotalAmount: json["intOldTotalAmount"] ?? 0,
       );
 
   Map<String, dynamic> toJson() => {
-        "_id": id,
-        "strCarNumber": strCarNumber,
-        "strCarCode": strCarCode,
+        "_id": id ?? '',
+        "strCarNumber": strCarNumber ?? '',
+        "strCarCode": strCarCode ?? '',
         "strStartDate": strStartDate?.toIso8601String(),
         "strEndDate": strEndDate?.toIso8601String(),
         "strDeliveryLocation": strDeliveryLocation?.toJson(),
         "strPickupLocation": strPickupLocation?.toJson(),
-        "strPickupLocationAddress": strPickupLocationAddress,
-        "strDeliveryLocationAddress": strDeliveryLocationAddress,
-        "intTotalAmount": intTotalAmount,
-        "intTotalFinalVatAmount": intTotalFinalVatAmount,
-        "intAmountExcludingVat": intAmountExcludingVat,
-        "intVatAmount": intVatAmount,
-        "intVatPercentage": intVatPercentage,
-        "strBookingType": strBookingType,
-        "type": type,
-        "intPricePerDay": intPricePerDay,
-        "strImgUrl": strImgUrl,
-        "strModel": strModel,
-        "intPricePerMonth": intPricePerMonth,
-        "intPricePerWeek": intPricePerWeek,
-        "strBooking_Id": arrBookingItemStrBookingId,
-        "strBookingId": strBookingId,
-        "strContractId": strContractId,
-        "strCarId": strCarId,
-        "chrStatus": chrStatus,
-        "intUnitPrice": intUnitPrice,
-        "intTotalDays": intTotalDays,
-        "isVatIncluded": isVatIncluded,
-        "strCreatedBy": strCreatedBy,
+        "strPickupLocationAddress": strPickupLocationAddress ?? '',
+        "strDeliveryLocationAddress": strDeliveryLocationAddress ?? '',
+        "intTotalAmount": intTotalAmount ?? 0,
+        "intTotalFinalVatAmount": intTotalFinalVatAmount ?? 0,
+        "intAmountExcludingVat": intAmountExcludingVat ?? 0,
+        "intVatAmount": intVatAmount ?? 0,
+        "intVatPercentage": intVatPercentage ?? 0,
+        "strBookingType": strBookingType ?? '',
+        "type": type ?? '',
+        "intPricePerDay": intPricePerDay ?? 0,
+        "strImgUrl": strImgUrl ?? '',
+        "strModel": strModel ?? '',
+        "intPricePerMonth": intPricePerMonth ?? 0,
+        "intPricePerWeek": intPricePerWeek ?? 0,
+        "strBooking_Id": arrBookingItemStrBookingId ?? '',
+        "strBookingId": strBookingId ?? '',
+        "strContractId": strContractId ?? '',
+        "strCarId": strCarId ?? '',
+        "chrStatus": chrStatus ?? '',
+        "intUnitPrice": intUnitPrice ?? 0,
+        "intTotalDays": intTotalDays ?? 0,
+        "isVatIncluded": isVatIncluded ?? false,
+        "strCreatedBy": strCreatedBy ?? '',
         "strCreatedTime": strCreatedTime?.toIso8601String(),
-        "strStatus": strStatus,
-        "strUpdatedBy": strUpdatedBy,
+        "strStatus": strStatus ?? '',
+        "strUpdatedBy": strUpdatedBy ?? '',
         "strUpdatedTime": strUpdatedTime?.toIso8601String(),
         "arrTasks": arrTasks == null
             ? []
@@ -573,16 +573,16 @@ class ArrBookingItemTwo {
         "arrCar": reservArrCar == null
             ? []
             : List<dynamic>.from(reservArrCar!.map((x) => x.toJson())),
-        "strName": strName,
-        "strDescription": strDescription,
-        "intQty": intQty,
-        "intTotalFinalAmount": intTotalFinalAmount,
-        "strAddOnItemId": strAddOnItemId,
-        "strAddOnName": strAddOnName,
-        "strAssigneeName": strAssigneeName,
-        "intCancellationFee": intCancellationFee,
-        "intDeductionAmount": intDeductionAmount,
-        "intOldTotalAmount": intOldTotalAmount,
+        "strName": strName ?? '',
+        "strDescription": strDescription ?? '',
+        "intQty": intQty ?? 0,
+        "intTotalFinalAmount": intTotalFinalAmount ?? 0,
+        "strAddOnItemId": strAddOnItemId ?? '',
+        "strAddOnName": strAddOnName ?? '',
+        "strAssigneeName": strAssigneeName ?? '',
+        "intCancellationFee": intCancellationFee ?? 0,
+        "intDeductionAmount": intDeductionAmount ?? 0,
+        "intOldTotalAmount": intOldTotalAmount ?? 0,
       };
 }
 
@@ -628,53 +628,53 @@ class ArrTask {
   });
 
   factory ArrTask.fromJson(Map<String, dynamic> json) => ArrTask(
-        id: json["_id"],
-        strBookingItemId: json["strBookingItemId"],
-        strTittle: json["strTittle"],
-        strDescription: json["strDescription"],
-        strTaskType: json["strTaskType"],
-        strCarNumber: json["strCarNumber"],
-        strBookingId: json["strBookingId"],
+        id: json["_id"] ?? '',
+        strBookingItemId: json["strBookingItemId"] ?? '',
+        strTittle: json["strTittle"] ?? '',
+        strDescription: json["strDescription"] ?? '',
+        strTaskType: json["strTaskType"] ?? '',
+        strCarNumber: json["strCarNumber"] ?? '',
+        strBookingId: json["strBookingId"] ?? '',
         strStartDate: json["strStartDate"] == null
             ? null
             : DateTime.parse(json["strStartDate"]),
         strEndDate: json["strEndDate"] == null
             ? null
             : DateTime.parse(json["strEndDate"]),
-        strAssignedToId: json["strAssignedToId"],
-        strAssignedBy: json["strAssignedBy"],
+        strAssignedToId: json["strAssignedToId"] ?? '',
+        strAssignedBy: json["strAssignedBy"] ?? '',
         strDueDateAndTime: json["strDueDateAndTime"] == null
             ? null
             : DateTime.parse(json["strDueDateAndTime"]),
-        strCustomerId: json["strCustomerId"],
-        chrStatus: json["chrStatus"],
-        strStatus: json["strStatus"],
-        strCreatedBy: json["strCreatedBy"],
+        strCustomerId: json["strCustomerId"] ?? '',
+        chrStatus: json["chrStatus"] ?? '',
+        strStatus: json["strStatus"] ?? '',
+        strCreatedBy: json["strCreatedBy"] ?? '',
         strCreatedTime: json["strCreatedTime"] == null
             ? null
             : DateTime.parse(json["strCreatedTime"]),
-        strAssigneeName: json["strAssigneeName"],
+        strAssigneeName: json["strAssigneeName"] ?? '',
       );
 
   Map<String, dynamic> toJson() => {
-        "_id": id,
-        "strBookingItemId": strBookingItemId,
-        "strTittle": strTittle,
-        "strDescription": strDescription,
-        "strTaskType": strTaskType,
-        "strCarNumber": strCarNumber,
-        "strBookingId": strBookingId,
+        "_id": id ?? '',
+        "strBookingItemId": strBookingItemId ?? '',
+        "strTittle": strTittle ?? '',
+        "strDescription": strDescription ?? '',
+        "strTaskType": strTaskType ?? '',
+        "strCarNumber": strCarNumber ?? '',
+        "strBookingId": strBookingId ?? '',
         "strStartDate": strStartDate?.toIso8601String(),
         "strEndDate": strEndDate?.toIso8601String(),
-        "strAssignedToId": strAssignedToId,
-        "strAssignedBy": strAssignedBy,
+        "strAssignedToId": strAssignedToId ?? '',
+        "strAssignedBy": strAssignedBy ?? '',
         "strDueDateAndTime": strDueDateAndTime?.toIso8601String(),
-        "strCustomerId": strCustomerId,
-        "chrStatus": chrStatus,
-        "strStatus": strStatus,
-        "strCreatedBy": strCreatedBy,
+        "strCustomerId": strCustomerId ?? '',
+        "chrStatus": chrStatus ?? '',
+        "strStatus": strStatus ?? '',
+        "strCreatedBy": strCreatedBy ?? '',
         "strCreatedTime": strCreatedTime?.toIso8601String(),
-        "strAssigneeName": strAssigneeName,
+        "strAssigneeName": strAssigneeName ?? '',
       };
 }
 
@@ -688,23 +688,23 @@ class StrLocation {
   });
 
   factory StrLocation.fromJson(Map<String, dynamic> json) => StrLocation(
-        type: json["type"],
+        type: json["type"] ?? '',
         coordinates: json["coordinates"] == null
             ? []
-            : List<double>.from(json["coordinates"]!.map((x) => x?.toDouble())),
+            : List<double>.from(json["coordinates"]!.map((x) => (x ?? 0).toDouble())),
       );
 
   Map<String, dynamic> toJson() => {
-        "type": type,
+        "type": type ?? '',
         "coordinates": coordinates == null
             ? []
-            : List<dynamic>.from(coordinates!.map((x) => x)),
+            : List<dynamic>.from(coordinates!.map((x) => x ?? 0)),
       };
 }
 
 class ArrPayment {
   String? id;
-  double? intAmount;
+  dynamic intAmount;
   String? strPaymentType;
   String? strPaymentMode;
   String? strBillUrl;
@@ -734,38 +734,38 @@ class ArrPayment {
   });
 
   factory ArrPayment.fromJson(Map<String, dynamic> json) => ArrPayment(
-        id: json["_id"],
-        intAmount: json["intAmount"]?.toDouble(),
-        strPaymentType: json["strPaymentType"],
-        strPaymentMode: json["strPaymentMode"],
-        strBillUrl: json["strBillUrl"],
-        strPaymentRecievedBy: json["strPaymentRecievedBy"],
+        id: json["_id"] ?? '',
+        intAmount: json["intAmount"] ?? 0,
+        strPaymentType: json["strPaymentType"] ?? '',
+        strPaymentMode: json["strPaymentMode"] ?? '',
+        strBillUrl: json["strBillUrl"] ?? '',
+        strPaymentRecievedBy: json["strPaymentRecievedBy"] ?? '',
         strPaymentDateTime: json["strPaymentDateTime"] == null
             ? null
             : DateTime.parse(json["strPaymentDateTime"]),
-        strStatus: json["strStatus"],
-        strDescription: json["strDescription"],
-        strCreatedBy: json["strCreatedBy"],
+        strStatus: json["strStatus"] ?? '',
+        strDescription: json["strDescription"] ?? '',
+        strCreatedBy: json["strCreatedBy"] ?? '',
         strCreatedTime: json["strCreatedTime"] == null
             ? null
             : DateTime.parse(json["strCreatedTime"]),
-        shortUrl: json["short_url"],
-        url: json["url"],
+        shortUrl: json["short_url"] ?? '',
+        url: json["url"] ?? '',
       );
 
   Map<String, dynamic> toJson() => {
-        "_id": id,
-        "intAmount": intAmount,
-        "strPaymentType": strPaymentType,
-        "strPaymentMode": strPaymentMode,
-        "strBillUrl": strBillUrl,
-        "strPaymentRecievedBy": strPaymentRecievedBy,
+        "_id": id ?? '',
+        "intAmount": intAmount ?? 0,
+        "strPaymentType": strPaymentType ?? '',
+        "strPaymentMode": strPaymentMode ?? '',
+        "strBillUrl": strBillUrl ?? '',
+        "strPaymentRecievedBy": strPaymentRecievedBy ?? '',
         "strPaymentDateTime": strPaymentDateTime?.toIso8601String(),
-        "strStatus": strStatus,
-        "strDescription": strDescription,
-        "strCreatedBy": strCreatedBy,
+        "strStatus": strStatus ?? '',
+        "strDescription": strDescription ?? '',
+        "strCreatedBy": strCreatedBy ?? '',
         "strCreatedTime": strCreatedTime?.toIso8601String(),
-        "short_url": shortUrl,
-        "url": url,
+        "short_url": shortUrl ?? '',
+        "url": url ?? '',
       };
 }

@@ -22,6 +22,7 @@ class AddProfileModel {
     String? strFcmToken;
     String? strGender;
     String? strDateOfBirth;
+    String? strCitizenType;
 
     AddProfileModel({
         this.id,
@@ -37,6 +38,7 @@ class AddProfileModel {
         this.strFcmToken,
         this.strGender,
         this.strDateOfBirth,
+        this.strCitizenType,
     });
 
     factory AddProfileModel.fromJson(Map<String, dynamic> json) => AddProfileModel(
@@ -53,6 +55,7 @@ class AddProfileModel {
         strFcmToken: json["strFcmToken"],
         strGender: json["strGender"],
         strDateOfBirth: json["strDateOfBirth"],
+        strCitizenType: json["strCitizenType"],
     );
 
     Map<String, dynamic> toJson() => {
@@ -69,5 +72,6 @@ class AddProfileModel {
         "strFcmToken": strFcmToken,
         "strGender": strGender,
         "strDateOfBirth": strDateOfBirth,
+        "strCitizenType": strCitizenType,
     };
 }

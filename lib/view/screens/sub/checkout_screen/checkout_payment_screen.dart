@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:country_code_picker/country_code_picker.dart';
 import 'package:hny_main/core/routes/app_routes.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
 import 'package:hny_main/core/utils/app_text_styles.dart';
@@ -38,6 +39,7 @@ class _CheckoutPaymentScreenState extends State<CheckoutPaymentScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _customAmountController = TextEditingController();
+  String _countryCode = '971'; // Default country code for UAE
 
   String _selectedPaymentAmountOption = 'Full Amount';
 
@@ -142,22 +144,56 @@ class _CheckoutPaymentScreenState extends State<CheckoutPaymentScreen> {
                   ),
                   const Gap(6),
                   Container(
-                      decoration: const BoxDecoration(
-                          color: AppColors.paymentScreenBackgroundColor,
-                          boxShadow: [
-                            BoxShadow(
-                                offset: Offset(1, 1),
-                                spreadRadius: 0.1,
-                                color: Color.fromARGB(255, 240, 240, 240),
-                                blurRadius: 15)
-                          ]),
-                      child: CustomTextFormField(
-                        controller: _phoneController,
-                        label: "",
-                        hint: "Enter your mobile number",
-                        keyboardType: TextInputType.phone,
-                        borderColor: AppColors.textFormFieldBorderColor,
-                      )),
+                    decoration: const BoxDecoration(
+                      color: AppColors.paymentScreenBackgroundColor,
+                      boxShadow: [
+                        BoxShadow(
+                          offset: Offset(1, 1),
+                          spreadRadius: 0.1,
+                          color: Color.fromARGB(255, 240, 240, 240),
+                          blurRadius: 15
+                        )
+                      ]
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Country Code Selector
+                        Container(
+                          height: 50,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey.shade300),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: CountryCodePicker(
+                            onChanged: (CountryCode countryCode) {
+                              setState(() {
+                                _countryCode = countryCode.dialCode ?? '971';
+                              });
+                            },
+                            initialSelection: 'AE',
+                            favorite: const ['AE'],
+                            showCountryOnly: false,
+                            showOnlyCountryWhenClosed: false,
+                            alignLeft: false,
+                            padding: EdgeInsets.zero,
+                            dialogSize: Size(MediaQuery.of(context).size.width * 0.9, MediaQuery.of(context).size.height * 0.6),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        // Phone number input
+                        Expanded(
+                          child: CustomTextFormField(
+                            controller: _phoneController,
+                            label: "",
+                            hint: "Enter your mobile number",
+                            keyboardType: TextInputType.phone,
+                            borderColor: AppColors.textFormFieldBorderColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
 
                   // Payment Amount Options
                   const Gap(15),
@@ -455,9 +491,10 @@ class _CheckoutPaymentScreenState extends State<CheckoutPaymentScreen> {
     // Create booking
       log("pay now 2 >>>>>....");
 
+    final phoneNumber = _countryCode + _phoneController.text;
     final success = await provider.createBooking(context,
         email: _emailController.text,
-        phoneNumber: _phoneController.text,
+        phoneNumber: phoneNumber,
         totalFinalAmount: widget.totalAmount.toDouble(),
         payedAmount: paymentAmount,
         totalVehicleAmount: provider
@@ -468,6 +505,7 @@ class _CheckoutPaymentScreenState extends State<CheckoutPaymentScreen> {
             .toDouble(),
         totalGadgetsAmount: provider.totalGadgetPrice,
         carDetails: ArrCar(
+          strImgUrl: widget.carDetails?.strImgUrl,
           id: widget.isCartPage == true ? widget.cartdata?.itemDetails?.id ?? '' : widget.carDetails?.id ?? '',
           strCarNumber: widget.isCartPage == true ? widget.cartdata?.itemDetails?.strCarNumber ?? '' : widget.carDetails?.strCarNumber ?? '',
           strBrand: widget.isCartPage == true ? widget.cartdata?.itemDetails?.strBrand ?? '' : widget.carDetails?.strBrand ?? '',

@@ -608,8 +608,9 @@ class BookingProvider extends ChangeNotifier {
         "intTotalDiscount": 0,
         "intTotalAmount": totalFinalAmount,
         "intPayedAmount": _selectedPaymentMethod == "CASH" ? 0 : payedAmount,
-        "intCheckoutAmount": 0,
-        "intBalanceAmt": 0,
+        "intCheckoutAmount": totalFinalAmount,
+        "intBalanceAmt": totalFinalAmount -
+            (_selectedPaymentMethod == "CASH" ? 0 : payedAmount),
         "arrCarItems": arrCarItems,
         "isVatIncluded": true,
       };
@@ -821,7 +822,6 @@ class BookingProvider extends ChangeNotifier {
     required String strBookingId,
     String? strAltMobileNo,
   }) async {
-    _setLoading(true);
     _setError(null);
 
     try {
@@ -831,7 +831,7 @@ class BookingProvider extends ChangeNotifier {
         "strBooking_Id": bookingId,
         "strPaymentMode": "TAP_LINK",
         "strPaymentRecievedBy": "COMPANY_BANK",
-        "isDirectLink":true
+        "isDirectLink": true
       };
       if (strAltMobileNo != null && strAltMobileNo.isNotEmpty) {
         paymentData["strAltMobileNo"] = strAltMobileNo;
@@ -840,7 +840,6 @@ class BookingProvider extends ChangeNotifier {
       final ApiResponseModel<dynamic> response =
           await _bookingService.createPayment(paymentData);
 
-      _setLoading(false);
       if (response.success) {
         log(response.data.toString());
         await getBookingList(context);
@@ -861,10 +860,9 @@ class BookingProvider extends ChangeNotifier {
               children: [
                 const Icon(Icons.check_circle, color: Colors.green, size: 60),
                 const SizedBox(height: 18),
-                Text(
+                const Text(
                   'A payment link has been successfully sent to',
-                  style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.w500),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 8),
@@ -877,25 +875,25 @@ class BookingProvider extends ChangeNotifier {
                   ),
                 ),
                 const SizedBox(height: 18),
-                    if (paymentLink != '' && paymentLink != null)
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text('You can also access it directly '),
-                      GestureDetector(
-                        onTap: () async {
-                          await launchUrl(Uri.parse(paymentLink));
-                        },
-                        child: const Text(
-                          'click here',
-                          style: TextStyle(
-                            color: Colors.blue,
-                            fontWeight: FontWeight.bold,
-                            decoration: TextDecoration.underline,
-                          ),
-                        ),
-                      ),
-                  ],
+                if (paymentLink != '' && paymentLink != null)
+                  const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('You can also access it directly '),
+                    ],
+                  ),
+                GestureDetector(
+                  onTap: () async {
+                    await launchUrl(Uri.parse(paymentLink));
+                  },
+                  child: const Text(
+                    'click here',
+                    style: TextStyle(
+                      color: Colors.blue,
+                      fontWeight: FontWeight.bold,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -929,7 +927,6 @@ class BookingProvider extends ChangeNotifier {
       }
     } catch (e) {
       _setError(e.toString());
-      _setLoading(false);
       return null;
     }
   }
