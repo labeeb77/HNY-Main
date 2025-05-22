@@ -511,6 +511,9 @@ class _CheckoutPaymentScreenState extends State<CheckoutPaymentScreen> {
           strBrand: widget.isCartPage == true ? widget.cartdata?.itemDetails?.strBrand ?? '' : widget.carDetails?.strBrand ?? '',
           strModel: widget.isCartPage == true ? widget.cartdata?.itemDetails?.strModel ?? '' : widget.carDetails?.strModel ?? '',
           strDescription: widget.isCartPage == true ? widget.cartdata?.itemDetails?.strDescription ?? '' : widget.carDetails?.strDescription ?? '',
+          intPricePerDay: widget.isCartPage == true ? widget.cartdata?.itemDetails?.intPricePerDay?.toInt() ?? 0 : widget.carDetails?.intPricePerDay?.toInt() ?? 0,
+          intPricePerWeek: widget.isCartPage == true ? widget.cartdata?.itemDetails?.intPricePerWeek?.toInt() ?? 0 : widget.carDetails?.intPricePerWeek?.toInt() ?? 0,
+          intPricePerMonth: widget.isCartPage == true ? widget.cartdata?.itemDetails?.intPricePerMonth?.toInt() ?? 0 : widget.carDetails?.intPricePerMonth?.toInt() ?? 0, 
         ));
 
     if (success) {

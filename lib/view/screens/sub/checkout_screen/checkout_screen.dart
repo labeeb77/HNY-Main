@@ -72,7 +72,7 @@ class _CartScreenState extends State<CartScreen> {
                                                   ?.toInt() ??
                                               0,
                                           widget.arrCar.intPricePerMonth
-                                                  ?.toInt() ??
+                                                ?.toInt() ??
                                               0),
                                       widget.arrCar.strImgUrl ??
                                           'assets/images/placeholder_image.webp',
@@ -480,7 +480,7 @@ class _CartScreenState extends State<CartScreen> {
                     ),
                   ),
                   Text(
-                    "AED ${bookingProvider.totalGadgetPrice.toStringAsFixed(1)}",
+                    "$price",
                     style: const TextStyle(
                       fontSize: 16,
                       color: AppColors.orange,

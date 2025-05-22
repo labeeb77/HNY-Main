@@ -132,6 +132,21 @@ class BookingProvider extends ChangeNotifier {
     }
   }
 
+  // Calculate unit price without multiplying by total days
+  double calculateUnitPrice(
+      int pricePerDay, int pricePerWeek, int pricePerMonth) {
+    if (totalDays >= 30) {
+      // Monthly pricing
+      return pricePerMonth / 30;
+    } else if (totalDays >= 8) {
+      // Weekly pricing
+      return pricePerWeek / 7;
+    } else {
+      // Daily pricing
+      return pricePerDay.toDouble();
+    }
+  }
+
   // Location update methods
   void updatePickupAddress(String address) {
     _pickupAddress = address;
@@ -370,6 +385,21 @@ class BookingProvider extends ChangeNotifier {
     }
   }
 
+  double calculateGadgetUnitPrice(GadgetModel gadget) {
+    if (gadget.quantity <= 0) return 0;
+
+    if (totalDays >= 30) {
+      // Monthly pricing
+      return (gadget.monthlyPrice / 30);
+    } else if (totalDays >= 8) {
+      // Weekly pricing
+      return (gadget.weeklyPrice / 7);
+    } else {
+      // Daily pricing
+      return gadget.price;
+    }
+  }
+
   // Calculate total number of selected gadgets
   int get totalGadgetItems {
     return _gadgets.fold(
@@ -529,7 +559,12 @@ class BookingProvider extends ChangeNotifier {
         _handleError('Please select booking dates');
         return false;
       }
+      final unitPriceOfCar = calculateUnitPrice(carDetails.intPricePerDay ?? 0,
+          carDetails.intPricePerWeek ?? 0, carDetails.intPricePerMonth ?? 0);
+          
+      log('unitPriceOfCar: $unitPriceOfCar');
 
+      
       // Create car item
       final carItem = {
         "strImgUrl": carDetails.strImgUrl ?? "",
@@ -542,7 +577,7 @@ class BookingProvider extends ChangeNotifier {
         "intPricePerMonth": carDetails.intPricePerMonth ?? 0,
         "intTotalAmount": totalVehicleAmount,
         "intTotalDays": totalDays,
-        "intUnitPrice": carDetails.intPricePerDay ?? 0,
+        "intUnitPrice": unitPriceOfCar.toStringAsFixed(2),
         "strCarId": carDetails.id ?? "",
         "_id": const Uuid().v4(),
         "type": "CAR",
@@ -567,13 +602,14 @@ class BookingProvider extends ChangeNotifier {
                 "strName": gadget.name,
                 "_id": gadget.id,
                 "type": "ADD_ON",
-                "intPricePerDay": gadget.pricePerDay,
+                "intPricePerDay": gadget.price,
                 "intPricePerMonth":
-                    gadget.pricePerMonth, // Assuming monthly price
-                "intPricePerWeek": gadget.pricePerWeek, // Assuming weekly price
+                    gadget.monthlyPrice, // Assuming monthly price
+                "intPricePerWeek": gadget.weeklyPrice, // Assuming weekly price
                 "intQty": gadget.quantity,
                 "intTotalDays": totalDays,
-                "intUnitPrice": gadget.price,
+                "intUnitPrice": calculateUnitPrice(gadget.price.toInt(),
+                    gadget.weeklyPrice.toInt(), gadget.monthlyPrice.toInt()).toStringAsFixed(2),
                 "intTotalAmount": totalGadgetsAmount,
                 "intAvlQty":
                     gadget.quantity, // You might want to get this from the API
@@ -582,7 +618,7 @@ class BookingProvider extends ChangeNotifier {
                 "EndDate": _endDate?.toIso8601String(),
               })
           .toList();
-
+log('gadgetItems: $gadgetItems');
       // Combine car and gadget items
       final arrCarItems = [carItem, ...gadgetItems];
 
@@ -593,13 +629,12 @@ class BookingProvider extends ChangeNotifier {
         "strPaymentMethod": _selectedPaymentMethod,
         "strPickupLocation": {
           "type": "Point",
-          "coordinates":
-              _pickupCoordinates ?? [25.28071250637328, 55.41023254394531]
+          "coordinates": _pickupCoordinates ?? [00.00, 00.00]
         },
         "strPickupLocationAddress": _pickupAddress,
         "strDeliveryLocation": {
           "type": "Point",
-          "coordinates": _dropoffCoordinates ?? [25.252777, 55.364445]
+          "coordinates": _dropoffCoordinates ?? [00.00, 00.00]
         },
         "strDeliveryLocationAddress": _dropoffAddress,
         "strStartDate": _startDate?.toIso8601String(),

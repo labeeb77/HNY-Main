@@ -34,8 +34,8 @@ class _MyCartScreenState extends State<MyCartScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: const CommonAppBar(
-            title: 'My Cart',
-          ),
+        title: 'My Cart',
+      ),
       body: Consumer<MyCartProvider>(
         builder: (context, cartProvider, child) {
           if (cartProvider.isLoading) {
@@ -51,7 +51,8 @@ class _MyCartScreenState extends State<MyCartScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.shopping_cart_outlined, size: 64, color: Colors.grey[400]),
+                  Icon(Icons.shopping_cart_outlined,
+                      size: 64, color: Colors.grey[400]),
                   const SizedBox(height: 16),
                   Text(
                     'Your cart is empty',
@@ -66,228 +67,348 @@ class _MyCartScreenState extends State<MyCartScreen> {
             );
           }
 
-          return ListView.builder(
-            padding: const EdgeInsets.all(16),
-            itemCount: cartProvider.cartItems.length,
-            itemBuilder: (context, index) {
-              final item = cartProvider.cartItems[index];
-              return _buildCartItem(context, item, cartProvider);
-            },
-          );
-        },
-      ),
-    );
-  }
+          // Get the first item only
+          final item = cartProvider.cartItems[0];
+          final int totalDays =
+              _calculateTotalDays(item.strStartDate, item.strEndDate);
+          final int totalAmount = _calculateTotalAmount(
+              item.itemDetails?.intPricePerDay?.toInt() ?? 0,
+              item.itemDetails?.intPricePerWeek?.toInt() ?? 0,
+              item.itemDetails?.intPricePerMonth?.toInt() ?? 0,
+              totalDays);
 
-  Widget _buildCartItem(BuildContext context, ArrList item, MyCartProvider cartProvider) {
-    log("image url: ${item.itemDetails?.strImgUrl}");
-    
-    final int totalDays = _calculateTotalDays(item.strStartDate, item.strEndDate);
-    final int totalAmount = _calculateTotalAmount(
-      item.itemDetails?.intPricePerDay?.toInt() ?? 0,
-      item.itemDetails?.intPricePerWeek?.toInt() ?? 0,
-      item.itemDetails?.intPricePerMonth?.toInt() ?? 0,
-      totalDays
-    );
-    
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            offset: const Offset(1, 1),
-            spreadRadius: 0.1,
-            color: const Color.fromARGB(255, 225, 225, 225),
-            blurRadius: 12,
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          children: [
-            IntrinsicHeight(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  // Item Image
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: SizedBox(
-                      width: 100,
-                      child: Image.network(
-                        item.itemDetails?.strImgUrl ?? '',
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) => Image.asset(
-                          'assets/images/placeholder_image.webp',
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  // Item Details
-                  Expanded(
+          return Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                "${item.itemDetails?.strBrand ?? ''} ${item.itemDetails?.strModel ?? ''}",
-                                style: const TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
+                        Container(
+                          decoration: BoxDecoration(
+                              color: AppColors.white,
+                              borderRadius: BorderRadius.circular(8),
+                              boxShadow: const [
+                                BoxShadow(
+                                    offset: Offset(1, 1),
+                                    spreadRadius: 4,
+                                    color: Color.fromARGB(255, 231, 231, 231),
+                                    blurRadius: 6)
+                              ]),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8),
+                            child: IntrinsicHeight(
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: SizedBox(
+                                      width: 100,
+                                      child: Image.network(
+                                        item.itemDetails?.strImgUrl ?? '',
+                                        fit: BoxFit.fitHeight,
+                                        errorBuilder:
+                                            (context, error, stackTrace) =>
+                                                Image.asset(
+                                          'assets/images/placeholder_image.webp',
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              "${item.itemDetails?.strBrand ?? ''} ${item.itemDetails?.strModel ?? ''}",
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                            Row(
+                                              children: [
+                                                CircleAvatar(
+                                                  radius: 14,
+                                                  backgroundColor:
+                                                      AppColors.red,
+                                                  child: IconButton(
+                                                    icon: const Icon(Icons.edit,
+                                                        size: 18,
+                                                        color: AppColors.white),
+                                                    onPressed: () =>
+                                                        _showEditDialog(context,
+                                                            item, cartProvider),
+                                                    constraints:
+                                                        const BoxConstraints(),
+                                                    padding: EdgeInsets.zero,
+                                                  ),
+                                                ),
+                                                SizedBox(width: 8),
+                                                CircleAvatar(
+                                                  radius: 14,
+                                                  backgroundColor:
+                                                      AppColors.red,
+                                                  child: IconButton(
+                                                    icon: const Icon(
+                                                        Icons.delete,
+                                                        size: 18,
+                                                        color: AppColors.white),
+                                                    onPressed: () =>
+                                                        _showDeleteConfirmation(
+                                                            context,
+                                                            item,
+                                                            cartProvider),
+                                                    constraints:
+                                                        const BoxConstraints(),
+                                                    padding: EdgeInsets.zero,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          "AED ${totalAmount.toStringAsFixed(1)}",
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            color: AppColors.orange,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      const Icon(
+                                                          Icons.calendar_month,
+                                                          size: 12,
+                                                          color: Colors.grey),
+                                                      const SizedBox(width: 2),
+                                                      Text(
+                                                        'Trip Start: ${_formatDateTime(item.strStartDate)}',
+                                                        style: const TextStyle(
+                                                            fontSize: 12),
+                                                        maxLines: 1,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  const SizedBox(height: 2),
+                                                  Row(
+                                                    children: [
+                                                      const Icon(
+                                                          Icons.calendar_month,
+                                                          size: 12,
+                                                          color: Colors.grey),
+                                                      const SizedBox(width: 2),
+                                                      Text(
+                                                        'Trip End: ${_formatDateTime(item.strEndDate)}',
+                                                        style: const TextStyle(
+                                                            fontSize: 12),
+                                                        maxLines: 1,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 2),
+                                        Row(
+                                          children: [
+                                            const Icon(Icons.location_on,
+                                                size: 14),
+                                            const SizedBox(width: 4),
+                                            Expanded(
+                                              child: Text(
+                                                '${item.strPickupLocationAddress ?? 'Select Location'} - ${item.strDeliveryLocationAddress ?? 'Select Location'}',
+                                                style: const TextStyle(
+                                                    fontSize: 12),
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                            Row(
-                              children: [
-                                IconButton(
-                                  icon: const Icon(Icons.edit, size: 18, color: Colors.deepOrange),
-                                  onPressed: () => _showEditDialog(context, item, cartProvider),
-                                  padding: EdgeInsets.zero,
-                                  constraints: const BoxConstraints(),
-                                ),
-                                const SizedBox(width: 8),
-                                IconButton(
-                                  icon: const Icon(Icons.delete, size: 18, color: Colors.red),
-                                  onPressed: () => _showDeleteConfirmation(context, item, cartProvider),
-                                  padding: EdgeInsets.zero,
-                                  constraints: const BoxConstraints(),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'AED ${totalAmount}',
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: Colors.deepOrange,
-                            fontWeight: FontWeight.w600,
                           ),
                         ),
-                        const SizedBox(height: 8),
-                        // Date rows
+                        const SizedBox(height: 16),
+                        buildSuperCoinsSection(context),
+                        const SizedBox(height: 24),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              // Bottom section
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 40),
+                decoration: const BoxDecoration(
+                  color: AppColors.white,
+                  border: Border(
+                    top: BorderSide(color: AppColors.containerBorderColor),
+                  ),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Order Summary',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
                         Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Icon(Icons.calendar_month, size: 14, color: Colors.grey),
-                            const SizedBox(width: 4),
-                            const Text('Trip Start:', style: TextStyle(fontSize: 13, color: Colors.black)),
-                            const SizedBox(width: 4),
-                            Expanded(
-                              child: Text(
-                                _formatDateTime(item.strStartDate),
-                                style: const TextStyle(fontSize: 12, color: Colors.black),
-                                overflow: TextOverflow.ellipsis,
-                              ),
+                            const Text(
+                              'Vehicle Rental',
+                              style: TextStyle(fontSize: 14),
+                            ),
+                            Text(
+                              'AED ${totalAmount.toStringAsFixed(1)}',
+                              style: const TextStyle(fontSize: 14),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 2),
+                        const Divider(height: 24),
                         Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Icon(Icons.calendar_month, size: 14, color: Colors.grey),
-                            const SizedBox(width: 4),
-                            const Text('Trip End:', style: TextStyle(fontSize: 13, color: Colors.black)),
-                            const SizedBox(width: 4),
-                            Expanded(
-                              child: Text(
-                                _formatDateTime(item.strEndDate),
-                                style: const TextStyle(fontSize: 12, color: Colors.black),
-                                overflow: TextOverflow.ellipsis,
+                            const Text(
+                              'Total',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
-                          ],
-                        ),
-                        const SizedBox(height: 2),
-                        // Location rows
-                        Row(
-                          children: [
-                            const Icon(Icons.location_on, size: 16, color: Colors.grey),
-                            const SizedBox(width: 4),
-                            const Text('Pickup:', style: TextStyle(fontSize: 13, color: Colors.black)),
-                            const SizedBox(width: 4),
-                            Expanded(
-                              child: Text(
-                                item.strPickupLocationAddress ?? 'Select Location',
-                                style: const TextStyle(fontSize: 13, color: Colors.black),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 2),
-                        Row(
-                          children: [
-                            const Icon(Icons.location_on, size: 16, color: Colors.grey),
-                            const SizedBox(width: 4),
-                            const Text('Drop-off:', style: TextStyle(fontSize: 13, color: Colors.black)),
-                            const SizedBox(width: 4),
-                            Expanded(
-                              child: Text(
-                                item.strDeliveryLocationAddress ?? 'Select Location',
-                                style: const TextStyle(fontSize: 13, color: Colors.black),
-                                overflow: TextOverflow.ellipsis,
+                            Text(
+                              'AED ${totalAmount.toStringAsFixed(1)}',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.orange,
                               ),
                             ),
                           ],
                         ),
                       ],
                     ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-            // Continue Button
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: item.isAvailable == true
-                    ? () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => CheckoutPaymentScreen(
-                              totalAmount: totalAmount,
-                              cartdata: item,
-                              isCartPage: true,
-                            ),
-                          ),
-                        );
-                      }
-                    : null,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: item.isAvailable == true ? AppColors.primary : Colors.grey,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  elevation: 0,
-                ),
-                child: const Text(
-                  'Continue',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
+                    const SizedBox(height: 16),
+                    SizedBox(
+                      height: 40,
+                      width: double.infinity,
+                      child: PrimaryElevateButton(
+                        ontap: () {
+                          if (item.isAvailable ?? false) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => CheckoutPaymentScreen(
+                                  totalAmount: totalAmount,
+                                  cartdata: item,
+                                  isCartPage: true,
+                                ),
+                              ),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                    'This item is not available at this date range'),
+                                backgroundColor: Colors.black,
+                                duration: Duration(seconds: 2),
+                              ),
+                            );
+                          }
+                        },
+                        buttonName: "Proceed to checkout",
+                      ),
+                    ),
+                  ],
                 ),
               ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  Widget buildSuperCoinsSection(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.blue[50],
+              shape: BoxShape.circle,
             ),
-          ],
-        ),
+            child: const Icon(Icons.monetization_on, color: Colors.blue),
+          ),
+          const SizedBox(width: 8),
+          const Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Use SuperCoins',
+                  style: TextStyle(fontWeight: FontWeight.w500),
+                ),
+                Text(
+                  'You have 100 coins',
+                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                ),
+              ],
+            ),
+          ),
+          Switch(
+            value: false,
+            onChanged: (value) {},
+            activeColor: AppColors.orange,
+          ),
+        ],
       ),
     );
   }
@@ -297,12 +418,14 @@ class _MyCartScreenState extends State<MyCartScreen> {
     return DateFormat('MMMM d, yyyy hh:mm a').format(date);
   }
 
-  void _showDeleteConfirmation(BuildContext context, ArrList item, MyCartProvider cartProvider) {
+  void _showDeleteConfirmation(
+      BuildContext context, ArrList item, MyCartProvider cartProvider) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Delete Item'),
-        content: const Text('Are you sure you want to remove this item from your cart?'),
+        content: const Text(
+            'Are you sure you want to remove this item from your cart?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -322,7 +445,8 @@ class _MyCartScreenState extends State<MyCartScreen> {
     );
   }
 
-  void _showEditDialog(BuildContext context, ArrList item, MyCartProvider cartProvider) {
+  void _showEditDialog(
+      BuildContext context, ArrList item, MyCartProvider cartProvider) {
     String? updatedPickupAddress;
     String? updatedDropoffAddress;
     List<double>? updatedPickupCoords;
@@ -335,7 +459,7 @@ class _MyCartScreenState extends State<MyCartScreen> {
     final now = DateTime.now();
     final initialStartDate = item.strStartDate ?? now;
     final initialEndDate = item.strEndDate ?? now;
-    
+
     // Ensure dates are not in the past
     final startDate = initialStartDate.isBefore(now) ? now : initialStartDate;
     final endDate = initialEndDate.isBefore(now) ? now : initialEndDate;
@@ -410,7 +534,8 @@ class _MyCartScreenState extends State<MyCartScreen> {
                               setState(() {
                                 updatedStartDate = date;
                                 // If end date is before start date, update it too
-                                if (updatedEndDate != null && updatedEndDate!.isBefore(date)) {
+                                if (updatedEndDate != null &&
+                                    updatedEndDate!.isBefore(date)) {
                                   updatedEndDate = date;
                                 }
                               });
@@ -435,8 +560,10 @@ class _MyCartScreenState extends State<MyCartScreen> {
                                 const SizedBox(height: 4),
                                 Text(
                                   updatedStartDate != null
-                                      ? DateFormat('MMM dd, yyyy').format(updatedStartDate!)
-                                      : DateFormat('MMM dd, yyyy').format(startDate),
+                                      ? DateFormat('MMM dd, yyyy')
+                                          .format(updatedStartDate!)
+                                      : DateFormat('MMM dd, yyyy')
+                                          .format(startDate),
                                   style: const TextStyle(fontSize: 16),
                                 ),
                               ],
@@ -479,8 +606,10 @@ class _MyCartScreenState extends State<MyCartScreen> {
                                 const SizedBox(height: 4),
                                 Text(
                                   updatedEndDate != null
-                                      ? DateFormat('MMM dd, yyyy').format(updatedEndDate!)
-                                      : DateFormat('MMM dd, yyyy').format(endDate),
+                                      ? DateFormat('MMM dd, yyyy')
+                                          .format(updatedEndDate!)
+                                      : DateFormat('MMM dd, yyyy')
+                                          .format(endDate),
                                   style: const TextStyle(fontSize: 16),
                                 ),
                               ],
@@ -520,7 +649,10 @@ class _MyCartScreenState extends State<MyCartScreen> {
                               if (result != null) {
                                 setState(() {
                                   updatedPickupAddress = result['address'];
-                                  updatedPickupCoords = [result['lat'], result['long']];
+                                  updatedPickupCoords = [
+                                    result['lat'],
+                                    result['long']
+                                  ];
                                 });
                               }
                             },
@@ -532,11 +664,13 @@ class _MyCartScreenState extends State<MyCartScreen> {
                               ),
                               child: Row(
                                 children: [
-                                  const Icon(Icons.location_on, color: Colors.orange),
+                                  const Icon(Icons.location_on,
+                                      color: Colors.orange),
                                   const SizedBox(width: 12),
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         const Text(
                                           'Pickup Location',
@@ -547,10 +681,14 @@ class _MyCartScreenState extends State<MyCartScreen> {
                                         ),
                                         const SizedBox(height: 4),
                                         Text(
-                                          updatedPickupAddress ?? item.strPickupLocationAddress ?? 'Select Location',
+                                          updatedPickupAddress ??
+                                              item.strPickupLocationAddress ??
+                                              'Select Location',
                                           style: TextStyle(
                                             fontSize: 14,
-                                            color: updatedPickupAddress != null ? Colors.green : Colors.black,
+                                            color: updatedPickupAddress != null
+                                                ? Colors.green
+                                                : Colors.black,
                                           ),
                                         ),
                                       ],
@@ -576,7 +714,10 @@ class _MyCartScreenState extends State<MyCartScreen> {
                               if (result != null) {
                                 setState(() {
                                   updatedDropoffAddress = result['address'];
-                                  updatedDropoffCoords = [result['lat'], result['long']];
+                                  updatedDropoffCoords = [
+                                    result['lat'],
+                                    result['long']
+                                  ];
                                 });
                               }
                             },
@@ -588,11 +729,13 @@ class _MyCartScreenState extends State<MyCartScreen> {
                               ),
                               child: Row(
                                 children: [
-                                  const Icon(Icons.location_on, color: Colors.orange),
+                                  const Icon(Icons.location_on,
+                                      color: Colors.orange),
                                   const SizedBox(width: 12),
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         const Text(
                                           'Delivery Location',
@@ -603,10 +746,14 @@ class _MyCartScreenState extends State<MyCartScreen> {
                                         ),
                                         const SizedBox(height: 4),
                                         Text(
-                                          updatedDropoffAddress ?? item.strDeliveryLocationAddress ?? 'Select Location',
+                                          updatedDropoffAddress ??
+                                              item.strDeliveryLocationAddress ??
+                                              'Select Location',
                                           style: TextStyle(
                                             fontSize: 14,
-                                            color: updatedDropoffAddress != null ? Colors.green : Colors.black,
+                                            color: updatedDropoffAddress != null
+                                                ? Colors.green
+                                                : Colors.black,
                                           ),
                                         ),
                                       ],
@@ -631,18 +778,30 @@ class _MyCartScreenState extends State<MyCartScreen> {
                         await cartProvider.updateCartItem(
                           id: item.id!,
                           intCount: updatedCount ?? item.intCount ?? 1,
-                          strStartDate: updatedStartDate ?? item.strStartDate ?? DateTime.now(),
-                          strEndDate: updatedEndDate ?? item.strEndDate ?? DateTime.now(),
-                          strPickupLocation: updatedPickupCoords ?? [
-                            item.strPickupLocation?.coordinates?[0] ?? 0.0,
-                            item.strPickupLocation?.coordinates?[1] ?? 0.0,
-                          ],
-                          strDeliveryLocation: updatedDropoffCoords ?? [
-                            item.strDeliveryLocation?.coordinates?[0] ?? 0.0,
-                            item.strDeliveryLocation?.coordinates?[1] ?? 0.0,
-                          ],
-                          strPickupLocationAddress: updatedPickupAddress ?? item.strPickupLocationAddress ?? '',
-                          strDeliveryLocationAddress: updatedDropoffAddress ?? item.strDeliveryLocationAddress ?? '',
+                          strStartDate: updatedStartDate ??
+                              item.strStartDate ??
+                              DateTime.now(),
+                          strEndDate: updatedEndDate ??
+                              item.strEndDate ??
+                              DateTime.now(),
+                          strPickupLocation: updatedPickupCoords ??
+                              [
+                                item.strPickupLocation?.coordinates?[0] ?? 0.0,
+                                item.strPickupLocation?.coordinates?[1] ?? 0.0,
+                              ],
+                          strDeliveryLocation: updatedDropoffCoords ??
+                              [
+                                item.strDeliveryLocation?.coordinates?[0] ??
+                                    0.0,
+                                item.strDeliveryLocation?.coordinates?[1] ??
+                                    0.0,
+                              ],
+                          strPickupLocationAddress: updatedPickupAddress ??
+                              item.strPickupLocationAddress ??
+                              '',
+                          strDeliveryLocationAddress: updatedDropoffAddress ??
+                              item.strDeliveryLocationAddress ??
+                              '',
                         );
                       },
                       style: ElevatedButton.styleFrom(
@@ -675,20 +834,21 @@ class _MyCartScreenState extends State<MyCartScreen> {
     if (startDate == null || endDate == null) {
       return 1; // Default to 1 day if dates not selected
     }
-    
+
     // Create DateTime objects with times set to 0 since we only have dates
     final start = DateTime(startDate.year, startDate.month, startDate.day);
     final end = DateTime(endDate.year, endDate.month, endDate.day);
-    
+
     // Calculate difference in days (add 1 to include both start and end date)
     final difference = end.difference(start);
     int days = difference.inDays + 1;
-    
+
     // Ensure minimum of 1 day
     return days > 0 ? days : 1;
   }
 
-  int _calculateTotalAmount(int pricePerDay, int pricePerWeek, int pricePerMonth, int totalDays) {
+  int _calculateTotalAmount(
+      int pricePerDay, int pricePerWeek, int pricePerMonth, int totalDays) {
     if (totalDays >= 30) {
       // Monthly pricing
       final monthlyPrice = (pricePerMonth / 30) * totalDays;
