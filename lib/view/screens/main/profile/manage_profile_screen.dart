@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:hny_main/core/routes/app_routes.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
 import 'package:hny_main/core/utils/app_image_picker.dart';
+import 'package:hny_main/core/utils/snackbar.dart';
 import 'package:hny_main/data/providers/profile_provider.dart';
 import 'package:hny_main/view/widgets/profile_image_widget.dart';
 import 'package:intl/intl.dart';
@@ -216,11 +217,7 @@ class _ManageProfileScreenState extends State<ManageProfileScreen> {
     'Zimbabwe'
   ];
 
-  final List<String> _citizenshipTypes = [
-    'Tourist',
-    'Gcc',
-    'Resident'
-  ];
+  final List<String> _citizenshipTypes = ['Tourist', 'Gcc', 'Resident'];
 
   bool _isLoading = false;
 
@@ -288,8 +285,30 @@ class _ManageProfileScreenState extends State<ManageProfileScreen> {
       if (result == true) {
         // Only navigate on success
         if (from == "register") {
-          Navigator.of(context)
-              .pushNamed(AppRoutes.manageGccId, arguments: from);
+                    if (profileProvider.selectedCitizenshipType == 'Tourist') {
+                      Navigator.pushNamed(
+                        context,
+                        AppRoutes.managePassport,
+                        arguments:
+                            widget.screenName == "Add" ? "register" : "profile",
+                      );
+                    } else if (profileProvider.selectedCitizenshipType ==
+                        'Gcc') {
+                      Navigator.pushNamed(
+                        context,
+                        AppRoutes.manageGccId,
+                        arguments:
+                            widget.screenName == "Add" ? "register" : "profile",
+                      );
+                    } else {
+                      Navigator.pushNamed(
+                        context,
+                        AppRoutes.manageEmiratesId,
+                        arguments:
+                            widget.screenName == "Add" ? "register" : "profile",
+                      );
+                    }
+                  
         } else {
           Navigator.pop(context);
         }
@@ -386,9 +405,35 @@ class _ManageProfileScreenState extends State<ManageProfileScreen> {
               visible: widget.screenName == "Add",
               child: TextButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, AppRoutes.manageGccId,
-                      arguments:
-                          widget.screenName == "Add" ? "register" : "profile");
+                  if (profileProvider.selectedCitizenshipType != null) {
+                    if (profileProvider.selectedCitizenshipType == 'Tourist') {
+                      Navigator.pushNamed(
+                        context,
+                        AppRoutes.managePassport,
+                        arguments:
+                            widget.screenName == "Add" ? "register" : "profile",
+                      );
+                    } else if (profileProvider.selectedCitizenshipType ==
+                        'Gcc') {
+                      Navigator.pushNamed(
+                        context,
+                        AppRoutes.manageGccId,
+                        arguments:
+                            widget.screenName == "Add" ? "register" : "profile",
+                      );
+                    } else {
+                      Navigator.pushNamed(
+                        context,
+                        AppRoutes.manageEmiratesId,
+                        arguments:
+                            widget.screenName == "Add" ? "register" : "profile",
+                      );
+                    }
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text(
+                            "Citizenship is required, please select you citizenship")));
+                  }
                 },
                 child: const Text(
                   'Skip',
@@ -717,8 +762,9 @@ class _ManageProfileScreenState extends State<ManageProfileScreen> {
     );
   }
 
-  Widget _buildCountryDropdown(String label, String? value, List<String> items,
-      ProfileProvider provider, {bool isCitizenship = false}) {
+  Widget _buildCountryDropdown(
+      String label, String? value, List<String> items, ProfileProvider provider,
+      {bool isCitizenship = false}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: Column(

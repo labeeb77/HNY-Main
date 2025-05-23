@@ -8,22 +8,21 @@ import 'package:hny_main/core/utils/app_alerts.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
 import 'package:hny_main/core/utils/app_image_picker.dart';
 import 'package:hny_main/data/providers/profile_provider.dart';
-import 'package:hny_main/view/common/bottom_nav.dart';
 import 'package:hny_main/view/screens/main/Bookings/widgets/file_upload_ui_widget.dart';
-import 'package:hny_main/view/screens/main/home/home_screen.dart';
+import 'package:hny_main/view/screens/main/profile/manage_license.dart';
 import 'package:hny_main/view/screens/main/profile/manage_passport.dart';
 import 'package:hny_main/view/widgets/back_button.dart';
-import 'package:hny_main/view/widgets/liecense_image_widget.dart';
+import 'package:hny_main/view/widgets/id_card_section.dart';
 import 'package:provider/provider.dart';
 
-class ManageDrivingLicense extends StatefulWidget {
-  const ManageDrivingLicense({super.key, required this.from});
+class ManageVisaInfo extends StatefulWidget {
+  const ManageVisaInfo({super.key, required this.from});
   final from;
   @override
-  State<ManageDrivingLicense> createState() => _ManageDrivingLicenseState();
+  State<ManageVisaInfo> createState() => _ManageVisaInfoState();
 }
 
-class _ManageDrivingLicenseState extends State<ManageDrivingLicense> {
+class _ManageVisaInfoState extends State<ManageVisaInfo> {
   @override
   Widget build(BuildContext context) {
     return Consumer<ProfileProvider>(
@@ -36,10 +35,10 @@ class _ManageDrivingLicenseState extends State<ManageDrivingLicense> {
                 visible: widget.from == "register",
                 child: TextButton(
                   onPressed: () {
-                    Navigator.pushNamed(
-                      context,
-                      AppRoutes.bottomNav,
-                    );
+                    if (profileProvider.selectedCitizenshipType == 'Tourist') {
+                      Navigator.pushNamed(context, AppRoutes.manageLicense,
+                          arguments: widget.from);
+                    }
                   },
                   child: const Text(
                     'Skip',
@@ -56,9 +55,9 @@ class _ManageDrivingLicenseState extends State<ManageDrivingLicense> {
             leading: const CommonBackButton(
               showBorder: true,
             ),
-            title: const Text(
-              'Add Driving License ID',
-              style: TextStyle(
+            title: Text(
+              'Add Visa Card',
+              style: const TextStyle(
                 color: Colors.black,
                 fontSize: 20,
                 fontWeight: FontWeight.w500,
@@ -76,72 +75,47 @@ class _ManageDrivingLicenseState extends State<ManageDrivingLicense> {
                     File? selectedImage =
                         await AppImagePicker().pickImageFromGallery();
                     if (selectedImage != null) {
-                      profileProvider.setDrivingLicenseImagePath(selectedImage);
+                      profileProvider.setVisaCardImagePath(selectedImage);
                     }
                   },
                   child: const FileUploadUIWidget(),
                 ),
                 const SizedBox(height: 24),
-                // Driving License Container
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFD9E5E3).withOpacity(0.4),
-                    borderRadius: BorderRadius.circular(4),
-                    border: Border.all(color: Colors.grey.withOpacity(0.5)),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Driving License ID',
-                        style: TextStyle(
-                          color: Color(0xFF006C3F),
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
+                // Visa ID Image Display
+                if (profileProvider.selectedVisaCardImagePath != null)
+                  Container(
+                    height: 220,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      image: DecorationImage(
+                        image: kIsWeb
+                            ? NetworkImage(
+                                profileProvider.selectedVisaCardImagePath!.path)
+                            : FileImage(
+                                profileProvider.selectedVisaCardImagePath!),
+                        fit: BoxFit.cover,
                       ),
-                      const SizedBox(height: 12),
-                      // License Image Display
-                      if (profileProvider.selectedDrivingLicenseImagePath !=
-                          null)
-                        Container(
-                          height: 220,
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            image: DecorationImage(
-                              image: kIsWeb
-                                  ? NetworkImage(profileProvider
-                                      .selectedDrivingLicenseImagePath!.path)
-                                  : FileImage(profileProvider
-                                      .selectedDrivingLicenseImagePath!),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        )
-                      else if (globalUser?.strLicenceUrl != null &&
-                          globalUser!.strLicenceUrl!.isNotEmpty)
-                        Container(
-                          height: 220,
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            image: DecorationImage(
-                              image: NetworkImage(globalUser!.strLicenceUrl!),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        )
-                      else
-                        const DrivingLicenseImageWidget(
-                          height: 220,
-                          defaultImagePath:
-                              'assets/images/custom_placeholder.webp',
-                        ),
-                    ],
-                  ),
-                ),
+                    ),
+                  )
+                else if (globalUser?.strVisaUrl != null &&
+                    globalUser!.strVisaUrl!.isNotEmpty)
+                  Container(
+                    height: 220,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      image: DecorationImage(
+                        image: NetworkImage(globalUser!.strVisaUrl!),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  )
+                else
+                  const IDCardImageSection(
+                    height: 220,
+                    defaultImagePath: 'assets/images/custom_placeholder.webp',
+                  )
               ],
             ),
           ),
@@ -156,25 +130,27 @@ class _ManageDrivingLicenseState extends State<ManageDrivingLicense> {
                 onPressed: profileProvider.isLoading
                     ? null
                     : () async {
-                        if (profileProvider.selectedDrivingLicenseImagePath !=
-                            null) {
+                        if (profileProvider.selectedVisaCardImagePath != null) {
                           final success =
                               await profileProvider.updateDocumentUrl(
                             context,
                             documentFile:
-                                profileProvider.selectedDrivingLicenseImagePath,
-                            documentType: 'License',
+                                profileProvider.selectedVisaCardImagePath,
+                            documentType: 'Visa Card',
                           );
                           (context);
                           if (success) {
                             AppAlerts.showCustomSnackBar(
-                                "Driving License updated successfully",
+                                "Visa Card updated successfully",
                                 isSuccess: true);
+
                             if (widget.from == "register") {
-                              Navigator.pushNamed(
-                                context,
-                                AppRoutes.bottomNav,
-                              );
+                              if (profileProvider.selectedCitizenshipType ==
+                                  'Tourist') {
+                                Navigator.pushNamed(
+                                    context, AppRoutes.manageLicense,
+                                    arguments: widget.from);
+                              }
                             } else {
                               Navigator.pop(context);
                             }
@@ -182,10 +158,12 @@ class _ManageDrivingLicenseState extends State<ManageDrivingLicense> {
                         } else {
                           // If no image is selected, just navigate to next screen
                           if (widget.from == "register") {
-                            Navigator.pushNamed(
-                              context,
-                              AppRoutes.bottomNav,
-                            );
+                            if (profileProvider.selectedCitizenshipType ==
+                                'Tourist') {
+                              Navigator.pushNamed(
+                                  context, AppRoutes.manageLicense,
+                                  arguments: widget.from);
+                            }
                           } else {
                             Navigator.pop(context);
                           }
@@ -198,9 +176,7 @@ class _ManageDrivingLicenseState extends State<ManageDrivingLicense> {
                   ),
                 ),
                 child: profileProvider.isLoading
-                    ? const CircularProgressIndicator(
-                        color: AppColors.white,
-                      )
+                    ? const CircularProgressIndicator(color: Colors.white)
                     : const Text(
                         'Save',
                         style: TextStyle(

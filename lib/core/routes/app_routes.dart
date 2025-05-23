@@ -4,10 +4,12 @@ import 'package:hny_main/view/screens/main/auth/sign_in_screen.dart';
 import 'package:hny_main/view/screens/main/cart/my_cart_screen.dart';
 import 'package:hny_main/view/screens/main/home/home_screen.dart';
 import 'package:hny_main/view/screens/main/onboarding/onboarding_screen.dart';
+import 'package:hny_main/view/screens/main/profile/manage_emirates_id.dart';
 import 'package:hny_main/view/screens/main/profile/manage_license.dart';
 import 'package:hny_main/view/screens/main/profile/manage_gcc_id.dart';
 import 'package:hny_main/view/screens/main/profile/manage_passport.dart';
 import 'package:hny_main/view/screens/main/profile/manage_profile_screen.dart';
+import 'package:hny_main/view/screens/main/profile/manage_visa_info.dart';
 import 'package:hny_main/view/screens/main/splash_screen/splash_screen.dart';
 import 'package:hny_main/view/screens/sub/checkout_screen/checkout_screen.dart';
 
@@ -18,6 +20,8 @@ class AppRoutes {
   static const String homePage = '/home';
   static const String bottomNav = '/bottomNav';
   static const String manageGccId = '/manageGccId';
+  static const String manageEmiratesId = '/manageEmirateId';
+  static const String manageVisaCard = 'manageVisaCard';
   static const String manageLicense = '/manageLicense';
   static const String managePassport = '/managePassport';
   static const String onboardingScreen = '/onboardingScreen';
@@ -59,6 +63,18 @@ class AppRoutes {
         final data = settings.arguments;
         return MaterialPageRoute(
             builder: (_) => ManagePassport(
+                  from: data,
+                ));
+                case manageEmiratesId:
+        final data = settings.arguments;
+        return MaterialPageRoute(
+            builder: (_) => ManageEmiratesId(
+                  from: data,
+                ));
+                case manageVisaCard:
+        final data = settings.arguments;
+        return MaterialPageRoute(
+            builder: (_) => ManageVisaInfo(
                   from: data,
                 ));
         case myCartPage:

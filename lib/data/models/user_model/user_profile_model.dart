@@ -31,6 +31,7 @@ class UserProfileModel {
     int? intAdvancePercentage;
     dynamic intOpningBalance;
     String? strEmiratesIdUrl;
+    String? strVisaUrl;
     String? strFirstName;
     String? strFullName;
     String? strGccIdUrl;
@@ -83,6 +84,7 @@ class UserProfileModel {
         this.strZonePolygon,
         this.userCoins,
         this.isUserPremium,
+        this.strVisaUrl
     });
 
     factory UserProfileModel.fromJson(Map<String, dynamic> json) => UserProfileModel(
@@ -122,6 +124,7 @@ class UserProfileModel {
         strZonePolygon: json["strZonePolygon"],
         userCoins: json["userCoins"],
         isUserPremium: json["isUserPremium"],
+        strVisaUrl: json["strVisaUrl"]
     );
 
     Map<String, dynamic> toJson() => {
@@ -161,5 +164,6 @@ class UserProfileModel {
         "strZonePolygon": strZonePolygon,
         "userCoins": userCoins,
         "isUserPremium": isUserPremium,
+        "strVisaUrl": strVisaUrl
     };
 }

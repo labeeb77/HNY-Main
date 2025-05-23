@@ -35,8 +35,10 @@ class _ManageGCCIdState extends State<ManageGCCId> {
                 visible: widget.from == "register",
                 child: TextButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, AppRoutes.managePassport,
-                        arguments: widget.from);
+                    if (profileProvider.selectedCitizenshipType == 'Gcc') {
+                      Navigator.pushNamed(context, AppRoutes.manageLicense,
+                          arguments: widget.from);
+                    }
                   },
                   child: const Text(
                     'Skip',
@@ -142,31 +144,25 @@ class _ManageGCCIdState extends State<ManageGCCId> {
                             AppAlerts.showCustomSnackBar(
                                 "GCC ID updated successfully",
                                 isSuccess: true);
-                                
-                           if (widget.from == "register") {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ManagePassport(
-                                  from: widget.from,
-                                ),
-                              ),
-                            );
-                          } else {
-                            Navigator.pop(context);
-                          }
+
+                            if (widget.from == "register") {
+                              if (profileProvider.selectedCitizenshipType ==
+                                  'Gcc') {
+                                Navigator.pushNamed(
+                                    context, AppRoutes.manageLicense,
+                                    arguments: widget.from);
+                              }
+                            } else {
+                              Navigator.pop(context);
+                            }
                           }
                         } else {
                           // If no image is selected, just navigate to next screen
                           if (widget.from == "register") {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ManagePassport(
-                                  from: widget.from,
-                                ),
-                              ),
-                            );
+                            if (profileProvider.selectedCitizenshipType == 'Gcc') {
+                      Navigator.pushNamed(context, AppRoutes.manageLicense,
+                          arguments: widget.from);
+                    }
                           } else {
                             Navigator.pop(context);
                           }

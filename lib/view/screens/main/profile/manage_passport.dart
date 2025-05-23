@@ -34,8 +34,15 @@ class _ManagePassportState extends State<ManagePassport> {
                 visible: widget.from == "register",
                 child: TextButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, AppRoutes.manageLicense,
-                        arguments: widget.from);
+                      if (profileProvider.selectedCitizenshipType ==
+                          'Tourist') {
+                        Navigator.pushNamed(
+                          context,
+                          AppRoutes.manageVisaCard,
+                          arguments: widget.from,
+                        );
+                      }
+                    
                   },
                   child: const Text(
                     'Skip',
@@ -174,12 +181,14 @@ class _ManagePassportState extends State<ManagePassport> {
                               AppAlerts.showCustomSnackBar(
                                   "Passport updated successfully",
                                   isSuccess: true);
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>  ManageDrivingLicense(from: widget.from,),
-                                ),
-                              );
+                              if (profileProvider.selectedCitizenshipType ==
+                                  'Tourist') {
+                                Navigator.pushNamed(
+                                  context,
+                                  AppRoutes.manageVisaCard,
+                                  arguments: widget.from,
+                                );
+                              }
                             } else {
                               Navigator.pop(context);
                             }
@@ -187,12 +196,14 @@ class _ManagePassportState extends State<ManagePassport> {
                         } else {
                           // If no image is selected, just navigate to next screen
                           if (widget.from == "register") {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ManageDrivingLicense(from: widget.from,),
-                              ),
-                            );
+                            if (profileProvider.selectedCitizenshipType ==
+                                'Tourist') {
+                              Navigator.pushNamed(
+                                context,
+                                AppRoutes.manageVisaCard,
+                                arguments: widget.from,
+                              );
+                            }
                           } else {
                             Navigator.pop(context);
                           }

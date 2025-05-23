@@ -34,10 +34,14 @@ class ProfileProvider with ChangeNotifier {
   File? _selectedGCCIdCardImagePath;
   File? _selectedDrivingLicenseImagePath;
   File? _selectedPassportImagePath;
+  File? _selectedEmiratesIdCardImagePath;
+  File? _selectedVisaCardImagePath;
 
   File? get selectedProfileImage => _selectedProfileImage;
+  File? get selectedVisaCardImagePath => _selectedVisaCardImagePath;
   File? get selectedGCCIdCardImagePath => _selectedGCCIdCardImagePath;
   File? get selectedDrivingLicenseImagePath => _selectedDrivingLicenseImagePath;
+  File? get selectedEmirateIdCardImagePath => _selectedEmiratesIdCardImagePath;
 
   File? get selectedPassportImagePath => _selectedPassportImagePath;
 
@@ -73,6 +77,10 @@ class ProfileProvider with ChangeNotifier {
 
   void setPassportImagePath(File? image) =>
       _updateValue(() => _selectedPassportImagePath = image);
+  void setEmiratesIdCardImagePath(File? image) =>
+      _updateValue(() => _selectedEmiratesIdCardImagePath = image);
+  void setVisaCardImagePath(File? image) =>
+      _updateValue(() => _selectedVisaCardImagePath = image);
 
   Future<bool> addProfileData(BuildContext context) async {
     String? profileUploadedUrl;
@@ -120,7 +128,7 @@ class ProfileProvider with ChangeNotifier {
       log("lastName: ${data.strLastName}");
       log("licenceUrl: ${data.strLicenceUrl}");
       log("nationality: ${data.strNationality}");
-            log("citizenship: ${data.strCitizenType}");
+      log("citizenship: ${data.strCitizenType}");
 
       log("passportUrl: ${data.strPassportUrl}");
       log("profileUrl: ${data.strProfileUrl}");
@@ -199,6 +207,9 @@ class ProfileProvider with ChangeNotifier {
           break;
         case 'Emirates ID':
           data['strEmiratesIdUrl'] = documentUrl;
+          break;
+        case 'Visa Card':
+          data['strVisaCardUrl'] = documentUrl;
           break;
         default:
           throw Exception("Invalid document type");
