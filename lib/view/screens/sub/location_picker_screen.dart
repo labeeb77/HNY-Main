@@ -129,7 +129,7 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
                           Marker(
                             icon: myIcon!,
                             infoWindow:
-                                const InfoWindow(title: "PICKUP LOCATION"),
+                                const InfoWindow(title: "RETURN LOCATION"),
                             markerId: MarkerId(_center.toString()),
                             position: LatLng(
                                 _center.latitude ?? 25.2048, _center.longitude),

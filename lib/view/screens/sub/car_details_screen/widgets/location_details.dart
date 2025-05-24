@@ -56,7 +56,7 @@ class LocationDetails extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       LocationItem(
-                        title: 'Pick-Up',
+                        title: 'Return',
                         address: bookingProvider.pickupAddress,
                       ),
                       const Expanded(child: Divider()),

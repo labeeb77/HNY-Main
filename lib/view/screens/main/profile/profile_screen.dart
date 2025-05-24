@@ -131,174 +131,187 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               const Gap(25),
               Consumer<ProfileProvider>(
-                builder: (context, value, child) => Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Stack(
+                builder: (context, value, child) {
+                  // Count visible documents
+                  int visibleDocs = 1; // License is always visible
+                  if (value.selectedCitizenshipType == 'Tourist') {
+                    visibleDocs += 2; // Passport and Visa Card
+                  } else if (value.selectedCitizenshipType == 'Gcc') {
+                    visibleDocs += 1; // GCC ID
+                  } else if (value.selectedCitizenshipType == 'Resident') {
+                    visibleDocs += 1; // Emirates ID
+                  }
+
+                  return Container(
+                    width: double.infinity,
+                    child: Wrap(
+                      spacing: visibleDocs == 1 ? 0 : 16,
+                      runSpacing: 16,
+                      alignment: visibleDocs == 1 
+                          ? WrapAlignment.center 
+                          : visibleDocs == 2 
+                              ? WrapAlignment.center 
+                              : WrapAlignment.spaceBetween,
                       children: [
-                        DocumentElement(
-                          argument: "profile",
-                          routeName: AppRoutes.manageLicense,
-                          docIcon: Icons.document_scanner_outlined,
-                          docName: "License",
-                          imageUrl: globalUser?.strLicenceUrl,
-                          isEnabled:
-                              globalUser?.strLicenceUrl?.isNotEmpty ?? false,
-                        ),
-                        if (globalUser?.strLicenceUrl?.isEmpty ?? true)
-                          Positioned(
-                            right: 0,
-                            top: 0,
-                            child: Container(
-                              padding: const EdgeInsets.all(4),
-                              decoration: const BoxDecoration(
-                                color: AppColors.primary,
-                                shape: BoxShape.circle,
-                              ),
-                              child: const Icon(
-                                Icons.add,
-                                color: AppColors.white,
-                                size: 16,
-                              ),
+                        Stack(
+                          children: [
+                            DocumentElement(
+                              argument: "profile",
+                              routeName: AppRoutes.manageLicense,
+                              docIcon: Icons.document_scanner_outlined,
+                              docName: "License",
+                              imageUrl: globalUser?.strLicenceUrl,
+                              isEnabled:
+                                  globalUser?.strLicenceUrl?.isNotEmpty ?? false,
                             ),
+                            if (globalUser?.strLicenceUrl?.isEmpty ?? true)
+                              Positioned(
+                                right: 0,
+                                top: 0,
+                                child: Container(
+                                  padding: const EdgeInsets.all(4),
+                                  decoration: const BoxDecoration(
+                                    color: AppColors.primary,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(
+                                    Icons.add,
+                                    color: AppColors.white,
+                                    size: 16,
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                        if (value.selectedCitizenshipType == 'Tourist')
+                          Stack(
+                            children: [
+                              DocumentElement(
+                                argument: "profile",
+                                routeName: AppRoutes.managePassport,
+                                docIcon: Icons.file_copy_outlined,
+                                docName: "Passport",
+                                imageUrl: globalUser?.strPassportUrl,
+                                isEnabled:
+                                    globalUser?.strPassportUrl?.isNotEmpty ?? false,
+                              ),
+                              if (globalUser?.strPassportUrl?.isEmpty ?? true)
+                                Positioned(
+                                  right: 0,
+                                  top: 0,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(4),
+                                    decoration: const BoxDecoration(
+                                      color: AppColors.primary,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Icon(
+                                      Icons.add,
+                                      color: AppColors.white,
+                                      size: 16,
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        if (value.selectedCitizenshipType == 'Gcc')
+                          Stack(
+                            children: [
+                              DocumentElement(
+                                argument: "profile",
+                                routeName: AppRoutes.manageGccId,
+                                docIcon: Icons.folder_copy_outlined,
+                                docName: "GCC ID",
+                                imageUrl: globalUser?.strGccIdUrl,
+                                isEnabled:
+                                    globalUser?.strGccIdUrl?.isNotEmpty ?? false,
+                              ),
+                              if (globalUser?.strGccIdUrl?.isEmpty ?? true)
+                                Positioned(
+                                  right: 0,
+                                  top: 0,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(4),
+                                    decoration: const BoxDecoration(
+                                      color: AppColors.primary,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Icon(
+                                      Icons.add,
+                                      color: AppColors.white,
+                                      size: 16,
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        if (value.selectedCitizenshipType == 'Tourist')
+                          Stack(
+                            children: [
+                              DocumentElement(
+                                argument: "profile",
+                                routeName: AppRoutes.manageVisaCard,
+                                docIcon: Icons.folder_copy_outlined,
+                                docName: "Visa Card",
+                                imageUrl: globalUser?.strVisaUrl,
+                                isEnabled:
+                                    globalUser?.strVisaUrl?.isNotEmpty ?? false,
+                              ),
+                              if (globalUser?.strVisaUrl?.isEmpty ?? true)
+                                Positioned(
+                                  right: 0,
+                                  top: 0,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(4),
+                                    decoration: const BoxDecoration(
+                                      color: AppColors.primary,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Icon(
+                                      Icons.add,
+                                      color: AppColors.white,
+                                      size: 16,
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        if (value.selectedCitizenshipType == 'Resident')
+                          Stack(
+                            children: [
+                              DocumentElement(
+                                argument: "profile",
+                                routeName: AppRoutes.manageEmiratesId,
+                                docIcon: Icons.folder_copy_outlined,
+                                docName: "Emirates Id",
+                                imageUrl: globalUser?.strEmiratesIdUrl,
+                                isEnabled:
+                                    globalUser?.strEmiratesIdUrl?.isNotEmpty ??
+                                        false,
+                              ),
+                              if (globalUser?.strEmiratesIdUrl?.isEmpty ?? true)
+                                Positioned(
+                                  right: 0,
+                                  top: 0,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(4),
+                                    decoration: const BoxDecoration(
+                                      color: AppColors.primary,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Icon(
+                                      Icons.add,
+                                      color: AppColors.white,
+                                      size: 16,
+                                    ),
+                                  ),
+                                ),
+                            ],
                           ),
                       ],
                     ),
-                    Visibility(
-                      visible: value.selectedCitizenshipType == 'Tourist',
-                      child: Stack(
-                        children: [
-                          DocumentElement(
-                            argument: "profile",
-                            routeName: AppRoutes.managePassport,
-                            docIcon: Icons.file_copy_outlined,
-                            docName: "Passport",
-                            imageUrl: globalUser?.strPassportUrl,
-                            isEnabled:
-                                globalUser?.strPassportUrl?.isNotEmpty ?? false,
-                          ),
-                          if (globalUser?.strPassportUrl?.isEmpty ?? true)
-                            Positioned(
-                              right: 0,
-                              top: 0,
-                              child: Container(
-                                padding: const EdgeInsets.all(4),
-                                decoration: const BoxDecoration(
-                                  color: AppColors.primary,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: const Icon(
-                                  Icons.add,
-                                  color: AppColors.white,
-                                  size: 16,
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-                    Visibility(
-                      visible: value.selectedCitizenshipType == 'Gcc',
-                      child: Stack(
-                        children: [
-                          DocumentElement(
-                            argument: "profile",
-                            routeName: AppRoutes.manageGccId,
-                            docIcon: Icons.folder_copy_outlined,
-                            docName: "GCC ID",
-                            imageUrl: globalUser?.strGccIdUrl,
-                            isEnabled:
-                                globalUser?.strGccIdUrl?.isNotEmpty ?? false,
-                          ),
-                          if (globalUser?.strGccIdUrl?.isEmpty ?? true)
-                            Positioned(
-                              right: 0,
-                              top: 0,
-                              child: Container(
-                                padding: const EdgeInsets.all(4),
-                                decoration: const BoxDecoration(
-                                  color: AppColors.primary,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: const Icon(
-                                  Icons.add,
-                                  color: AppColors.white,
-                                  size: 16,
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-                    Visibility(
-                      visible: value.selectedCitizenshipType == 'Tourist',
-                      child: Stack(
-                        children: [
-                          DocumentElement(
-                            argument: "profile",
-                            routeName: AppRoutes.manageVisaCard,
-                            docIcon: Icons.folder_copy_outlined,
-                            docName: "Visa Card",
-                            imageUrl: globalUser?.strVisaUrl,
-                            isEnabled:
-                                globalUser?.strVisaUrl?.isNotEmpty ?? false,
-                          ),
-                          if (globalUser?.strVisaUrl?.isEmpty ?? true)
-                            Positioned(
-                              right: 0,
-                              top: 0,
-                              child: Container(
-                                padding: const EdgeInsets.all(4),
-                                decoration: const BoxDecoration(
-                                  color: AppColors.primary,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: const Icon(
-                                  Icons.add,
-                                  color: AppColors.white,
-                                  size: 16,
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-                    Visibility(
-                      visible: value.selectedCitizenshipType == 'Resident',
-                      child: Stack(
-                        children: [
-                          DocumentElement(
-                            argument: "profile",
-                            routeName: AppRoutes.manageEmiratesId,
-                            docIcon: Icons.folder_copy_outlined,
-                            docName: "Emirates Id",
-                            imageUrl: globalUser?.strEmiratesIdUrl,
-                            isEnabled:
-                                globalUser?.strEmiratesIdUrl?.isNotEmpty ??
-                                    false,
-                          ),
-                          if (globalUser?.strEmiratesIdUrl?.isEmpty ?? true)
-                            Positioned(
-                              right: 0,
-                              top: 0,
-                              child: Container(
-                                padding: const EdgeInsets.all(4),
-                                decoration: const BoxDecoration(
-                                  color: AppColors.primary,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: const Icon(
-                                  Icons.add,
-                                  color: AppColors.white,
-                                  size: 16,
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+                  );
+                },
               ),
               const Gap(25),
               const AppText(

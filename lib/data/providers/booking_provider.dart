@@ -169,7 +169,7 @@ class BookingProvider extends ChangeNotifier {
   }
 
   void updateLocation(String type, String address) {
-    if (type == 'Pick-Up') {
+    if (type == 'Return') {
       updatePickupAddress(address);
     } else {
       updateDropoffAddress(address);

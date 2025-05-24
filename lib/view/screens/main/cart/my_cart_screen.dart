@@ -131,7 +131,10 @@ class _MyCartScreenState extends State<MyCartScreen> {
                                               MainAxisAlignment.spaceBetween,
                                           children: [
                                             Text(
-                                              "${item.itemDetails?.strBrand ?? ''} ${item.itemDetails?.strModel ?? ''}",
+                                              item.itemDetails?.strType == 'CAR'
+                                                  ? "${item.itemDetails?.strBrand ?? ''} ${item.itemDetails?.strModel ?? ''}"
+                                                  : item.itemDetails?.strName ??
+                                                      "Unknown",
                                               style: const TextStyle(
                                                 fontSize: 14,
                                                 fontWeight: FontWeight.w500,

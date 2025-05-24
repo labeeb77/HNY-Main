@@ -285,30 +285,25 @@ class _ManageProfileScreenState extends State<ManageProfileScreen> {
       if (result == true) {
         // Only navigate on success
         if (from == "register") {
-                    if (profileProvider.selectedCitizenshipType == 'Tourist') {
-                      Navigator.pushNamed(
-                        context,
-                        AppRoutes.managePassport,
-                        arguments:
-                            widget.screenName == "Add" ? "register" : "profile",
-                      );
-                    } else if (profileProvider.selectedCitizenshipType ==
-                        'Gcc') {
-                      Navigator.pushNamed(
-                        context,
-                        AppRoutes.manageGccId,
-                        arguments:
-                            widget.screenName == "Add" ? "register" : "profile",
-                      );
-                    } else {
-                      Navigator.pushNamed(
-                        context,
-                        AppRoutes.manageEmiratesId,
-                        arguments:
-                            widget.screenName == "Add" ? "register" : "profile",
-                      );
-                    }
-                  
+          if (profileProvider.selectedCitizenshipType == 'Tourist') {
+            Navigator.pushNamed(
+              context,
+              AppRoutes.managePassport,
+              arguments: widget.screenName == "Add" ? "register" : "profile",
+            );
+          } else if (profileProvider.selectedCitizenshipType == 'Gcc') {
+            Navigator.pushNamed(
+              context,
+              AppRoutes.manageGccId,
+              arguments: widget.screenName == "Add" ? "register" : "profile",
+            );
+          } else {
+            Navigator.pushNamed(
+              context,
+              AppRoutes.manageEmiratesId,
+              arguments: widget.screenName == "Add" ? "register" : "profile",
+            );
+          }
         } else {
           Navigator.pop(context);
         }
@@ -431,8 +426,7 @@ class _ManageProfileScreenState extends State<ManageProfileScreen> {
                     }
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                        content: Text(
-                            "Citizenship is required, please select you citizenship")));
+                        content: Text("Please select your citizenship type")));
                   }
                 },
                 child: const Text(
@@ -564,17 +558,21 @@ class _ManageProfileScreenState extends State<ManageProfileScreen> {
                     _buildInputField(
                         'Email ID', profileProvider.emailController,
                         keyboardType: TextInputType.emailAddress),
-                    _buildCountryDropdown(
-                        'Nationality',
-                        profileProvider.selectedNationality,
-                        _countries,
-                        profileProvider),
-                    _buildCountryDropdown(
-                        'Citizenship',
-                        profileProvider.selectedCitizenshipType,
-                        _citizenshipTypes,
-                        profileProvider,
-                        isCitizenship: true),
+                    Consumer<ProfileProvider>(
+                      builder: (context, value, child) => _buildCountryDropdown(
+                          'Nationality',
+                          value.selectedNationality,
+                          _countries,
+                          value),
+                    ),
+                    Consumer<ProfileProvider>(
+                      builder: (context, value, child) => _buildCountryDropdown(
+                          'Citizenship',
+                          value.selectedCitizenshipType,
+                          _citizenshipTypes,
+                          value,
+                          isCitizenship: true),
+                    ),
                     const SizedBox(height: 24),
                   ],
                 ),
@@ -592,29 +590,32 @@ class _ManageProfileScreenState extends State<ManageProfileScreen> {
         ),
         bottomNavigationBar: SafeArea(
           child: widget.screenName == 'Add'
-              ? SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: ElevatedButton(
-                    onPressed: _isLoading
-                        ? null
-                        : () => _handleSave(
-                            context,
-                            widget.screenName == "Add"
-                                ? "register"
-                                : "profile"),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(80),
+              ? Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: _isLoading
+                          ? null
+                          : () => _handleSave(
+                              context,
+                              widget.screenName == "Add"
+                                  ? "register"
+                                  : "profile"),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(80),
+                        ),
                       ),
-                    ),
-                    child: Text(
-                      _isLoading ? 'Saving...' : 'Save',
-                      style: const TextStyle(
-                        color: AppColors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+                      child: Text(
+                        _isLoading ? 'Saving...' : 'Save',
+                        style: const TextStyle(
+                          color: AppColors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),

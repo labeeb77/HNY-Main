@@ -294,7 +294,7 @@ class _MyBookingDetailsScreenState extends State<MyBookingDetailsScreen> {
                       children: [
                         const Icon(Icons.location_on, size: 16, color: Colors.grey),
                         const SizedBox(width: 4),
-                        const Text('Pickup:', style: TextStyle(fontSize: 13, color: Colors.black)),
+                        const Text('Return:', style: TextStyle(fontSize: 13, color: Colors.black)),
                         const SizedBox(width: 4),
                         Expanded(
                           child: Text(

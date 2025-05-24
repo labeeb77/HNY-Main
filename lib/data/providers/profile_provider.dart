@@ -4,11 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:hny_main/core/constants/api_constants.dart';
 import 'package:hny_main/core/global/profile.dart';
 import 'package:hny_main/core/utils/app_alerts.dart';
+import 'package:hny_main/core/utils/date_formatter.dart';
 import 'package:hny_main/data/models/request/add_profile_model.dart';
 import 'package:hny_main/data/models/response/api_response_model.dart';
 import 'package:hny_main/data/models/user_model/user_profile_model.dart';
 import 'package:hny_main/data/providers/common_provider.dart';
 import 'package:hny_main/service/api_service.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class ProfileProvider with ChangeNotifier {
@@ -57,6 +59,9 @@ class ProfileProvider with ChangeNotifier {
       mobileController.text = globalUser?.strMobileNo ?? "";
       emailController.text = globalUser?.strEmail ?? "";
       selectedNationality = globalUser?.strNationality ?? "";
+      selectedCitizenshipType = globalUser?.strCitizenType;
+      dobController.text = DateFormatter.formatDateOfBirth(globalUser?.dateOfBirth) ?? "";
+      selectedGender = globalUser?.gender ?? "";
 
       // Parse date of birth if available
     }
@@ -73,7 +78,7 @@ class ProfileProvider with ChangeNotifier {
       _updateValue(() => selectedNationality = value);
   void setGender(String value) => _updateValue(() => selectedGender = value);
   void setCitizenshipType(String value) =>
-      _updateValue(() => selectedCitizenshipType = value.toLowerCase());
+      _updateValue(() => selectedCitizenshipType = value);
 
   void setPassportImagePath(File? image) =>
       _updateValue(() => _selectedPassportImagePath = image);
@@ -209,7 +214,7 @@ class ProfileProvider with ChangeNotifier {
           data['strEmiratesIdUrl'] = documentUrl;
           break;
         case 'Visa Card':
-          data['strVisaCardUrl'] = documentUrl;
+          data['strVisaUrl'] = documentUrl;
           break;
         default:
           throw Exception("Invalid document type");

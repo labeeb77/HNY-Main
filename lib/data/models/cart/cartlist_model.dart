@@ -110,6 +110,7 @@ class ItemDetails {
     String? strCarNumber;
     String? strBrand;
     String? strStatus;
+    String? strType;
     String? chrStatus;
     String? strModel;
     String? strDescription;
@@ -141,6 +142,7 @@ class ItemDetails {
         this.strCarCode = '',
         this.strCarNumber = '',
         this.strBrand = '',
+        this.strType = '',
         this.strStatus = '',
         this.chrStatus = '',
         this.strModel = '',
@@ -176,6 +178,7 @@ class ItemDetails {
         strBrand: json["strBrand"]?.toString() ?? '',
         strStatus: json["strStatus"]?.toString() ?? '',
         chrStatus: json["chrStatus"]?.toString() ?? '',
+        strType:json["strType"]?.toString()??'',
         strModel: json["strModel"]?.toString() ?? '',
         strDescription: json["strDescription"]?.toString() ?? '',
         strCarCategory: json["strCarCategory"]?.toString() ?? '',
@@ -208,6 +211,7 @@ class ItemDetails {
         "strCarNumber": strCarNumber ?? '',
         "strBrand": strBrand ?? '',
         "strStatus": strStatus ?? '',
+        "strType":strType??'',
         "chrStatus": chrStatus ?? '',
         "strModel": strModel ?? '',
         "strDescription": strDescription ?? '',
