@@ -45,6 +45,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
             return Center(child: Text(favouriteProvider.error!));
           }
           if (favouriteProvider.favArrList.isEmpty) {
+            
             return Center(
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
