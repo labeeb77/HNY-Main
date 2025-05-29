@@ -1,18 +1,31 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:hny_main/core/global/profile.dart';
-import 'package:hny_main/data/providers/profile_provider.dart';
-import 'package:provider/provider.dart';
 
-class IDCardImageSection extends StatelessWidget {
+class DocumentImageSection extends StatelessWidget {
   final double height;
-  final String defaultImagePath;
+  final String? defaultImagePath;
+  final String title;
+  final Color backgroundColor;
+  final Color titleColor;
+  final File? selectedImage;
+  final String? imageUrl;
+  final VoidCallback? onTap;
+  final String placeholderText;
+  final IconData placeholderIcon;
   
-  const IDCardImageSection({
+  const DocumentImageSection({
     Key? key,
     this.height = 220,
-    this.defaultImagePath = 'assets/images/placeholder_image.webp',
+    this.defaultImagePath,
+    this.title = 'Document',
+    this.backgroundColor = const Color(0xFFD9E5E3),
+    this.titleColor = const Color(0xFF006C3F),
+    this.selectedImage,
+    this.imageUrl,
+    this.onTap,
+    this.placeholderText = 'Add Document',
+    this.placeholderIcon = Icons.credit_card,
   }) : super(key: key);
 
   @override
@@ -20,25 +33,30 @@ class IDCardImageSection extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFFD9E5E3).withOpacity(0.4),
+        color: backgroundColor.withOpacity(0.4),
         borderRadius: BorderRadius.circular(4),
         border: Border.all(color: Colors.grey.withOpacity(0.5)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'ID Card',
+          Text(
+            title,
             style: TextStyle(
-              color: Color(0xFF006C3F),
+              color: titleColor,
               fontSize: 16,
               fontWeight: FontWeight.w500,
             ),
           ),
           const SizedBox(height: 12),
-          _IDCardImageWidget(
+          _DocumentImageWidget(
             height: height,
             defaultImagePath: defaultImagePath,
+            selectedImage: selectedImage,
+            imageUrl: imageUrl,
+            onTap: onTap,
+            placeholderText: placeholderText,
+            placeholderIcon: placeholderIcon,
           ),
         ],
       ),
@@ -46,107 +64,151 @@ class IDCardImageSection extends StatelessWidget {
   }
 }
 
-class _IDCardImageWidget extends StatelessWidget {
+class _DocumentImageWidget extends StatelessWidget {
   final double height;
-  final String defaultImagePath;
+  final String? defaultImagePath;
+  final File? selectedImage;
+  final String? imageUrl;
+  final VoidCallback? onTap;
+  final String placeholderText;
+  final IconData placeholderIcon;
 
-  const _IDCardImageWidget({
+  const _DocumentImageWidget({
     Key? key,
     required this.height,
-    required this.defaultImagePath,
+    this.defaultImagePath,
+    this.selectedImage,
+    this.imageUrl,
+    this.onTap,
+    this.placeholderText = 'Add Document',
+    this.placeholderIcon = Icons.credit_card,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      height: height,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: Colors.grey[300]!,
-          width: 1,
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: double.infinity,
+        height: height,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: Colors.grey[300]!,
+            width: 1,
+          ),
         ),
-      ),
-      child: Consumer<ProfileProvider>(
-        builder: (context, profileProvider, child) {
-          return ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: _buildIDCardImage(profileProvider),
-          );
-        },
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: _buildImage(),
+        ),
       ),
     );
   }
 
-  Widget _buildIDCardImage(ProfileProvider profileProvider) {
+  Widget _buildImage() {
     // Case 1: Selected image exists (highest priority)
-    if (profileProvider.selectedGCCIdCardImagePath != null) {
-      return kIsWeb? Image.network(
-        profileProvider.selectedGCCIdCardImagePath!.path,
-        fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) => _buildDefaultImage(),
-      ):Image.file(
-        profileProvider.selectedGCCIdCardImagePath!,
-        fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) => _buildDefaultImage(),
-      );
+    if (selectedImage != null) {
+      return _buildImageFromFile(selectedImage!);
     }
 
-    // Case 2: ID Card URL exists
-    final idCardUrl = globalUser?.strGccIdUrl;
-    if (idCardUrl != null && idCardUrl.isNotEmpty) {
-      return Image.network(
-        idCardUrl,
-        fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) => _buildDefaultImage(),
-        loadingBuilder: (context, child, loadingProgress) {
-          if (loadingProgress == null) return child;
-          return _buildLoadingIndicator();
-        },
-      );
+    // Case 2: Image URL exists
+    if (imageUrl != null && imageUrl!.isNotEmpty) {
+      return _buildImageFromUrl(imageUrl!);
     }
 
     // Case 3: Default fallback
     return _buildDefaultImage();
   }
 
-  Widget _buildDefaultImage() {
-    return Image.asset(
-      defaultImagePath,
+  Widget _buildImageFromFile(File file) {
+    if (kIsWeb) {
+      return Image.network(
+        file.path,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) => _buildDefaultImage(),
+      );
+    }
+    return Image.file(
+      file,
       fit: BoxFit.cover,
-      errorBuilder: (context, error, stackTrace) => Container(
-        color: Colors.grey[200],
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.credit_card,
-                size: 48,
-                color: Colors.grey[400],
+      errorBuilder: (context, error, stackTrace) => _buildDefaultImage(),
+    );
+  }
+
+  Widget _buildImageFromUrl(String url) {
+    return Image.network(
+      url,
+      fit: BoxFit.cover,
+      errorBuilder: (context, error, stackTrace) => _buildDefaultImage(),
+      loadingBuilder: (context, child, loadingProgress) {
+        if (loadingProgress == null) return child;
+        return _buildLoadingIndicator(loadingProgress);
+      },
+    );
+  }
+
+  Widget _buildDefaultImage() {
+    if (defaultImagePath != null) {
+      return Image.asset(
+        defaultImagePath!,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) => _buildPlaceholder(),
+      );
+    }
+    return _buildPlaceholder();
+  }
+
+  Widget _buildPlaceholder() {
+    return Container(
+      color: Colors.grey[200],
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              placeholderIcon,
+              size: 48,
+              color: Colors.grey[400],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              placeholderText,
+              style: TextStyle(
+                color: Colors.grey[600],
+                fontSize: 16,
               ),
-              const SizedBox(height: 8),
-              Text(
-                'Add ID Card',
-                style: TextStyle(
-                  color: Colors.grey[600],
-                  fontSize: 16,
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildLoadingIndicator() {
+  Widget _buildLoadingIndicator(ImageChunkEvent? loadingProgress) {
     return Container(
       color: Colors.grey[200],
-      child: const Center(
-        child: CircularProgressIndicator(),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(
+              value: loadingProgress?.expectedTotalBytes != null
+                  ? loadingProgress!.cumulativeBytesLoaded /
+                      loadingProgress.expectedTotalBytes!
+                  : null,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Loading...',
+              style: TextStyle(
+                color: Colors.grey[600],
+                fontSize: 14,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

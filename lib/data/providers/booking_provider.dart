@@ -67,14 +67,14 @@ class BookingProvider extends ChangeNotifier {
 
   // Formatted getters for display
   String get formattedStartDate => _startDate != null
-      ? DateFormat('MMMM d, yyyy').format(_startDate!)
+      ? DateFormat('MMM d, yyyy').format(_startDate!)
       : 'mm/dd/yyyy';
 
   String get formattedStartTime =>
       _startTime != null ? _formatTimeOfDay(_startTime!) : '00:00 AM';
 
   String get formattedEndDate => _endDate != null
-      ? DateFormat('MMMM d, yyyy').format(_endDate!)
+      ? DateFormat('MMM d, yyyy').format(_endDate!)
       : 'mm/dd/yyyy';
 
   String get formattedEndTime =>

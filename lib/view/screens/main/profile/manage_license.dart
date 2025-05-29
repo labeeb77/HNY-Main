@@ -13,6 +13,7 @@ import 'package:hny_main/view/screens/main/Bookings/widgets/file_upload_ui_widge
 import 'package:hny_main/view/screens/main/home/home_screen.dart';
 import 'package:hny_main/view/screens/main/profile/manage_passport.dart';
 import 'package:hny_main/view/widgets/back_button.dart';
+import 'package:hny_main/view/widgets/id_card_section.dart';
 import 'package:hny_main/view/widgets/liecense_image_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -81,66 +82,52 @@ class _ManageDrivingLicenseState extends State<ManageDrivingLicense> {
                   },
                   child: const FileUploadUIWidget(),
                 ),
-                const SizedBox(height: 24),
+                                    const SizedBox(height: 12),
+
                 // Driving License Container
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFD9E5E3).withOpacity(0.4),
-                    borderRadius: BorderRadius.circular(4),
-                    border: Border.all(color: Colors.grey.withOpacity(0.5)),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Driving License ID',
-                        style: TextStyle(
-                          color: Color(0xFF006C3F),
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      // License Image Display
-                      if (profileProvider.selectedDrivingLicenseImagePath !=
-                          null)
-                        Container(
-                          height: 220,
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            image: DecorationImage(
-                              image: kIsWeb
-                                  ? NetworkImage(profileProvider
-                                      .selectedDrivingLicenseImagePath!.path)
-                                  : FileImage(profileProvider
-                                      .selectedDrivingLicenseImagePath!),
-                              fit: BoxFit.cover,
-                            ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                   
+                    const SizedBox(height: 12),
+                    // License Image Display
+                    if (profileProvider.selectedDrivingLicenseImagePath !=
+                        null)
+                      Container(
+                        height: 220,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          image: DecorationImage(
+                            image: kIsWeb
+                                ? NetworkImage(profileProvider
+                                    .selectedDrivingLicenseImagePath!.path)
+                                : FileImage(profileProvider
+                                    .selectedDrivingLicenseImagePath!),
+                            fit: BoxFit.cover,
                           ),
-                        )
-                      else if (globalUser?.strLicenceUrl != null &&
-                          globalUser!.strLicenceUrl!.isNotEmpty)
-                        Container(
-                          height: 220,
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            image: DecorationImage(
-                              image: NetworkImage(globalUser!.strLicenceUrl!),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        )
-                      else
-                        const DrivingLicenseImageWidget(
-                          height: 220,
-                          defaultImagePath:
-                              'assets/images/custom_placeholder.webp',
                         ),
-                    ],
-                  ),
+                      )
+                    else if (globalUser?.strLicenceUrl != null &&
+                        globalUser!.strLicenceUrl!.isNotEmpty)
+                      Container(
+                        height: 220,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          image: DecorationImage(
+                            image: NetworkImage(globalUser!.strLicenceUrl!),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      )
+                    else
+                      DocumentImageSection(
+                  title: "Driving License ID",
+                  height: 220,
+                  defaultImagePath: 'assets/images/placeholder_image.webp',
+                )
+                  ],
                 ),
               ],
             ),

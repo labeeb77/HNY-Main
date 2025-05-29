@@ -36,12 +36,12 @@ class _HomeScreenState extends State<HomeScreen> {
         statusBarIconBrightness: Brightness.light,
       ),
     );
-    WidgetsBinding.instance.addPostFrameCallback((va) {
-      final homeController =
-          Provider.of<HomeController>(context, listen: false);
-      // homeController.getCarDataList(context: context);
-      homeController.getCarTypeList();
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((va) {
+    //   final homeController =
+    //       Provider.of<HomeController>(context, listen: false);
+    //   // homeController.getCarDataList(context: context);
+    //   // homeController.getCarTypeList();
+    // });
     super.initState();
   }
 
@@ -66,7 +66,7 @@ class _HomeScreenState extends State<HomeScreen> {
             builder: (context, value, child) => CircledIcon(
               circleColor: AppColors.circleAvatarBackground,
               iconColor: AppColors.white,
-              badgeValue: value.cartItems.length.toString(),
+              badgeValue: value.cartItems.isEmpty ? null : value.cartItems.length.toString(),
               icon: Icons.shopping_cart_outlined,
               ontap: () => Navigator.pushNamed(context, AppRoutes.myCartPage),
             ),
@@ -233,7 +233,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               },
                               value:
                                   value.selectedDateTOString ?? 'Select Date',
-                              title: "Trip Start",
+                              title: "Start Day",
                             ),
                             const SizedBox(width: 16),
                             DateSectionWidget(
@@ -290,7 +290,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 }
                               },
                               value: value.selectedEndTOString ?? 'Select Date',
-                              title: "Trip End",
+                              title: "End Day",
                             ),
                           ],
                         ),
@@ -344,15 +344,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: ListView.builder(
                             scrollDirection: Axis.horizontal,
                             itemCount:
-                                homeController.carTypeListData.length + 1,
+                                homeController.carTypeListData.length,
                             itemBuilder: (context, index) {
-                              if (index ==
-                                  homeController.carTypeListData.length) {
-                                return Padding(
-                                  padding: const EdgeInsets.only(right: 16.0),
-                                  child: buildRideOption('', 'View All'),
-                                );
-                              }
+                              
 
                               final carType =
                                   homeController.carTypeListData[index];
@@ -385,28 +379,28 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
 
                   // Popular Cars Section
-                  Padding(
-                    padding: const EdgeInsets.all(16),
+                  const Padding(
+                    padding: EdgeInsets.all(16),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
+                        Text(
                           'Popular Cars',
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        InkWell(
-                          onTap: () {},
-                          child: const Text(
-                            'See All',
-                            style: TextStyle(
-                              color: Color(0xFF0B5D3A),
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
+                        // InkWell(
+                        //   onTap: () {},
+                        //   child: const Text(
+                        //     'See All',
+                        //     style: TextStyle(
+                        //       color: Color(0xFF0B5D3A),
+                        //       fontWeight: FontWeight.w500,
+                        //     ),
+                        //   ),
+                        // ),
                       ],
                     ),
                   ),
@@ -548,6 +542,8 @@ class DateSectionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool hasDate = value != 'Select Date';
+    
     return Expanded(
       child: GestureDetector(
         onTap: onTap,
@@ -569,17 +565,51 @@ class DateSectionWidget extends StatelessWidget {
             crossAxisAlignment: isEnd ? CrossAxisAlignment.end : CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey,
-                ),
+              Row(
+                mainAxisAlignment: isEnd ? MainAxisAlignment.end : MainAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  if (hasDate) ...[
+                    const SizedBox(width: 8),
+                    GestureDetector(
+                      onTap: () {
+                        if (isEnd) {
+                          Provider.of<HomeController>(context, listen: false)
+                              .setSelectedEndtDate(null);
+                        } else {
+                          Provider.of<HomeController>(context, listen: false)
+                              .setSelectedStartDate(null);
+                        }
+                        // Refresh the car list after clearing the date
+                        Provider.of<HomeController>(context, listen: false)
+                            .getCarDataList(context: context);
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.withOpacity(0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.close,
+                          size: 14,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ),
+                  ],
+                ],
               ),
               const SizedBox(height: 4),
               SizedBox(
                 height: 40,
-                child: value == 'Select Date'
+                child: !hasDate
                     ? Column(
                         crossAxisAlignment: isEnd ? CrossAxisAlignment.end : CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -592,29 +622,6 @@ class DateSectionWidget extends StatelessWidget {
                               height: 1.2,
                             ),
                             textAlign: isEnd ? TextAlign.end : TextAlign.start,
-                          ),
-                          const SizedBox(height: 4),
-                          Align(
-                            alignment: isEnd ? Alignment.centerRight : Alignment.centerLeft,
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  Icons.directions_car_filled_rounded,
-                                  size: 14,
-                                  color: Colors.grey[400],
-                                ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  isEnd ? 'Return' : 'Pickup',
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    color: Colors.grey[400],
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ],
-                            ),
                           ),
                         ],
                       )

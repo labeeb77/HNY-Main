@@ -112,9 +112,10 @@ class _ManageEmiratesIdState extends State<ManageEmiratesId> {
                     ),
                   )
                 else
-                  const IDCardImageSection(
+                  DocumentImageSection(
+                    title: "Emirates ID",
                     height: 220,
-                    defaultImagePath: 'assets/images/custom_placeholder.webp',
+                    defaultImagePath: 'assets/images/placeholder_image.webp',
                   )
               ],
             ),
@@ -147,7 +148,7 @@ class _ManageEmiratesIdState extends State<ManageEmiratesId> {
 
                             if (widget.from == "register") {
                               if (profileProvider.selectedCitizenshipType ==
-                                  'Resident') {
+                                  'resident') {
                                 Navigator.pushNamed(
                                     context, AppRoutes.manageLicense,
                                     arguments: widget.from);
@@ -160,7 +161,7 @@ class _ManageEmiratesIdState extends State<ManageEmiratesId> {
                           // If no image is selected, just navigate to next screen
                           if (widget.from == "register") {
                             if (profileProvider.selectedCitizenshipType ==
-                                'Resident') {
+                                'resident') {
                               Navigator.pushNamed(
                                   context, AppRoutes.manageLicense,
                                   arguments: widget.from);

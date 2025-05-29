@@ -116,8 +116,7 @@ Widget buildCarCard(
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => CarDetailsScreen(
-                    arrCar: arrCar,
+                  builder: (context) => CarDetailsScreen(arrCar: arrCar,
                   ),
                 ));
           }

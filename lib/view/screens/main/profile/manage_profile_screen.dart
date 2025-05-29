@@ -1,10 +1,10 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:hny_main/core/global/profile.dart';
 import 'package:hny_main/core/routes/app_routes.dart';
 import 'package:hny_main/core/utils/app_colors.dart';
 import 'package:hny_main/core/utils/app_image_picker.dart';
-import 'package:hny_main/core/utils/snackbar.dart';
 import 'package:hny_main/data/providers/profile_provider.dart';
 import 'package:hny_main/view/widgets/profile_image_widget.dart';
 import 'package:intl/intl.dart';
@@ -217,7 +217,7 @@ class _ManageProfileScreenState extends State<ManageProfileScreen> {
     'Zimbabwe'
   ];
 
-  final List<String> _citizenshipTypes = ['Tourist', 'Gcc', 'Resident'];
+  final List<String> _citizenshipTypes = ['tourist', 'gcc', 'resident'];
 
   bool _isLoading = false;
 
@@ -285,13 +285,13 @@ class _ManageProfileScreenState extends State<ManageProfileScreen> {
       if (result == true) {
         // Only navigate on success
         if (from == "register") {
-          if (profileProvider.selectedCitizenshipType == 'Tourist') {
+          if (profileProvider.selectedCitizenshipType == 'tourist') {
             Navigator.pushNamed(
               context,
               AppRoutes.managePassport,
               arguments: widget.screenName == "Add" ? "register" : "profile",
             );
-          } else if (profileProvider.selectedCitizenshipType == 'Gcc') {
+          } else if (profileProvider.selectedCitizenshipType == 'gcc') {
             Navigator.pushNamed(
               context,
               AppRoutes.manageGccId,
@@ -400,34 +400,7 @@ class _ManageProfileScreenState extends State<ManageProfileScreen> {
               visible: widget.screenName == "Add",
               child: TextButton(
                 onPressed: () {
-                  if (profileProvider.selectedCitizenshipType != null) {
-                    if (profileProvider.selectedCitizenshipType == 'Tourist') {
-                      Navigator.pushNamed(
-                        context,
-                        AppRoutes.managePassport,
-                        arguments:
-                            widget.screenName == "Add" ? "register" : "profile",
-                      );
-                    } else if (profileProvider.selectedCitizenshipType ==
-                        'Gcc') {
-                      Navigator.pushNamed(
-                        context,
-                        AppRoutes.manageGccId,
-                        arguments:
-                            widget.screenName == "Add" ? "register" : "profile",
-                      );
-                    } else {
-                      Navigator.pushNamed(
-                        context,
-                        AppRoutes.manageEmiratesId,
-                        arguments:
-                            widget.screenName == "Add" ? "register" : "profile",
-                      );
-                    }
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                        content: Text("Please select your citizenship type")));
-                  }
+                  Navigator.of(context).pushNamed(AppRoutes.bottomNav);
                 },
                 child: const Text(
                   'Skip',
@@ -749,9 +722,10 @@ class _ManageProfileScreenState extends State<ManageProfileScreen> {
               log(provider.selectedGender.toString());
               log(isEdit.toString());
               if (isEdit) {
-                if (provider.selectedGender == null) {
+                if (globalUser?.gender == null || globalUser?.gender?.isEmpty == true) {
                   provider.setGender(newValue!);
                 }
+                
               } else {
                 provider.setGender(newValue!);
               }
@@ -804,7 +778,7 @@ class _ManageProfileScreenState extends State<ManageProfileScreen> {
             items: items.map((String item) {
               return DropdownMenuItem<String>(
                 value: item,
-                child: Text(item),
+                child: Text(item.toUpperCase()),
               );
             }).toList(),
             onChanged: (String? newValue) {

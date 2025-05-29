@@ -81,7 +81,6 @@ class NoInternetScreen extends StatelessWidget {
     }
   }
 }
-
 void showNoInternetDialog(BuildContext context, NoInternetArguments args) {
   showDialog(
     context: context,

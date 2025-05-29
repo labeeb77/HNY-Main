@@ -60,7 +60,8 @@ class ProfileProvider with ChangeNotifier {
       emailController.text = globalUser?.strEmail ?? "";
       selectedNationality = globalUser?.strNationality ?? "";
       selectedCitizenshipType = globalUser?.strCitizenType;
-      dobController.text = DateFormatter.formatDateOfBirth(globalUser?.dateOfBirth) ?? "";
+      dobController.text =
+          DateFormatter.formatDateOfBirth(globalUser?.dateOfBirth) ?? "";
       selectedGender = globalUser?.gender ?? "";
 
       // Parse date of birth if available
@@ -118,25 +119,22 @@ class ProfileProvider with ChangeNotifier {
         strNationality: selectedNationality,
         strPassportUrl: globalUser?.strPassportUrl ?? "",
         strProfileUrl: profileUploadedUrl ?? globalUser?.strProfileUrl ?? "",
-        strCitizenType: selectedCitizenshipType,
+        strCitizenType: selectedCitizenshipType ?? "",
       );
 
-      log("AddProfileModel Details:");
-      log("id: ${data.id}");
-      log("dateOfBirth: ${data.strDateOfBirth}");
-      log("email: ${data.strEmail}");
-      log("emiratesIdUrl: ${data.strEmiratesIdUrl}");
-      log("fcmToken: ${data.strFcmToken}");
-      log("firstName: ${data.strFirstName}");
-      log("gccIdUrl: ${data.strGccIdUrl}");
-      log("gender: ${data.strGender}");
-      log("lastName: ${data.strLastName}");
-      log("licenceUrl: ${data.strLicenceUrl}");
-      log("nationality: ${data.strNationality}");
-      log("citizenship: ${data.strCitizenType}");
-
-      log("passportUrl: ${data.strPassportUrl}");
-      log("profileUrl: ${data.strProfileUrl}");
+      log("strDateOfBirth: ${data.strDateOfBirth}");
+      log("strEmail: ${data.strEmail}");
+      log("strEmiratesIdUrl: ${data.strEmiratesIdUrl}");
+      log("strFcmToken: ${data.strFcmToken}");
+      log("strFirstName: ${data.strFirstName}");
+      log("strGCCIdUrl: ${data.strGccIdUrl}");
+      log("strGender: ${data.strGender}");
+      log("strLastName: ${data.strLastName}");
+      log("strLicenceUrl: ${data.strLicenceUrl}");
+      log("strNationality: ${data.strNationality}");
+      log("strCitizenType: ${data.strCitizenType}");
+      log("strPassportUrl: ${data.strPassportUrl}");
+      log("strProfileUrl: ${data.strProfileUrl}");
       final ApiResponseModel<dynamic> apiResponse =
           await ApiService(context).apiCall(
         endpoint: ApiConstants.updateCustomerUrl,
@@ -194,9 +192,7 @@ class ProfileProvider with ChangeNotifier {
       }
 
       // Create a payload with just the ID and the specific document URL field
-      final Map<String, dynamic> data = {
-        '_id': currentUserId,
-      };
+      final Map<String, dynamic> data = {};
       log("updateDocumentRequest Body : $data");
 
       // Set the correct field based on document type

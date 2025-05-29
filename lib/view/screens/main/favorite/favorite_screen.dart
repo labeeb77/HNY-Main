@@ -1,9 +1,11 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:hny_main/data/providers/bottom_nav_controller.dart';
 import 'package:hny_main/data/providers/favourite_provider.dart';
 import 'package:hny_main/data/providers/home_controller.dart';
 import 'package:hny_main/view/screens/main/home/widgets_elements.dart';
+import 'package:hny_main/view/widgets/app_button.dart';
 import 'package:hny_main/view/widgets/common_app_bar.dart';
 import 'package:provider/provider.dart';
 
@@ -41,11 +43,61 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
 
           if (favouriteProvider.error != null) {
             return Center(child: Text(favouriteProvider.error!));
-          } 
+          }
           if (favouriteProvider.favArrList.isEmpty) {
-            return  const Center(child: Text('No favorites found'));
-          } 
-
+            return Center(
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 120,
+                      height: 120,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[100],
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.favorite_border,
+                        size: 64,
+                        color: Colors.grey[400],
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      'No Favorites Yet',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.grey[800],
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      'Your favorite cars will appear here. Start exploring and add some cars to your favorites!',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey[600],
+                        height: 1.4,
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+                    SizedBox(
+                        child: PrimaryElevateButton(
+                      buttonName: "Explore Cars",
+                      ontap: () {
+                        Provider.of<BottomNavController>(context, listen: false)
+                            .changeScreenIndex(0);
+                      },
+                    )),
+                  ],
+                ),
+              ),
+            );
+            ;
+          }
 
           final data = favouriteProvider.favArrList;
           return ListView.builder(
@@ -66,11 +118,16 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                 context,
                 MediaQuery.of(context).orientation,
                 mediaQuery,
-                onFavoriteTap: () { 
-                  
-                  favouriteProvider
-                      .removeFromFavourites(data[index].id ?? '0');
-                },
+                onFavoriteTap: () {
+                  final homeProvider = Provider.of<HomeController>(context,listen: false);
+                  favouriteProvider.removeFromFavourites(data[index].id).then((_) {
+                                              homeProvider.getCarDataList(
+                                                  context: context,
+                                                  startDate:
+                                                      homeProvider.selecteStratdDate,
+                                                  endDate:
+                                                      homeProvider.selecteEnddDate);
+                });}
               ),
             ),
           );

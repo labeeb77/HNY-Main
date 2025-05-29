@@ -22,6 +22,13 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
+ late String? arrCarId ;
+ @override
+  void initState() {
+    arrCarId = widget.arrCar.id!;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<BookingProvider>(
@@ -33,7 +40,7 @@ class _CartScreenState extends State<CartScreen> {
 
         return WillPopScope(
           onWillPop: () async {
-            if (widget.arrCar.id != null) {
+            if (arrCarId != null) {
               Navigator.pop(context);
               return true;
             } else {
@@ -51,7 +58,7 @@ class _CartScreenState extends State<CartScreen> {
               title: 'My Cart',
             ),
             body: SafeArea(
-                child: widget.arrCar.id != null
+                child: arrCarId != null
                     ? Column(
                         children: [
                           Expanded(
@@ -72,7 +79,7 @@ class _CartScreenState extends State<CartScreen> {
                                                   ?.toInt() ??
                                               0,
                                           widget.arrCar.intPricePerMonth
-                                                ?.toInt() ??
+                                                  ?.toInt() ??
                                               0),
                                       widget.arrCar.strImgUrl ??
                                           'assets/images/placeholder_image.webp',
@@ -90,7 +97,7 @@ class _CartScreenState extends State<CartScreen> {
                                           buildAddonCard(
                                             bookingProvider,
                                             gadget.name,
-                                            gadget.price.toInt(),
+                                            findSingleGadgetAmount(bookingProvider.totalDays,gadget.monthlyPrice,gadget.weeklyPrice,gadget.pricePerDay??0,gadget.quantity),
                                             gadget.image,
                                             quantity: gadget.quantity,
                                             onQuantityChanged: (newQuantity) {
@@ -270,7 +277,8 @@ class _CartScreenState extends State<CartScreen> {
     String pickup,
     String dropoff,
   ) {
-    final bookingProvider = Provider.of<BookingProvider>(context, listen: false);
+    final bookingProvider =
+        Provider.of<BookingProvider>(context, listen: false);
     log('chop car :$imagePath');
     return Container(
       decoration: BoxDecoration(
@@ -346,7 +354,7 @@ class _CartScreenState extends State<CartScreen> {
                       ),
                       const Gap(4),
                       Text(
-                        "AED ${price.toStringAsFixed(1)}",
+                        "${price.toStringAsFixed(1)} AED",
                         style: const TextStyle(
                           fontSize: 16,
                           color: AppColors.orange,
@@ -356,17 +364,17 @@ class _CartScreenState extends State<CartScreen> {
                       const Gap(4),
                       Row(
                         children: [
-                        
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Row(
                                   children: [
-                                    const Icon(Icons.calendar_month, size: 12, color: Colors.grey),
+                                    const Icon(Icons.calendar_month,
+                                        size: 12, color: Colors.grey),
                                     const SizedBox(width: 2),
                                     Text(
-                                      'Trip Start: $startDate ${bookingProvider.formattedStartTime}',
+                                      'Start: $startDate ${bookingProvider.formattedStartTime}',
                                       style: const TextStyle(fontSize: 12),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
@@ -376,10 +384,11 @@ class _CartScreenState extends State<CartScreen> {
                                 const SizedBox(height: 2),
                                 Row(
                                   children: [
-                                    const Icon(Icons.calendar_month, size: 12, color: Colors.grey),
+                                    const Icon(Icons.calendar_month,
+                                        size: 12, color: Colors.grey),
                                     const SizedBox(width: 2),
                                     Text(
-                                      'Trip End: $endDate ${bookingProvider.formattedEndTime}',
+                                      'End: $endDate ${bookingProvider.formattedEndTime}',
                                       style: const TextStyle(fontSize: 12),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
@@ -419,7 +428,7 @@ class _CartScreenState extends State<CartScreen> {
             onPressed: () async {
               Navigator.pop(context);
               cartProvider.deleteCartItem(await findCartItem(item.id!));
-              widget.arrCar.id = null;
+              arrCarId = null;
               setState(() {});
             },
             child: const Text('Delete', style: TextStyle(color: Colors.red)),
@@ -431,7 +440,7 @@ class _CartScreenState extends State<CartScreen> {
 
   // Updated addon card to include quantity and callback
   Widget buildAddonCard(
-      BookingProvider bookingProvider, String name, int price, String imagePath,
+      BookingProvider bookingProvider, String name,  price, String imagePath,
       {int quantity = 1, Function(int)? onQuantityChanged}) {
     return Container(
       decoration: BoxDecoration(
@@ -447,7 +456,7 @@ class _CartScreenState extends State<CartScreen> {
         ],
       ),
       child: Padding(
-        padding: const EdgeInsets.all(8),
+        padding: const EdgeInsets.all(10),
         child: Row(
           children: [
             ClipRRect(
@@ -479,13 +488,25 @@ class _CartScreenState extends State<CartScreen> {
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  Text(
-                    "$price",
-                    style: const TextStyle(
-                      fontSize: 16,
-                      color: AppColors.orange,
-                      fontWeight: FontWeight.w500,
-                    ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "$price AED",
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: AppColors.orange,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      Text(
+                        _getGadgetCalculationText(bookingProvider.totalDays, price, quantity),
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -511,38 +532,6 @@ class _CartScreenState extends State<CartScreen> {
       ),
     );
   }
-
-//   PriceCalculation _calculatePricing(
-//   num dailyRate,
-//   num weeklyRate,
-//   num monthlyRate,
-// ) {
-//   // Get total days from BookingProvider
-//   final totalDays = Provider.of<BookingProvider>(context, listen: false).totalDays;
-
-//   if (totalDays >= 30) {
-//     // Monthly pricing
-//     final monthlyPrice = (monthlyRate / 30) * totalDays;
-//     return PriceCalculation(
-//       totalPrice: monthlyPrice.toDouble(),
-//       priceType: 'Monthly Rate',
-//     );
-//   } else if (totalDays >= 8) {
-//     // Weekly pricing
-//     final weeklyPrice = (weeklyRate / 7) * totalDays;
-//     return PriceCalculation(
-//       totalPrice: weeklyPrice.toDouble(),
-//       priceType: 'Weekly Rate',
-//     );
-//   } else {
-//     // Daily pricing
-//     final dailyPrice = dailyRate * totalDays;
-//     return PriceCalculation(
-//       totalPrice: dailyPrice.toDouble(),
-//       priceType: 'Daily Rate',
-//     );
-//   }
-// }
 
   PriceCalculation _calculateGadgetPricing() {
     final bookingProvider =
@@ -608,17 +597,17 @@ class _CartScreenState extends State<CartScreen> {
         const SizedBox(height: 16),
         buildSummaryRow(
           'Vehicle Rental',
-          'AED ${vehiclePrice.toStringAsFixed(1)}',
+          '${vehiclePrice.toStringAsFixed(1)} AED',
         ),
         if (provider.totalGadgetPrice > 0.0)
           buildSummaryRow(
             'Add-ons',
-            'AED ${provider.totalGadgetPrice.toStringAsFixed(1)}',
+            '${provider.totalGadgetPrice.toStringAsFixed(1)} AED',
           ),
         const Divider(height: 24),
         buildSummaryRow(
           'Total',
-          'AED ${finalAmount.toStringAsFixed(1)}',
+          '${finalAmount.toStringAsFixed(1)} AED',
           isTotal: true,
         ),
       ],
@@ -657,6 +646,29 @@ class _CartScreenState extends State<CartScreen> {
         ],
       ),
     );
+  }
+
+  String _getGadgetCalculationText(int days,  price, int quantity) {
+    final dailyPrice = price / days;
+    return '($quantity × ${dailyPrice.toStringAsFixed(1)} AED/day × $days days)';
+  }
+
+  String _getTotalGadgetCalculationText(BookingProvider provider) {
+    final gadgets = provider.gadgets.where((g) => g.quantity > 0);
+    if (gadgets.isEmpty) return '';
+    
+    final List<String> calculations = [];
+    for (var gadget in gadgets) {
+      final dailyPrice = findSingleGadgetAmount(
+        provider.totalDays,
+        gadget.monthlyPrice ?? 0,
+        gadget.weeklyPrice ?? 0,
+        gadget.pricePerDay ?? 0,
+        1
+      ) / provider.totalDays;
+      calculations.add('${gadget.quantity} × ${dailyPrice.toStringAsFixed(1)} AED/day');
+    }
+    return '(${calculations.join(' + ')}) × ${provider.totalDays} days';
   }
 
   // Placeholder methods for the other widgets
@@ -779,5 +791,25 @@ class _CartScreenState extends State<CartScreen> {
         return element.id!;
       }
     }
+  }
+
+   findSingleGadgetAmount(
+      days, monthlyAmount, weeklyAmount, dailyAmount, qty) {
+    if (qty > 0) {
+      if (days >= 30) {
+        // Monthly pricing
+        final monthlyPrice = (monthlyAmount / 30) * days * qty;
+        return monthlyPrice;
+      } else if (days >= 8) {
+        // Weekly pricing
+        final weeklyPrice = (weeklyAmount / 7) * days * qty;
+        return weeklyPrice;
+      } else {
+        // Daily pricing
+        final dailyPrice = dailyAmount * days * qty;
+        return dailyPrice;
+      }
+    }
+    return 0;
   }
 }

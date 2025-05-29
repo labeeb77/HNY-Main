@@ -234,9 +234,39 @@ class _BookingScreenState extends State<BookingScreen> {
                       child: CircularProgressIndicator(),
                     )
                   : value.bookingsListData.isEmpty
-                      ? const Center(
-                          child: Text('No bookings found'),
-                        )
+                      ?  Center(
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 120,
+                      height: 120,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[100],
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.book_online,
+                        size: 64,
+                        color: Colors.grey[400],
+                      ),
+                    ),
+                    Text(
+                      'No Bookings Yet',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.grey[800],
+                      ),
+                    ),
+                   
+                    
+                  ],
+                ),
+              ),
+            )
                       : ListView.builder(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           itemCount: value.bookingsListData.length,

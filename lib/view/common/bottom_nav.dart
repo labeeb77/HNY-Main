@@ -20,8 +20,11 @@ class _BottomNavState extends State<BottomNav> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((va) {
-      Provider.of<HomeController>(context, listen: false)
-          .getCarDataList(context: context);
+      final homeController =
+          Provider.of<HomeController>(context, listen: false);
+      homeController.getCarTypeList();
+      homeController.getCarDataList(context: context);
+
       Provider.of<ProfileProvider>(context, listen: false)
           .getUserProfileDetails(context);
       Provider.of<MyCartProvider>(context, listen: false).fetchCartItems();

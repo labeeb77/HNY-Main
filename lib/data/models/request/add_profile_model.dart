@@ -9,7 +9,6 @@ AddProfileModel addProfileModelFromJson(String str) => AddProfileModel.fromJson(
 String addProfileModelToJson(AddProfileModel data) => json.encode(data.toJson());
 
 class AddProfileModel {
-    String? id;
     String? strFirstName;
     String? strLastName;
     String? strEmail;
@@ -23,9 +22,10 @@ class AddProfileModel {
     String? strGender;
     String? strDateOfBirth;
     String? strCitizenType;
+    
 
     AddProfileModel({
-        this.id,
+    
         this.strFirstName,
         this.strLastName,
         this.strEmail,
@@ -42,7 +42,7 @@ class AddProfileModel {
     });
 
     factory AddProfileModel.fromJson(Map<String, dynamic> json) => AddProfileModel(
-        id: json["_id"],
+  
         strFirstName: json["strFirstName"],
         strLastName: json["strLastName"],
         strEmail: json["strEmail"],
@@ -59,7 +59,7 @@ class AddProfileModel {
     );
 
     Map<String, dynamic> toJson() => {
-        "_id": id,
+       
         "strFirstName": strFirstName,
         "strLastName": strLastName,
         "strEmail": strEmail,

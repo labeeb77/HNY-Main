@@ -112,9 +112,10 @@ class _ManageGCCIdState extends State<ManageGCCId> {
                     ),
                   )
                 else
-                  const IDCardImageSection(
+                 DocumentImageSection(
+                    title: "GCC ID",
                     height: 220,
-                    defaultImagePath: 'assets/images/custom_placeholder.webp',
+                    defaultImagePath: 'assets/images/placeholder_image.webp',
                   )
               ],
             ),
@@ -147,7 +148,7 @@ class _ManageGCCIdState extends State<ManageGCCId> {
 
                             if (widget.from == "register") {
                               if (profileProvider.selectedCitizenshipType ==
-                                  'Gcc') {
+                                  'gcc') {
                                 Navigator.pushNamed(
                                     context, AppRoutes.manageLicense,
                                     arguments: widget.from);
@@ -159,7 +160,7 @@ class _ManageGCCIdState extends State<ManageGCCId> {
                         } else {
                           // If no image is selected, just navigate to next screen
                           if (widget.from == "register") {
-                            if (profileProvider.selectedCitizenshipType == 'Gcc') {
+                            if (profileProvider.selectedCitizenshipType == 'gcc') {
                       Navigator.pushNamed(context, AppRoutes.manageLicense,
                           arguments: widget.from);
                     }

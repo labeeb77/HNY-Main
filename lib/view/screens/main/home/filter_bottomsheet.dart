@@ -39,8 +39,8 @@ class PriceRangeBottomSheet extends StatelessWidget {
               activeColor: AppColors.primary,
               inactiveColor: Colors.grey.shade200,
               labels: RangeLabels(
-                'AED ${value.currentRangeValues.start.round()}',
-                'AED ${value.currentRangeValues.end.round()}',
+                '${value.currentRangeValues.start.round()} AED',
+                '${value.currentRangeValues.end.round()} AED',
               ),
               onChanged: (RangeValues values) {
                 value.changeSliderValue(values);
@@ -58,7 +58,7 @@ class PriceRangeBottomSheet extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
-                    'AED ${value.currentRangeValues.start.round()}',
+                    '${value.currentRangeValues.start.round()} AED',
                     style: const TextStyle(color: Colors.white),
                   ),
                 ),
@@ -70,7 +70,7 @@ class PriceRangeBottomSheet extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
-                    'AED ${value.currentRangeValues.end.round()}',
+                    '${value.currentRangeValues.end.round()} AED',
                     style: const TextStyle(color: Colors.white),
                   ),
                 ),

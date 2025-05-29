@@ -152,7 +152,8 @@ class _MyCartScreenState extends State<MyCartScreen> {
                                                         color: AppColors.white),
                                                     onPressed: () =>
                                                         _showEditDialog(context,
-                                                            item, cartProvider),
+                                                            item, cartProvider,),
+                                                            
                                                     constraints:
                                                         const BoxConstraints(),
                                                     padding: EdgeInsets.zero,
@@ -184,7 +185,7 @@ class _MyCartScreenState extends State<MyCartScreen> {
                                         ),
                                         const SizedBox(height: 4),
                                         Text(
-                                          "AED ${totalAmount.toStringAsFixed(1)}",
+                                          "${totalAmount.toStringAsFixed(1)} AED",
                                           style: const TextStyle(
                                             fontSize: 16,
                                             color: AppColors.orange,
@@ -207,7 +208,7 @@ class _MyCartScreenState extends State<MyCartScreen> {
                                                           color: Colors.grey),
                                                       const SizedBox(width: 2),
                                                       Text(
-                                                        'Trip Start: ${_formatDateTime(item.strStartDate)}',
+                                                        'Start: ${_formatDateTime(item.strStartDate)}',
                                                         style: const TextStyle(
                                                             fontSize: 12),
                                                         maxLines: 1,
@@ -225,7 +226,7 @@ class _MyCartScreenState extends State<MyCartScreen> {
                                                           color: Colors.grey),
                                                       const SizedBox(width: 2),
                                                       Text(
-                                                        'Trip End: ${_formatDateTime(item.strEndDate)}',
+                                                        'End: ${_formatDateTime(item.strEndDate)}',
                                                         style: const TextStyle(
                                                             fontSize: 12),
                                                         maxLines: 1,
@@ -304,7 +305,7 @@ class _MyCartScreenState extends State<MyCartScreen> {
                               style: TextStyle(fontSize: 14),
                             ),
                             Text(
-                              'AED ${totalAmount.toStringAsFixed(1)}',
+                              '${totalAmount.toStringAsFixed(1)} AED',
                               style: const TextStyle(fontSize: 14),
                             ),
                           ],
@@ -321,7 +322,7 @@ class _MyCartScreenState extends State<MyCartScreen> {
                               ),
                             ),
                             Text(
-                              'AED ${totalAmount.toStringAsFixed(1)}',
+                              '${totalAmount.toStringAsFixed(1)} AED',
                               style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
@@ -418,7 +419,7 @@ class _MyCartScreenState extends State<MyCartScreen> {
 
   String _formatDateTime(DateTime? date) {
     if (date == null) return 'N/A';
-    return DateFormat('MMMM d, yyyy hh:mm a').format(date);
+    return DateFormat('MMM d, yyyy hh:mm a').format(date);
   }
 
   void _showDeleteConfirmation(
@@ -454,7 +455,6 @@ class _MyCartScreenState extends State<MyCartScreen> {
     String? updatedDropoffAddress;
     List<double>? updatedPickupCoords;
     List<double>? updatedDropoffCoords;
-    int? updatedCount;
     DateTime? updatedStartDate;
     DateTime? updatedEndDate;
 
@@ -506,21 +506,7 @@ class _MyCartScreenState extends State<MyCartScreen> {
                   const Divider(),
                   const SizedBox(height: 16),
                   // Quantity Input
-                  TextFormField(
-                    initialValue: item.intCount?.toString() ?? '1',
-                    decoration: const InputDecoration(
-                      labelText: 'Quantity',
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.shopping_cart),
-                    ),
-                    keyboardType: TextInputType.number,
-                    onChanged: (value) {
-                      setState(() {
-                        updatedCount = int.tryParse(value);
-                      });
-                    },
-                  ),
-                  const SizedBox(height: 16),
+                  
                   // Date Range Picker
                   Row(
                     children: [
@@ -554,7 +540,7 @@ class _MyCartScreenState extends State<MyCartScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const Text(
-                                  'Trip Start',
+                                  'Start',
                                   style: TextStyle(
                                     fontSize: 12,
                                     color: Colors.grey,
@@ -600,7 +586,7 @@ class _MyCartScreenState extends State<MyCartScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const Text(
-                                  'End Date',
+                                  'End',
                                   style: TextStyle(
                                     fontSize: 12,
                                     color: Colors.grey,
@@ -773,53 +759,57 @@ class _MyCartScreenState extends State<MyCartScreen> {
                   ),
                   const SizedBox(height: 24),
                   // Save Button
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        Navigator.pop(context);
-                        await cartProvider.updateCartItem(
-                          id: item.id!,
-                          intCount: updatedCount ?? item.intCount ?? 1,
-                          strStartDate: updatedStartDate ??
-                              item.strStartDate ??
-                              DateTime.now(),
-                          strEndDate: updatedEndDate ??
-                              item.strEndDate ??
-                              DateTime.now(),
-                          strPickupLocation: updatedPickupCoords ??
-                              [
-                                item.strPickupLocation?.coordinates?[0] ?? 0.0,
-                                item.strPickupLocation?.coordinates?[1] ?? 0.0,
-                              ],
-                          strDeliveryLocation: updatedDropoffCoords ??
-                              [
-                                item.strDeliveryLocation?.coordinates?[0] ??
-                                    0.0,
-                                item.strDeliveryLocation?.coordinates?[1] ??
-                                    0.0,
-                              ],
-                          strPickupLocationAddress: updatedPickupAddress ??
-                              item.strPickupLocationAddress ??
-                              '',
-                          strDeliveryLocationAddress: updatedDropoffAddress ??
-                              item.strDeliveryLocationAddress ??
-                              '',
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          Navigator.pop(context);
+                          await cartProvider.updateCartItem(
+                            id: item.id!,
+                            intCount:item.intCount ?? 1,
+                            strStartDate: updatedStartDate ??
+                                item.strStartDate ??
+                                DateTime.now(),
+                            strEndDate: updatedEndDate ??
+                                item.strEndDate ??
+                                DateTime.now(),
+                            strPickupLocation: updatedPickupCoords ??
+                                [
+                                  item.strPickupLocation?.coordinates?[0] ?? 0.0,
+                                  item.strPickupLocation?.coordinates?[1] ?? 0.0,
+                                ],
+                            strDeliveryLocation: updatedDropoffCoords ??
+                                [
+                                  item.strDeliveryLocation?.coordinates?[0] ??
+                                      0.0,
+                                  item.strDeliveryLocation?.coordinates?[1] ??
+                                      0.0,
+                                ],
+                            strPickupLocationAddress: updatedPickupAddress ??
+                                item.strPickupLocationAddress ??
+                                '',
+                            strDeliveryLocationAddress: updatedDropoffAddress ??
+                                item.strDeliveryLocationAddress ??
+                                '',
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          
+                          backgroundColor: AppColors.primary,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
                         ),
-                      ),
-                      child: const Text(
-                        'Save Changes',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                        child: const Text(
+                          'Save Changes',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ),

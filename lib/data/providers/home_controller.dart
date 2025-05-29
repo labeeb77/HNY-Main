@@ -41,20 +41,34 @@ callNot(){
       currentRangeValues != defaultRangeValues || 
       selectedCarTypeIds.isNotEmpty;
 
-  void setSelectedStartDate(DateTime date) {
+  void setSelectedStartDate(DateTime? date) {
+    if (date == null) {
+      selectedDateTOString = null;
+      selecteStratdDate = null;
+      selectedStartTime = null;
+      selectedStartTimeString = null;
+    } else {
     selectedDateTOString = DateFormat('MMM d, y\nh:mm a').format(date);
     selecteStratdDate = date;
     selectedStartTime = TimeOfDay.fromDateTime(date);
     selectedStartTimeString = DateFormat('hh:mm a').format(date);
+    }
     log(selectedDateTOString.toString());
     notifyListeners();
   }
 
-  void setSelectedEndtDate(DateTime date) {
+  void setSelectedEndtDate(DateTime? date) {
+    if (date == null) {
+      selectedEndTOString = null;
+      selecteEnddDate = null;
+      selectedEndTime = null;
+      selectedEndTimeString = null;
+    } else {
     selectedEndTOString = DateFormat('MMM d, y\nh:mm a').format(date);
     selecteEnddDate = date;
     selectedEndTime = TimeOfDay.fromDateTime(date);
     selectedEndTimeString = DateFormat('hh:mm a').format(date);
+    }
     log(selectedDateTOString.toString());
     notifyListeners();
   }

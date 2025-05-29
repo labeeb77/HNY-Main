@@ -12,6 +12,7 @@ import 'package:hny_main/view/common/bottom_nav.dart';
 import 'package:hny_main/view/screens/main/Bookings/widgets/file_upload_ui_widget.dart';
 import 'package:hny_main/view/screens/main/profile/manage_license.dart';
 import 'package:hny_main/view/widgets/back_button.dart';
+import 'package:hny_main/view/widgets/id_card_section.dart';
 import 'package:provider/provider.dart';
 
 class ManagePassport extends StatefulWidget {
@@ -86,72 +87,49 @@ class _ManagePassportState extends State<ManagePassport> {
                 ),
                 const SizedBox(height: 24),
                 // Passport Container
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFD9E5E3).withOpacity(0.4),
-                    borderRadius: BorderRadius.circular(4),
-                    border: Border.all(color: Colors.grey.withOpacity(0.5)),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Passport ID',
-                        style: TextStyle(
-                          color: Color(0xFF006C3F),
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      // Passport Image Display
-                      if (profileProvider.selectedPassportImagePath != null)
-                        Container(
-                          height: 220,
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            image: DecorationImage(
-                              image: kIsWeb
-                                  ? NetworkImage(profileProvider
-                                      .selectedPassportImagePath!.path)
-                                  : FileImage(profileProvider
-                                      .selectedPassportImagePath!),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        )
-                      else if (globalUser?.strPassportUrl != null &&
-                          globalUser!.strPassportUrl!.isNotEmpty)
-                        Container(
-                          height: 220,
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            image: DecorationImage(
-                              image: NetworkImage(globalUser!.strPassportUrl!),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        )
-                      else
-                        // You might need to create a PassportImageWidget similar to DrivingLicenseImageWidget
-                        Container(
-                          height: 220,
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: Colors.grey[200],
-                            image: const DecorationImage(
-                              image: AssetImage(
-                                  'assets/images/custom_placeholder.webp'),
-                              fit: BoxFit.contain,
-                            ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                  
+                    const SizedBox(height: 12),
+                    // Passport Image Display
+                    if (profileProvider.selectedPassportImagePath != null)
+                      Container(
+                        height: 220,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          image: DecorationImage(
+                            image: kIsWeb
+                                ? NetworkImage(profileProvider
+                                    .selectedPassportImagePath!.path)
+                                : FileImage(profileProvider
+                                    .selectedPassportImagePath!),
+                            fit: BoxFit.cover,
                           ),
                         ),
-                    ],
-                  ),
+                      )
+                    else if (globalUser?.strPassportUrl != null &&
+                        globalUser!.strPassportUrl!.isNotEmpty)
+                      Container(
+                        height: 220,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          image: DecorationImage(
+                            image: NetworkImage(globalUser!.strPassportUrl!),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      )
+                    else
+                      // You might need to create a PassportImageWidget similar to DrivingLicenseImageWidget
+                      DocumentImageSection(
+                  title: "Passport ID",
+                  height: 220,
+                  defaultImagePath: 'assets/images/placeholder_image.webp',
+                )
+                  ],
                 ),
               ],
             ),
@@ -182,7 +160,7 @@ class _ManagePassportState extends State<ManagePassport> {
                                   "Passport updated successfully",
                                   isSuccess: true);
                               if (profileProvider.selectedCitizenshipType ==
-                                  'Tourist') {
+                                  'tourist') {
                                 Navigator.pushNamed(
                                   context,
                                   AppRoutes.manageVisaCard,
@@ -197,7 +175,7 @@ class _ManagePassportState extends State<ManagePassport> {
                           // If no image is selected, just navigate to next screen
                           if (widget.from == "register") {
                             if (profileProvider.selectedCitizenshipType ==
-                                'Tourist') {
+                                'tourist') {
                               Navigator.pushNamed(
                                 context,
                                 AppRoutes.manageVisaCard,

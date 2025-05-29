@@ -33,7 +33,7 @@ class BookingPrice extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               Text(
-                'AED $value',
+                '$value AED',
                 style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,

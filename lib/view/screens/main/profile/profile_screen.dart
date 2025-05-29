@@ -134,11 +134,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 builder: (context, value, child) {
                   // Count visible documents
                   int visibleDocs = 1; // License is always visible
-                  if (value.selectedCitizenshipType == 'Tourist') {
+                  if (globalUser?.strCitizenType == 'tourist') {
                     visibleDocs += 2; // Passport and Visa Card
-                  } else if (value.selectedCitizenshipType == 'Gcc') {
+                  } else if (globalUser?.strCitizenType == 'gcc') {
                     visibleDocs += 1; // GCC ID
-                  } else if (value.selectedCitizenshipType == 'Resident') {
+                  } else if (globalUser?.strCitizenType == 'resident') {
                     visibleDocs += 1; // Emirates ID
                   }
 
@@ -183,7 +183,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ),
                           ],
                         ),
-                        if (value.selectedCitizenshipType == 'Tourist')
+                        if (globalUser?.strCitizenType == 'tourist')
                           Stack(
                             children: [
                               DocumentElement(
@@ -214,7 +214,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                             ],
                           ),
-                        if (value.selectedCitizenshipType == 'Gcc')
+                        if (globalUser?.strCitizenType == 'gcc')
                           Stack(
                             children: [
                               DocumentElement(
@@ -245,7 +245,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                             ],
                           ),
-                        if (value.selectedCitizenshipType == 'Tourist')
+                        if (globalUser?.strCitizenType == 'tourist')
                           Stack(
                             children: [
                               DocumentElement(
@@ -276,7 +276,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                             ],
                           ),
-                        if (value.selectedCitizenshipType == 'Resident')
+                        if (globalUser?.strCitizenType == 'resident')
                           Stack(
                             children: [
                               DocumentElement(

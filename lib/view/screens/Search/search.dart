@@ -84,7 +84,7 @@ class _SearchPageState extends State<SearchPage> {
                         }
                       },
                       value: value.selectedDateTOString ?? 'Select Date',
-                      title: "Trip Start",
+                      title: "Start Day",
                     ),
                     const SizedBox(width: 16),
                     DateSectionWidget(
@@ -111,7 +111,7 @@ class _SearchPageState extends State<SearchPage> {
                         }
                       },
                       value: value.selectedEndTOString ?? 'Select Date',
-                      title: "End Date",
+                      title: "End Day",
                     ),
                   ],
                 ),

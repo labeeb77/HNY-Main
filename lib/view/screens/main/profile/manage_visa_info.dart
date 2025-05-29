@@ -112,9 +112,10 @@ class _ManageVisaInfoState extends State<ManageVisaInfo> {
                     ),
                   )
                 else
-                  const IDCardImageSection(
+                 DocumentImageSection(
+                    title: "Visa ID",
                     height: 220,
-                    defaultImagePath: 'assets/images/custom_placeholder.webp',
+                    defaultImagePath: 'assets/images/placeholder_image.webp',
                   )
               ],
             ),
@@ -146,7 +147,7 @@ class _ManageVisaInfoState extends State<ManageVisaInfo> {
 
                             if (widget.from == "register") {
                               if (profileProvider.selectedCitizenshipType ==
-                                  'Tourist') {
+                                  'tourist') {
                                 Navigator.pushNamed(
                                     context, AppRoutes.manageLicense,
                                     arguments: widget.from);
@@ -159,7 +160,7 @@ class _ManageVisaInfoState extends State<ManageVisaInfo> {
                           // If no image is selected, just navigate to next screen
                           if (widget.from == "register") {
                             if (profileProvider.selectedCitizenshipType ==
-                                'Tourist') {
+                                'tourist') {
                               Navigator.pushNamed(
                                   context, AppRoutes.manageLicense,
                                   arguments: widget.from);

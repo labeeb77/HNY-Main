@@ -9,6 +9,7 @@ import 'package:hny_main/core/utils/app_text_styles.dart';
 import 'package:hny_main/data/models/cart/cartlist_model.dart';
 import 'package:hny_main/data/models/response/car_list_model.dart';
 import 'package:hny_main/data/providers/booking_provider.dart';
+import 'package:hny_main/data/providers/home_controller.dart';
 import 'package:hny_main/view/screens/sub/car_details_screen/widgets/booking_price.dart';
 import 'package:hny_main/view/screens/sub/checkout_screen/widgets/radius_tile.dart';
 import 'package:hny_main/view/widgets/app_text_widget.dart';
@@ -21,14 +22,13 @@ class CheckoutPaymentScreen extends StatefulWidget {
   final int totalAmount;
   final ArrCar? carDetails;
   final ArrList? cartdata;
-  
 
   const CheckoutPaymentScreen({
     super.key,
     required this.totalAmount,
-     this.carDetails,
-     this.isCartPage = false,
-     this.cartdata,
+    this.carDetails,
+    this.isCartPage = false,
+    this.cartdata,
   });
 
   @override
@@ -145,16 +145,14 @@ class _CheckoutPaymentScreenState extends State<CheckoutPaymentScreen> {
                   const Gap(6),
                   Container(
                     decoration: const BoxDecoration(
-                      color: AppColors.paymentScreenBackgroundColor,
-                      boxShadow: [
-                        BoxShadow(
-                          offset: Offset(1, 1),
-                          spreadRadius: 0.1,
-                          color: Color.fromARGB(255, 240, 240, 240),
-                          blurRadius: 15
-                        )
-                      ]
-                    ),
+                        color: AppColors.paymentScreenBackgroundColor,
+                        boxShadow: [
+                          BoxShadow(
+                              offset: Offset(1, 1),
+                              spreadRadius: 0.1,
+                              color: Color.fromARGB(255, 240, 240, 240),
+                              blurRadius: 15)
+                        ]),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -177,7 +175,9 @@ class _CheckoutPaymentScreenState extends State<CheckoutPaymentScreen> {
                             showOnlyCountryWhenClosed: false,
                             alignLeft: false,
                             padding: EdgeInsets.zero,
-                            dialogSize: Size(MediaQuery.of(context).size.width * 0.9, MediaQuery.of(context).size.height * 0.6),
+                            dialogSize: Size(
+                                MediaQuery.of(context).size.width * 0.9,
+                                MediaQuery.of(context).size.height * 0.6),
                           ),
                         ),
                         const SizedBox(width: 12),
@@ -203,7 +203,7 @@ class _CheckoutPaymentScreenState extends State<CheckoutPaymentScreen> {
                     fontSize: 16,
                   ),
                   const Gap(10),
-                  _buildPaymentAmountOptions(),
+                  _buildPaymentAmountOptions(widget.totalAmount),
 
                   // Custom amount field (conditionally rendered)
                   if (_selectedPaymentAmountOption == 'Custom Amount')
@@ -228,7 +228,7 @@ class _CheckoutPaymentScreenState extends State<CheckoutPaymentScreen> {
     );
   }
 
-  Widget _buildPaymentAmountOptions() {
+  Widget _buildPaymentAmountOptions(totalAmount) {
     final paymentOptions = ['Full Amount', 'Minimum Amount', 'Custom Amount'];
 
     return Container(
@@ -247,7 +247,8 @@ class _CheckoutPaymentScreenState extends State<CheckoutPaymentScreen> {
           return Column(
             children: [
               RadioBoxElement(
-                title: option,
+                title:
+                    "${option}      ${_selectedPaymentAmountOption == "Minimum Amount" && option == "Minimum Amount" ? (totalAmount * (30 / 100)).toStringAsFixed(1) + " AED" : ""}",
                 status: _selectedPaymentAmountOption == option,
                 padding: const EdgeInsets.only(right: 16, left: 16),
                 onChanged: (_) {
@@ -354,11 +355,9 @@ class _CheckoutPaymentScreenState extends State<CheckoutPaymentScreen> {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.of(context).pop();
-                      Navigator.of(context).pushNamedAndRemoveUntil(
-                        AppRoutes.bottomNav,
-                        (route) => false,
-                      );
+                      while (Navigator.canPop(context)) {
+                        Navigator.pop(context);
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,
@@ -463,7 +462,7 @@ class _CheckoutPaymentScreenState extends State<CheckoutPaymentScreen> {
 
   Future<void> _handlePayNow(
       BuildContext context, BookingProvider provider) async {
-  log("pay now >>>>>....");
+    log("pay now >>>>>....");
 
     // Determine the payment amount
     double paymentAmount;
@@ -489,7 +488,7 @@ class _CheckoutPaymentScreenState extends State<CheckoutPaymentScreen> {
     }
 
     // Create booking
-      log("pay now 2 >>>>>....");
+    log("pay now 2 >>>>>....");
 
     final phoneNumber = _countryCode + _phoneController.text;
     final success = await provider.createBooking(context,
@@ -499,27 +498,58 @@ class _CheckoutPaymentScreenState extends State<CheckoutPaymentScreen> {
         payedAmount: paymentAmount,
         totalVehicleAmount: provider
             .calculateTotalAmount(
-               widget.isCartPage == true ? widget.cartdata?.itemDetails?.intPricePerDay?.toInt() ?? 0 : widget.carDetails?.intPricePerDay?.toInt() ?? 0,
-                widget.isCartPage == true ? widget.cartdata?.itemDetails?.intPricePerWeek?.toInt() ?? 0 : widget.carDetails?.intPricePerWeek?.toInt() ?? 0,
-                widget.isCartPage == true ? widget.cartdata?.itemDetails?.intPricePerMonth?.toInt() ?? 0 : widget.carDetails?.intPricePerMonth?.toInt() ?? 0)
+                widget.isCartPage == true
+                    ? widget.cartdata?.itemDetails?.intPricePerDay?.toInt() ?? 0
+                    : widget.carDetails?.intPricePerDay?.toInt() ?? 0,
+                widget.isCartPage == true
+                    ? widget.cartdata?.itemDetails?.intPricePerWeek?.toInt() ??
+                        0
+                    : widget.carDetails?.intPricePerWeek?.toInt() ?? 0,
+                widget.isCartPage == true
+                    ? widget.cartdata?.itemDetails?.intPricePerMonth?.toInt() ??
+                        0
+                    : widget.carDetails?.intPricePerMonth?.toInt() ?? 0)
             .toDouble(),
         totalGadgetsAmount: provider.totalGadgetPrice,
         carDetails: ArrCar(
           strImgUrl: widget.carDetails?.strImgUrl,
-          id: widget.isCartPage == true ? widget.cartdata?.itemDetails?.id ?? '' : widget.carDetails?.id ?? '',
-          strCarNumber: widget.isCartPage == true ? widget.cartdata?.itemDetails?.strCarNumber ?? '' : widget.carDetails?.strCarNumber ?? '',
-          strBrand: widget.isCartPage == true ? widget.cartdata?.itemDetails?.strBrand ?? '' : widget.carDetails?.strBrand ?? '',
-          strModel: widget.isCartPage == true ? widget.cartdata?.itemDetails?.strModel ?? '' : widget.carDetails?.strModel ?? '',
-          strDescription: widget.isCartPage == true ? widget.cartdata?.itemDetails?.strDescription ?? '' : widget.carDetails?.strDescription ?? '',
-          intPricePerDay: widget.isCartPage == true ? widget.cartdata?.itemDetails?.intPricePerDay?.toInt() ?? 0 : widget.carDetails?.intPricePerDay?.toInt() ?? 0,
-          intPricePerWeek: widget.isCartPage == true ? widget.cartdata?.itemDetails?.intPricePerWeek?.toInt() ?? 0 : widget.carDetails?.intPricePerWeek?.toInt() ?? 0,
-          intPricePerMonth: widget.isCartPage == true ? widget.cartdata?.itemDetails?.intPricePerMonth?.toInt() ?? 0 : widget.carDetails?.intPricePerMonth?.toInt() ?? 0, 
+          id: widget.isCartPage == true
+              ? widget.cartdata?.itemDetails?.id ?? ''
+              : widget.carDetails?.id ?? '',
+          strCarNumber: widget.isCartPage == true
+              ? widget.cartdata?.itemDetails?.strCarNumber ?? ''
+              : widget.carDetails?.strCarNumber ?? '',
+          strBrand: widget.isCartPage == true
+              ? widget.cartdata?.itemDetails?.strBrand ?? ''
+              : widget.carDetails?.strBrand ?? '',
+          strModel: widget.isCartPage == true
+              ? widget.cartdata?.itemDetails?.strModel ?? ''
+              : widget.carDetails?.strModel ?? '',
+          strDescription: widget.isCartPage == true
+              ? widget.cartdata?.itemDetails?.strDescription ?? ''
+              : widget.carDetails?.strDescription ?? '',
+          intPricePerDay: widget.isCartPage == true
+              ? widget.cartdata?.itemDetails?.intPricePerDay?.toInt() ?? 0
+              : widget.carDetails?.intPricePerDay?.toInt() ?? 0,
+          intPricePerWeek: widget.isCartPage == true
+              ? widget.cartdata?.itemDetails?.intPricePerWeek?.toInt() ?? 0
+              : widget.carDetails?.intPricePerWeek?.toInt() ?? 0,
+          intPricePerMonth: widget.isCartPage == true
+              ? widget.cartdata?.itemDetails?.intPricePerMonth?.toInt() ?? 0
+              : widget.carDetails?.intPricePerMonth?.toInt() ?? 0,
         ));
 
     if (success) {
+      final homeController =
+          Provider.of<HomeController>(context, listen: false);
+      homeController.getCarDataList(
+          endDate: homeController.selecteEnddDate,
+          startDate: homeController.selecteStratdDate,
+          context: context);
       await _showSuccessDialog(context);
     } else {
-      await _showFailureDialog(context, 'Failed to create booking. Please try again.');
+      await _showFailureDialog(
+          context, 'Failed to create booking. Please try again.');
     }
   }
 

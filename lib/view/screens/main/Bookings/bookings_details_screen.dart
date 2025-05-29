@@ -247,7 +247,7 @@ class _MyBookingDetailsScreenState extends State<MyBookingDetailsScreen> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'AED ${carItem.intTotalAmount?.toStringAsFixed(1) ?? '0.0'}',
+                      '${carItem.intTotalAmount?.toStringAsFixed(1) ?? '0.0'} AED',
                       style: const TextStyle(
                         fontSize: 18,
                         color: Colors.deepOrange,
@@ -414,7 +414,7 @@ class _MyBookingDetailsScreenState extends State<MyBookingDetailsScreen> {
                   const SizedBox(height: 8),
 
                   Text(
-                    'AED ${addOnItem.intTotalAmount?.floor() ?? 0}',
+                    '${addOnItem.intTotalAmount?.floor() ?? 0} AED',
                     style: const TextStyle(
                       fontSize: 18,
                       color: Colors.deepOrange,
