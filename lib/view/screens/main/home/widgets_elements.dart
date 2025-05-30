@@ -124,7 +124,7 @@ Widget buildCarCard(
             // Show snackbar when dates are not selected
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
-                content: Text('Please choose Trip start and Trip end to get available cars'),
+                content: Text('Please choose start and end to get available cars'),
                 duration: Duration(seconds: 2),
                 behavior: SnackBarBehavior.floating,
               ),

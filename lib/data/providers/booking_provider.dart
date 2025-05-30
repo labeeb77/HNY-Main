@@ -422,14 +422,14 @@ class BookingProvider extends ChangeNotifier {
       // Validate required fields
       if (_startDate == null || _endDate == null) {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text('Please select trip start and trip end')));
+            content: Text('Please select start and end')));
         return false;
       }
 
       if (_endDate!.isBefore(_startDate!)) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-              content: Text('Trip end cannot be before the trip start')),
+              content: Text('End cannot be before the start')),
         );
         return false;
       }

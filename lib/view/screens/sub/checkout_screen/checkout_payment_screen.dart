@@ -10,6 +10,7 @@ import 'package:hny_main/data/models/cart/cartlist_model.dart';
 import 'package:hny_main/data/models/response/car_list_model.dart';
 import 'package:hny_main/data/providers/booking_provider.dart';
 import 'package:hny_main/data/providers/home_controller.dart';
+import 'package:hny_main/data/providers/mycart_provider.dart';
 import 'package:hny_main/view/screens/sub/car_details_screen/widgets/booking_price.dart';
 import 'package:hny_main/view/screens/sub/checkout_screen/widgets/radius_tile.dart';
 import 'package:hny_main/view/widgets/app_text_widget.dart';
@@ -546,6 +547,7 @@ class _CheckoutPaymentScreenState extends State<CheckoutPaymentScreen> {
           endDate: homeController.selecteEnddDate,
           startDate: homeController.selecteStratdDate,
           context: context);
+          Provider.of<MyCartProvider>(context,listen: false).fetchCartItems();
       await _showSuccessDialog(context);
     } else {
       await _showFailureDialog(

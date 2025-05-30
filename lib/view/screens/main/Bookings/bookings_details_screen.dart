@@ -260,7 +260,7 @@ class _MyBookingDetailsScreenState extends State<MyBookingDetailsScreen> {
                       children: [
                         const Icon(Icons.calendar_month, size: 14, color: Colors.grey),
                         const SizedBox(width: 4),
-                        const Text('Trip Start:', style: TextStyle(fontSize: 13, color: Colors.black)),
+                        const Text('Start:', style: TextStyle(fontSize: 13, color: Colors.black)),
                         const SizedBox(width: 4),
                         Expanded(
                           child: Text(
@@ -277,7 +277,7 @@ class _MyBookingDetailsScreenState extends State<MyBookingDetailsScreen> {
                       children: [
                         const Icon(Icons.calendar_month, size: 14, color: Colors.grey),
                         const SizedBox(width: 4),
-                        const Text('Trip End:', style: TextStyle(fontSize: 13, color: Colors.black)),
+                        const Text('End:', style: TextStyle(fontSize: 13, color: Colors.black)),
                         const SizedBox(width: 4),
                         Expanded(
                           child: Text(
@@ -608,10 +608,10 @@ class _MyBookingDetailsScreenState extends State<MyBookingDetailsScreen> {
             'Booking id', 'BK${bookingData.strBookingId ?? "00000"}'),
         const SizedBox(height: 16),
 
-        _buildDetailRow('Trip Start', _formatDate(startDate)),
+        _buildDetailRow('Start', _formatDate(startDate)),
         const SizedBox(height: 16),
 
-        _buildDetailRow('Trip End', _formatDate(endDate)),
+        _buildDetailRow('End', _formatDate(endDate)),
         const SizedBox(height: 16),
         _buildDetailRow('Additional Charges', '${additionalCharges.toStringAsFixed(2)} AED'),
         const SizedBox(height: 16),

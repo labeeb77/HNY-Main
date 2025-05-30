@@ -81,7 +81,7 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
   Future<void> _selectEndDate() async {
     if (selectedStartDate == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select Trip Start first')),
+        const SnackBar(content: Text('Please select Start first')),
       );
       return;
     }
@@ -171,7 +171,7 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
     // Validate dates
     if (startDateTime.isAfter(endDateTime)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Trip Start must be before Trip End')),
+        const SnackBar(content: Text('Start must be before End')),
       );
       return;
     }
@@ -311,10 +311,10 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildDateSection('Trip Start',
+              _buildDateSection('Start',
                   '${_formatDate(selectedStartDate)} ${_formatTime(selectedStartTime)}'),
               const Gap(12),
-              _buildDateSection('Trip End',
+              _buildDateSection('End',
                   '${_formatDate(selectedEndDate)} ${_formatTime(selectedEndTime)}'),
             ],
           ),

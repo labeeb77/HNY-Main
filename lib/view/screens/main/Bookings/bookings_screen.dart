@@ -393,7 +393,7 @@ class BookingCard extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       const Text(
-                        'Trip Start',
+                        'Start',
                         style: TextStyle(
                           color: Colors.grey,
                           fontSize: 12,
@@ -418,7 +418,7 @@ class BookingCard extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       const Text(
-                        'Trip End',
+                        'End',
                         style: TextStyle(
                           color: Colors.grey,
                           fontSize: 12,
